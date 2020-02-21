@@ -431,3 +431,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 !native/
+nuget.ps1

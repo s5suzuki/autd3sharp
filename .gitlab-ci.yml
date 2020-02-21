@@ -6,4 +6,5 @@ build-library:
   tags:
     - shell
   script:
+    - cd src
     - dotnet build
