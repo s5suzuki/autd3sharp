@@ -1,0 +1,9 @@
+stages:
+  - build
+
+build-library:
+  stage: build
+  tags:
+    - shell
+  script:
+    - dotnet build
