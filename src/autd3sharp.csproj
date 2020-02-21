@@ -13,6 +13,7 @@
     <PackageProjectUrl>https://github.com/shinolab/autd3sharp</PackageProjectUrl>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetNativeLibraryFiles</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
@@ -32,6 +33,10 @@
   </Target>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 </Project>

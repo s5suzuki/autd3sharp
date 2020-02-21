@@ -7,4 +7,4 @@ build-library:
     - shell
   script:
     - cd src
-    - dotnet build
+    - dotnet build -c Release
