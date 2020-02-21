@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/02/2020
+ * Last Modified: 21/02/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -62,7 +62,7 @@ namespace AUTD3SharpTest.Test
                 Gain gain = AUTD.FocalPointGain(x, y, z); // Focal point @ (x, y, z) [mm]
                 autd.AppendGainSync(gain);
 
-                Console.WriteLine("press any key to start spatio-temporal modulation...");
+                Console.WriteLine("press any key to start HoloGain...");
                 Console.ReadKey(true);
 
                 // HoloGain
