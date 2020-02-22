@@ -12,3 +12,7 @@ https://www.nuget.org/packages/autd3sharp
 cd example
 dotnet run
 ```
+
+# Author
+
+Shun Suzuki 2018-2020
