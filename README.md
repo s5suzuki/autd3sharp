@@ -1,3 +1,6 @@
+![Windows](https://github.com/shinolab/autd3sharp/workflows/Windows/badge.svg)
+![Publish to NuGet](https://github.com/shinolab/autd3sharp/workflows/Publish%20to%20NuGet/badge.svg)
+
 # autd3sharp
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net
