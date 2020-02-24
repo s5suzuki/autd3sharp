@@ -1,0 +1,24 @@
+name: Publish to NuGet
+
+on: 
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Build with dotnet and publish to NuGet
+      run: |
+        dotnet build -c:Release /p:Platform=x64
+        cd bin/x64/Release
+        dotnet nuget push autd3sharp.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate --no-symbols true
+      working-directory: ./src
