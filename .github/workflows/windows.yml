@@ -16,4 +16,4 @@ jobs:
     - name: Build with dotnet
       run: |
         cd src
-        dotnet build -c:Release
+        dotnet build -c:Release /p:Platform=x64
