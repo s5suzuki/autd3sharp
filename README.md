@@ -8,6 +8,10 @@ Please install using NuGet
 
 https://www.nuget.org/packages/autd3sharp
 
+## Requirements
+
+If you are using Windows, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
+
 ## Example
 
 * Please refer to [example](./example)
