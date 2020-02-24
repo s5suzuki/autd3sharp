@@ -1,0 +1,24 @@
+name: .NET Core
+
+on: 
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build with dotnet
+      run: |
+        cd src
+        dotnet build -c:Release /p:Platform=x64
+        cd bin/x64/Release
+        dotnet nuget push autd3sharp.*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json --skip-duplicate
