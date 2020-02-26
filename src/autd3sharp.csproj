@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Platforms>x64</Platforms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.0.3</Version>
+    <Version>0.3.0.4</Version>
     <Authors>Shun Suzuki</Authors>
     <Company>Shinolab</Company>
     <Description>AUTD3 library wrapper for .Net</Description>
@@ -28,7 +28,9 @@
 
   <Target Name="GetNativeLibraryFiles">
   <ItemGroup>
-    <BuildOutputInPackage Include="native\windows\x64\autd3capi.dll" />
+    <BuildOutputInPackage Include="native\windows\x64\*.dll" />
+    <BuildOutputInPackage Include="native\linux\x64\*.so" />
+    <BuildOutputInPackage Include="native\osx\x64\*.dylib" />
   </ItemGroup>
   </Target>
 
