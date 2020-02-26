@@ -8,7 +8,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -16,9 +16,29 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d . -f 1,2,3)
+    - name: Download latest binary
+      run: | 
+        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
+        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-x64.tar.gz
+        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
+    - name: Replace latest binary
+      run: |
+        tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
+        tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-macos-x64.tar.gz
+        unzip -o autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
+        rm -f ./src/native/windows/x64/*
+        rm -f ./src/native/linux/x64/*
+        rm -f ./src/native/osx/x64/*
+        \cp bin/*.dll ./src/native/windows/x64/
+        \cp bin/*.so ./src/native/linux/x64/
+        \cp bin/*.dylib ./src/native/osx/x64/
     - name: Build with dotnet and publish to NuGet
       run: |
         dotnet build -c:Release /p:Platform=x64
         cd bin/x64/Release
         dotnet nuget push autd3sharp.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate --no-symbols true
       working-directory: ./src
+    
