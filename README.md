@@ -2,12 +2,13 @@
 ![Linux](https://github.com/shinolab/autd3sharp/workflows/Linux/badge.svg?branch=v0.3)
 ![MacOS](https://github.com/shinolab/autd3sharp/workflows/MacOS/badge.svg?branch=v0.3)
 ![Publish to NuGet](https://github.com/shinolab/autd3sharp/workflows/Publish%20to%20NuGet/badge.svg?branch=v0.3)
+[![unitypackage](https://github.com/shinolab/autd3sharp/workflows/unitypackage/badge.svg)](https://github.com/shinolab/autd3sharp/releases)
 
 # autd3sharp
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net
 
-version: 0.3.1.0
+version: 0.3.1.1
 
 ## Install
 
