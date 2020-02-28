@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/02/2020
+ * Last Modified: 28/02/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -620,47 +620,6 @@ namespace AUTD3Sharp
 
             return new Vector3d(x, y, z);
         }
-
-        #region Deprecated
-        [Obsolete("AppendLateralGain is deprecated. Please use AppendSTMGain instead.", false)]
-        public void AppendLateralGain(Gain gain)
-        {
-            if (gain == null)
-            {
-                throw new ArgumentNullException(nameof(gain));
-            }
-
-            NativeMethods.AUTDAppendLateralGain(_autdControllerHandle, gain);
-        }
-        [Obsolete("AppendLateralGain is deprecated. Please use AppendSTMGain instead.", false)]
-        public void AppendLateralGain(params Gain[] gainList)
-        {
-            if (gainList == null)
-            {
-                throw new ArgumentNullException(nameof(gainList));
-            }
-
-            foreach (Gain gain in gainList)
-            {
-                AppendLateralGain(gain);
-            }
-        }
-        [Obsolete("StartLateralModulation is deprecated. Please use StartSTModulation instead.", false)]
-        public void StartLateralModulation(double freq)
-        {
-            NativeMethods.AUTDStartLateralModulation(_autdControllerHandle, freq);
-        }
-        [Obsolete("FinishLateralModulation is deprecated. Please use StopSTModulation instead.", false)]
-        public void FinishLateralModulation()
-        {
-            NativeMethods.AUTDFinishLateralModulation(_autdControllerHandle);
-        }
-        [Obsolete("ResetLateralGain is deprecated. Please use FinishSTModulation instead.", false)]
-        public void ResetLateralGain()
-        {
-            NativeMethods.AUTDResetLateralGain(_autdControllerHandle);
-        }
-        #endregion
 
         #endregion
 

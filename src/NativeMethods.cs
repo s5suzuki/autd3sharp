@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 26/02/2020
+ * Last Modified: 28/02/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -97,14 +97,6 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double* AUTDTransPosition(AUTDControllerHandle handle, int transIdx);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double* AUTDTransDirection(AUTDControllerHandle handle, int transIdx);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double* GetAngleZYZ(double* rotationMatrix);
-
-        #region Deprecated
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendLateralGain(AUTDControllerHandle handle, Gain gainHandle);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStartLateralModulation(AUTDControllerHandle handle, double freq);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFinishLateralModulation(AUTDControllerHandle handle);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDResetLateralGain(AUTDControllerHandle handle);
-        #endregion
-
         #endregion
 
         #region Debug
