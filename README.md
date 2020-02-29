@@ -1,7 +1,7 @@
-![Windows](https://github.com/shinolab/autd3sharp/workflows/Windows/badge.svg?branch=v0.3)
-![Linux](https://github.com/shinolab/autd3sharp/workflows/Linux/badge.svg?branch=v0.3)
-![MacOS](https://github.com/shinolab/autd3sharp/workflows/MacOS/badge.svg?branch=v0.3)
-![Publish to NuGet](https://github.com/shinolab/autd3sharp/workflows/Publish%20to%20NuGet/badge.svg?branch=v0.3)
+![Windows](https://github.com/shinolab/autd3sharp/workflows/Windows/badge.svg)
+![Linux](https://github.com/shinolab/autd3sharp/workflows/Linux/badge.svg)
+![MacOS](https://github.com/shinolab/autd3sharp/workflows/MacOS/badge.svg)
+![Publish to NuGet](https://github.com/shinolab/autd3sharp/workflows/Publish%20to%20NuGet/badge.svg)
 [![unitypackage](https://github.com/shinolab/autd3sharp/workflows/unitypackage/badge.svg)](https://github.com/shinolab/autd3sharp/releases)
 
 # autd3sharp
@@ -30,6 +30,10 @@ dotnet run
 ```
 
 * If you are using Linux/MacOS, you may need to run as root (e.g. `sudo dotnet run`).
+
+## Unity
+
+Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
 
 # Author
 
