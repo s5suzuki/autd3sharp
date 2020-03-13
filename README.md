@@ -8,7 +8,7 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net
 
-version: 0.3.1.3
+version: 0.3.2.0
 
 ## Install
 
