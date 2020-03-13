@@ -43,7 +43,6 @@ jobs:
         run: |
           cp -f src/AUTD3Sharp.cs ./unity/Assets/AUTD/Scripts
           cp -f src/NativeMethods.cs ./unity/Assets/AUTD/Scripts
-          cp -f src/Utils/Matrix3x3d.cs ./unity/Assets/AUTD/Scripts/Util
           cp -f src/Utils/GainMap.cs ./unity/Assets/AUTD/Scripts/Util
       - name: Enumerate Asstes
         run: |

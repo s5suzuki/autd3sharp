@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/02/2020
+ * Last Modified: 13/03/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -96,7 +96,6 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDevIdForTransIdx(AUTDControllerHandle handle, int transIdx);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double* AUTDTransPosition(AUTDControllerHandle handle, int transIdx);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double* AUTDTransDirection(AUTDControllerHandle handle, int transIdx);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double* GetAngleZYZ(double* rotationMatrix);
         #endregion
 
         #region Debug
@@ -106,7 +105,6 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void SetDebugLog(DebugLogFunc func);
         [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
         public static extern void DebugLog(string msg);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void DebugLogTest();
 #endif
         #endregion
     }

@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/02/2020
+ * Last Modified: 13/03/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -26,10 +26,10 @@
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Runtime.CompilerServices;
-using System.Diagnostics.CodeAnalysis;
 
 #if UNITY
 using UnityEngine;
@@ -609,29 +609,13 @@ namespace AUTD3Sharp
         public unsafe Vector3d TransPosition(int transIdx)
         {
             double* fp = NativeMethods.AUTDTransPosition(_autdControllerHandle, transIdx);
-            return new Vector3d((Float)fp[0], (Float)fp[1], (Float)fp[2]);
+            return CreateVector(fp[0], fp[1], fp[2]);
         }
         public unsafe Vector3d TransDirection(int transIdx)
         {
             double* fp = NativeMethods.AUTDTransDirection(_autdControllerHandle, transIdx);
-            return new Vector3d((Float)fp[0], (Float)fp[1], (Float)fp[2]);
+            return CreateVector(fp[0], fp[1], fp[2]);
         }
-        public static unsafe Vector3d GetEulerAngleZyz(double[] rot)
-        {
-            double x, y, z;
-
-            fixed (double* r = rot)
-            {
-                double* ang = NativeMethods.GetAngleZYZ(r);
-
-                x = ang[0];
-                y = ang[1];
-                z = ang[2];
-            }
-
-            return CreateVector(x, y, z);
-        }
-
         #endregion
 
         #region DEBUG
@@ -641,7 +625,6 @@ namespace AUTD3Sharp
             NativeMethods.DebugLogDelegate callback = new NativeMethods.DebugLogDelegate(debugLogFunc);
             IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(callback);
             NativeMethods.SetDebugLog(funcPtr);
-            NativeMethods.DebugLogTest();
         }
 
         public static void DebugLog(string msg)
