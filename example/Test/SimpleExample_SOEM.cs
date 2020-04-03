@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/02/2020
+ * Last Modified: 03/04/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -52,6 +52,9 @@ namespace AUTD3SharpTest.Test
                 // If you use more than one AUTD, call this function only once after Open().
                 // It takes several seconds proportional to the number of AUTD you use.
                 //autd.CalibrateModulation();
+
+                foreach (var (firm, index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
+                    Console.WriteLine($"[{index}]: {firm}");
 
                 // AM
                 Console.WriteLine("Amplitude Modulation");
