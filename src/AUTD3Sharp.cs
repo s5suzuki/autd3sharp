@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 13/03/2020
+ * Last Modified: 03/04/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -131,6 +131,47 @@ namespace AUTD3Sharp
         }
     }
 
+    public struct FirmwareInfo : IEquatable<FirmwareInfo>
+    {
+        public string CpuVersion { get; internal set; }
+        public string FpgaVersion { get; internal set; }
+
+        public override string ToString()
+        {
+            return $"CPU: {CpuVersion}, FPGA: {FpgaVersion}";
+        }
+
+        public bool Equals(FirmwareInfo other)
+        {
+            return CpuVersion.Equals(other.CpuVersion) && FpgaVersion.Equals(other.FpgaVersion);
+        }
+
+        public static bool operator ==(FirmwareInfo left, FirmwareInfo right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(FirmwareInfo left, FirmwareInfo right)
+        {
+            return !left.Equals(right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is FirmwareInfo))
+            {
+                return false;
+            }
+
+            return Equals((FirmwareInfo)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return CpuVersion.GetHashCode() ^ FpgaVersion.GetHashCode();
+        }
+    }
+
     public sealed class AUTD : IDisposable
     {
         #region const
@@ -188,6 +229,19 @@ namespace AUTD3Sharp
                 yield return new EtherCATAdapter() { Desc = sb_desc.ToString(), Name = sb_name.ToString() };
             }
             NativeMethods.AUTDFreeAdapterPointer(handle);
+        }
+
+        public IEnumerable<FirmwareInfo> FirmwareInfoList()
+        {
+            int size = NativeMethods.AUTDGetFirmwareInfoListPointer(_autdControllerHandle, out IntPtr handle);
+            for (int i = 0; i < size; i++)
+            {
+                StringBuilder sb_cpu = new StringBuilder(128);
+                StringBuilder sb_fpga = new StringBuilder(128);
+                NativeMethods.AUTDGetFirmwareInfo(handle, i, sb_cpu, sb_fpga);
+                yield return new FirmwareInfo() { CpuVersion = sb_cpu.ToString(), FpgaVersion = sb_fpga.ToString() };
+            }
+            NativeMethods.AUTDFreeFirmwareInfoListPointer(handle);
         }
 
 #if UNITY
@@ -269,9 +323,9 @@ namespace AUTD3Sharp
             NativeMethods.AUTDSetSilentMode(_autdControllerHandle, mode);
         }
 
-        public void CalibrateModulation()
+        public bool CalibrateModulation()
         {
-            NativeMethods.AUTDCalibrateModulation(_autdControllerHandle);
+            return NativeMethods.AUTDCalibrateModulation(_autdControllerHandle);
         }
 
         ~AUTD()
@@ -498,7 +552,11 @@ namespace AUTD3Sharp
         {
             return SineModulation(freq, amp, 0.5);
         }
-
+        public static Modulation WavModulation(string fileName)
+        {
+            NativeMethods.AUTDWavModulation(out IntPtr modPtr, fileName);
+            return new Modulation(modPtr);
+        }
         public static Modulation SineModulation(int freq, double amp, double offset)
         {
             NativeMethods.AUTDSineModulation(out IntPtr modPtr, freq, amp, offset);
@@ -516,14 +574,14 @@ namespace AUTD3Sharp
 
             NativeMethods.AUTDAppendGain(_autdControllerHandle, gain);
         }
-        public void AppendGainSync(Gain gain)
+        public void AppendGainSync(Gain gain, bool waitForSend = false)
         {
             if (gain == null)
             {
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendGainSync(_autdControllerHandle, gain);
+            NativeMethods.AUTDAppendGainSync(_autdControllerHandle, gain, waitForSend);
         }
         public void AppendModulation(Modulation mod)
         {

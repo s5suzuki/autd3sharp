@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 13/03/2020
+ * Last Modified: 03/04/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -38,18 +38,23 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCreateController(out IntPtr handle);
         [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
         public static extern int AUTDOpenController(AUTDControllerHandle handle, LinkType linkType, string location);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetAdapterPointer(out IntPtr p_adapter);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeAdapterPointer(IntPtr p_adapter);
-        [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
-        public static extern void AUTDGetAdapter(IntPtr p_adapter, int index, StringBuilder desc, StringBuilder name);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDAddDevice(AUTDControllerHandle handle, double x, double y, double z, double rz1, double ry, double rz2, int groupId);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDAddDeviceQuaternion(AUTDControllerHandle handle, double x, double y, double z, double quaW, double quaX, double quaY, double quaZ, int groupId);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDelDevice(AUTDControllerHandle handle, int devId);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCloseController(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeController(IntPtr handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetSilentMode(AUTDControllerHandle handle, [MarshalAs(UnmanagedType.U1)] bool mode);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCalibrateModulation(AUTDControllerHandle handle);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern bool AUTDCalibrateModulation(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStop(AUTDControllerHandle handle);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetAdapterPointer(out IntPtr p_adapter);
+
+        [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
+        public static extern void AUTDGetAdapter(IntPtr p_adapter, int index, StringBuilder desc, StringBuilder name);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeAdapterPointer(IntPtr p_adapter);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetFirmwareInfoListPointer(AUTDControllerHandle handle, out IntPtr plist);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDGetFirmwareInfo(IntPtr plist, int index, StringBuilder cpu_ver, StringBuilder fpga_ver);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeFirmwareInfoListPointer(IntPtr pfirminfolist);
         #endregion
 
         #region Property
@@ -78,12 +83,14 @@ namespace AUTD3Sharp
         public static extern void AUTDRawPCMModulation(out AUTDModulationPtr mod, string filename, double samplingFrequency);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSawModulation(out AUTDModulationPtr mod, int freq);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSineModulation(out AUTDModulationPtr mod, int freq, double amp, double offset);
+        [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
+        public static extern void AUTDWavModulation(out AUTDModulationPtr mod, string filename);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeleteModulation(AUTDModulationPtr mod);
         #endregion
 
         #region LowLevelInterface
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendGain(AUTDControllerHandle handle, Gain gain);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendGainSync(AUTDControllerHandle handle, Gain gain);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendGainSync(AUTDControllerHandle handle, Gain gain, bool waitForSend);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendModulation(AUTDControllerHandle handle, Modulation mod);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendModulationSync(AUTDControllerHandle handle, Modulation mod);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendSTMGain(AUTDControllerHandle handle, Gain gainHandle);

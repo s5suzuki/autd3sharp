@@ -1,4 +1,4 @@
-name: MacOS
+name: Windows
 
 on:
   push:
@@ -9,9 +9,12 @@ on:
 
 jobs:
   build:
-
-    runs-on: macos-latest
-
+    name: build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
