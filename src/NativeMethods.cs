@@ -97,7 +97,6 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStartSTModulation(AUTDControllerHandle handle, double freq);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStopSTModulation(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFinishSTModulation(AUTDControllerHandle handle);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetGain(AUTDControllerHandle handle, int deviceIndex, int transIndex, int amp, int phase);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFlush(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDevIdForDeviceIdx(AUTDControllerHandle handle, int devIdx);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDevIdForTransIdx(AUTDControllerHandle handle, int transIdx);

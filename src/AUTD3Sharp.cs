@@ -646,10 +646,6 @@ namespace AUTD3Sharp
         {
             NativeMethods.AUTDFinishSTModulation(_autdControllerHandle);
         }
-        public void SetGain(int deviceIndex, int transIndex, int amp, int phase)
-        {
-            NativeMethods.AUTDSetGain(_autdControllerHandle, deviceIndex, transIndex, amp, phase);
-        }
         public void Flush()
         {
             NativeMethods.AUTDFlush(_autdControllerHandle);
