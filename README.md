@@ -4,15 +4,17 @@
 
 # autd3sharp
 
-[autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net
+[autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Core 2.0+
 
-version: 0.4.0.0
+version: 0.4.0.1
 
 ## Install
 
 Please install using NuGet
 
 https://www.nuget.org/packages/autd3sharp
+
+If you are using .Net Framework, please place autd3capi.dll in the output directory by your self.
 
 ## Requirements
 
