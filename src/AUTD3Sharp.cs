@@ -90,6 +90,21 @@ namespace AUTD3Sharp
         }
     }
 
+    [ComVisible(false)]
+    public class Link : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        public Link(IntPtr handle) : base(true)
+        {
+            SetHandle(handle);
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            return true;
+        }
+    }
+
+
     public struct EtherCATAdapter : IEquatable<EtherCATAdapter>
     {
         public string Desc { get; internal set; }
@@ -203,19 +218,16 @@ namespace AUTD3Sharp
         {
             _autdControllerHandle = new AUTDControllerHandle(true);
         }
-        public int Open()
-        {
-            return Open(LinkType.ETHERCAT, "");
-        }
 
-        public int Open(string location)
-        {
-            return Open(LinkType.ETHERCAT, location);
-        }
-
+        [Obsolete("Open is deprecated, please use OpenWith instead.")]
         public int Open(LinkType linkType, string location)
         {
             return NativeMethods.AUTDOpenController(_autdControllerHandle, linkType, location);
+        }
+
+        public int OpenWith(Link link)
+        {
+            return NativeMethods.AUTDOpenControllerWith(_autdControllerHandle, link);
         }
 
         public static IEnumerable<EtherCATAdapter> EnumerateAdapters()
@@ -367,11 +379,11 @@ namespace AUTD3Sharp
                 return res;
             }
         }
-        public long RemainingInBuffer
+        public ulong RemainingInBuffer
         {
             get
             {
-                long res = NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle);
+                ulong res = NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle);
                 return res;
             }
         }
@@ -561,6 +573,29 @@ namespace AUTD3Sharp
         {
             NativeMethods.AUTDSineModulation(out IntPtr modPtr, freq, amp, offset);
             return new Modulation(modPtr);
+        }
+        #endregion
+
+        #region Link
+        public static Link SOEMLink(string ifname, int device_num)
+        {
+            NativeMethods.AUTDSOEMLink(out IntPtr plink, ifname, device_num);
+            return new Link(plink);
+        }
+        public static Link EtherCATLink(string ip4Addr, string amsNetId)
+        {
+            NativeMethods.AUTDEtherCATLink(out IntPtr plink, ip4Addr, amsNetId);
+            return new Link(plink);
+        }
+        public static Link LocalEtherCATLink()
+        {
+            NativeMethods.AUTDLocalEtherCATLink(out IntPtr plink);
+            return new Link(plink);
+        }
+        public static Link EmulatorLink(string addr, int port, AUTD autd)
+        {
+            NativeMethods.AUTDEmulatorLink(out IntPtr plink, addr, port, autd._autdControllerHandle);
+            return new Link(plink);
         }
         #endregion
 

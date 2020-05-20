@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/04/2020
+ * Last Modified: 20/05/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -14,7 +14,6 @@
 using AUTD3Sharp;
 using System;
 using System.Linq;
-using System.Threading;
 
 namespace AUTD3SharpTest.Test
 {
@@ -45,7 +44,8 @@ namespace AUTD3SharpTest.Test
                 while (!int.TryParse(Console.ReadLine(), out i)) { }
                 string ifname = adapters.ElementAt(i).Name;
 
-                autd.Open(LinkType.SOEM, ifname);
+                var link = AUTD.SOEMLink(ifname, autd.NumDevices);
+                autd.OpenWith(link);
                 // If you have already recognized the EtherCAT adapter name, you can write it directly like below.
                 // autd.Open(LinkType.SOEM, "\\Device\\NPF_{D8BC5907-A0E5-4EAF-A013-8C7F76E3E1F3}");
 
