@@ -6,7 +6,7 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Core 2.0+
 
-version: 0.4.0.1
+version: 0.4.1
 
 ## Install
 
