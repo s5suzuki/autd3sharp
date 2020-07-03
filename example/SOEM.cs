@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/05/2020
+ * Last Modified: 03/07/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -45,7 +45,7 @@ namespace AUTD3SharpTest
             //autd.AddDevice(Vector3d.UnitY * AUTD.AUTDHeight, Vector3d.Zero);
 
             string ifname = GetIfname();
-            var link = AUTD.SOEMLink(ifname, autd.NumDevices);
+            Link link = AUTD.SOEMLink(ifname, autd.NumDevices);
             autd.OpenWith(link);
 
             TestRunner.Run(autd);

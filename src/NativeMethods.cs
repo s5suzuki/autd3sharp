@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/04/2020
+ * Last Modified: 03/07/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -15,8 +15,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using AUTDGainPtr = System.IntPtr;
-using AUTDModulationPtr = System.IntPtr;
 using AUTDLinkPtr = System.IntPtr;
+using AUTDModulationPtr = System.IntPtr;
+using AUTDSequencePtr = System.IntPtr;
 
 #if DEBUG
 using DebugLogFunc = System.IntPtr;
@@ -24,29 +25,21 @@ using DebugLogFunc = System.IntPtr;
 
 namespace AUTD3Sharp
 {
-    public enum LinkType : int
-    {
-        ETHERCAT,
-        TwinCAT,
-        SOEM
-    };
-
     internal static unsafe class NativeMethods
     {
         private const string DllName = "autd3capi";
 
         #region Controller
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCreateController(out IntPtr handle);
-        [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
-        public static extern int AUTDOpenController(AUTDControllerHandle handle, LinkType linkType, string location);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDOpenControllerWith(AUTDControllerHandle handle, Link plink);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDAddDevice(AUTDControllerHandle handle, double x, double y, double z, double rz1, double ry, double rz2, int groupId);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDAddDeviceQuaternion(AUTDControllerHandle handle, double x, double y, double z, double quaW, double quaX, double quaY, double quaZ, int groupId);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDelDevice(AUTDControllerHandle handle, int devId);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCalibrate(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCloseController(AUTDControllerHandle handle);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDClear(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeController(IntPtr handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetSilentMode(AUTDControllerHandle handle, [MarshalAs(UnmanagedType.U1)] bool mode);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern bool AUTDCalibrateModulation(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStop(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetAdapterPointer(out IntPtr p_adapter);
 
@@ -90,12 +83,24 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeleteModulation(AUTDModulationPtr mod);
         #endregion
 
+        #region Sequence
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSequence(out AUTDSequencePtr seq);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSequenceAppnedPoint(AUTDSequencePtr seq, double x, double y, double z);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSequenceAppnedPoints(AUTDSequencePtr seq, double* points, ulong size);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double AUTDSequenceSetFreq(AUTDSequencePtr seq, double freq);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double AUTDSequenceFreq(AUTDSequencePtr seq);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern double AUTDSequenceSamplingFreq(AUTDSequencePtr seq);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern ushort AUTDSequenceSamplingFreqDiv(AUTDSequencePtr seq);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCircumSequence(out AUTDSequencePtr seq, double x, double y, double z, double nx, double ny, double nz, double radius, ulong n);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeleteSequence(AUTDSequencePtr seq);
+        #endregion
+
         #region Link
         [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
         public static extern void AUTDSOEMLink(out AUTDLinkPtr link, string ifname, int device_num);
         [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
-        public static extern void AUTDEtherCATLink(out AUTDLinkPtr link, string ipv4addr, string ams_net_id);
-        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLocalEtherCATLink(out AUTDLinkPtr link);
+        public static extern void AUTDTwinCATLink(out AUTDLinkPtr link, string ipv4addr, string ams_net_id);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLocalTwinCATLink(out AUTDLinkPtr link);
         [DllImport(DllName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)]
         public static extern void AUTDEmulatorLink(out AUTDLinkPtr link, string addr, int port, AUTDControllerHandle handle);
         #endregion
@@ -109,6 +114,7 @@ namespace AUTD3Sharp
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStartSTModulation(AUTDControllerHandle handle, double freq);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDStopSTModulation(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFinishSTModulation(AUTDControllerHandle handle);
+        [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAppendSequence(AUTDControllerHandle handle, PointSequence seq);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFlush(AUTDControllerHandle handle);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDevIdForDeviceIdx(AUTDControllerHandle handle, int devIdx);
         [DllImport(DllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDevIdForTransIdx(AUTDControllerHandle handle, int transIdx);

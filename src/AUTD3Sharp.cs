@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/04/2020
+ * Last Modified: 03/07/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -40,7 +40,6 @@ using Float = System.Single;
 using Float = System.Double;
 #endif
 
-
 [assembly: CLSCompliant(false), ComVisible(false)]
 namespace AUTD3Sharp
 {
@@ -71,6 +70,63 @@ namespace AUTD3Sharp
         protected override bool ReleaseHandle()
         {
             NativeMethods.AUTDDeleteModulation(handle);
+            return true;
+        }
+    }
+
+    [ComVisible(false)]
+    public class PointSequence : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        public PointSequence(IntPtr seq) : base(true)
+        {
+            SetHandle(seq);
+        }
+
+        public void AppendPoint(Vector3d point)
+        {
+            AUTD.AdjustVector(ref point);
+            NativeMethods.AUTDSequenceAppnedPoint(handle, point[0], point[1], point[2]);
+        }
+
+        public void AppendPoints(IList<Vector3d> points)
+        {
+            double[] points_d = new double[points.Count * 3];
+            for (int i = 0; i < points.Count; i++)
+            {
+                Vector3d point = points[i];
+                AUTD.AdjustVector(ref point);
+                points_d[3 * i] = point[0];
+                points_d[3 * i + 1] = point[1];
+                points_d[3 * i + 2] = point[2];
+
+            }
+            unsafe
+            {
+                fixed (double* pd = points_d)
+                {
+                    NativeMethods.AUTDSequenceAppnedPoints(handle, pd, (ulong)points.Count);
+                }
+            }
+        }
+        public double SetFrequency(double freq)
+        {
+            return NativeMethods.AUTDSequenceSetFreq(handle, freq);
+        }
+        public double Frequency()
+        {
+            return NativeMethods.AUTDSequenceFreq(handle);
+        }
+        public double SamplingFrequency()
+        {
+            return NativeMethods.AUTDSequenceSamplingFreq(handle);
+        }
+        public ushort SamplingFrequencyDivision()
+        {
+            return NativeMethods.AUTDSequenceSamplingFreqDiv(handle);
+        }
+        protected override bool ReleaseHandle()
+        {
+            NativeMethods.AUTDDeleteSequence(handle);
             return true;
         }
     }
@@ -219,12 +275,6 @@ namespace AUTD3Sharp
             _autdControllerHandle = new AUTDControllerHandle(true);
         }
 
-        [Obsolete("Open is deprecated, please use OpenWith instead.")]
-        public int Open(LinkType linkType, string location)
-        {
-            return NativeMethods.AUTDOpenController(_autdControllerHandle, linkType, location);
-        }
-
         public int OpenWith(Link link)
         {
             return NativeMethods.AUTDOpenControllerWith(_autdControllerHandle, link);
@@ -297,9 +347,19 @@ namespace AUTD3Sharp
             NativeMethods.AUTDDelDevice(_autdControllerHandle, devId);
         }
 
+        public void Calibrate()
+        {
+            NativeMethods.AUTDCalibrate(_autdControllerHandle);
+        }
+
         public void Close()
         {
             NativeMethods.AUTDCloseController(_autdControllerHandle);
+        }
+
+        public void Clear()
+        {
+            NativeMethods.AUTDClear(_autdControllerHandle);
         }
 
         public void Stop()
@@ -333,11 +393,6 @@ namespace AUTD3Sharp
         public void SetSilentMode(bool mode)
         {
             NativeMethods.AUTDSetSilentMode(_autdControllerHandle, mode);
-        }
-
-        public bool CalibrateModulation()
-        {
-            return NativeMethods.AUTDCalibrateModulation(_autdControllerHandle);
         }
 
         ~AUTD()
@@ -576,6 +631,21 @@ namespace AUTD3Sharp
         }
         #endregion
 
+        #region Sequence
+        public static PointSequence PointSequence()
+        {
+            NativeMethods.AUTDSequence(out IntPtr p);
+            return new PointSequence(p);
+        }
+        public static PointSequence CircumferencePointSequence(Vector3d center, Vector3d normal, double radius, ulong n)
+        {
+            AdjustVector(ref center);
+            AdjustVector(ref normal);
+            NativeMethods.AUTDCircumSequence(out IntPtr p, center[0], center[1], center[2], normal[0], normal[1], normal[2], radius, n);
+            return new PointSequence(p);
+        }
+        #endregion
+
         #region Link
         public static Link SOEMLink(string ifname, int device_num)
         {
@@ -584,12 +654,12 @@ namespace AUTD3Sharp
         }
         public static Link EtherCATLink(string ip4Addr, string amsNetId)
         {
-            NativeMethods.AUTDEtherCATLink(out IntPtr plink, ip4Addr, amsNetId);
+            NativeMethods.AUTDTwinCATLink(out IntPtr plink, ip4Addr, amsNetId);
             return new Link(plink);
         }
         public static Link LocalEtherCATLink()
         {
-            NativeMethods.AUTDLocalEtherCATLink(out IntPtr plink);
+            NativeMethods.AUTDLocalTwinCATLink(out IntPtr plink);
             return new Link(plink);
         }
         public static Link EmulatorLink(string addr, int port, AUTD autd)
@@ -680,6 +750,15 @@ namespace AUTD3Sharp
         public void FinishSTModulation()
         {
             NativeMethods.AUTDFinishSTModulation(_autdControllerHandle);
+        }
+        public void AppendSequence(PointSequence seq)
+        {
+            if (seq == null)
+            {
+                throw new ArgumentNullException(nameof(seq));
+            }
+
+            NativeMethods.AUTDAppendSequence(_autdControllerHandle, seq);
         }
         public void Flush()
         {

@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/05/2020
+ * Last Modified: 03/07/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -30,11 +30,11 @@ namespace AUTD3SharpTest.Test
 
             double radius = 30.0;
             int size = 200;
-            var center = new Vector3d(x, y, z);
+            Vector3d center = new Vector3d(x, y, z);
             for (int i = 0; i < size; i++)
             {
-                var theta = 2 * Math.PI * i / size;
-                var r = new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
+                double theta = 2 * Math.PI * i / size;
+                Vector3d r = new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
                 Gain f = AUTD.FocalPointGain(center + radius * r);
                 autd.AppendSTMGain(f);
             }

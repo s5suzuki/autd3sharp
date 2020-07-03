@@ -4,21 +4,21 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/05/2020
+ * Last Modified: 03/07/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
  * 
  */
 
+using AUTD3Sharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AUTD3Sharp;
 
 namespace AUTD3SharpTest.Test
 {
-    delegate void TestFn(AUTD autd);
+    internal delegate void TestFn(AUTD autd);
 
     public class TestRunner
     {
@@ -28,10 +28,16 @@ namespace AUTD3SharpTest.Test
              (BesselBeamTest.Test, "BesselBeam Test"),
              (HoloGainTest.Test, "Multiple Focal Points Test"),
              (STMTest.Test, "Spatio-Temporal Modulation Test"),
+             (SeqTest.Test, "PointSequence Test (Hardware STM)"),
              };
 
-            foreach (var (firm, index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
+            autd.Clear();
+            autd.Calibrate();
+
+            foreach ((FirmwareInfo firm, int index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
+            {
                 Console.WriteLine($"AUTD {index}: {firm}");
+            }
 
             while (true)
             {
@@ -42,11 +48,12 @@ namespace AUTD3SharpTest.Test
                 Console.WriteLine("[Others]: finish");
                 Console.Write("Choose number: ");
 
-                int idx;
-                if (!int.TryParse(Console.ReadLine(), out idx) || idx >= examples.Count)
+                if (!int.TryParse(Console.ReadLine(), out int idx) || idx >= examples.Count)
+                {
                     break;
+                }
 
-                var fn = examples[idx].Item1;
+                TestFn fn = examples[idx].Item1;
                 fn(autd);
 
                 Console.WriteLine("press any key to finish...");
@@ -54,6 +61,7 @@ namespace AUTD3SharpTest.Test
 
                 Console.WriteLine("finish.");
                 autd.Stop();
+                autd.Clear();
             }
 
             autd.Dispose();
