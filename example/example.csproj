@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AUTD3Sharp" Version="0.5.0" />
+    <PackageReference Include="AUTD3Sharp" Version="0.7.0" />
   </ItemGroup>
 
 </Project>

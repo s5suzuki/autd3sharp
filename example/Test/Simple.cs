@@ -26,7 +26,7 @@ namespace AUTD3SharpTest.Test
             Modulation mod = AUTD.SineModulation(150); // AM sin 150 Hz
             autd.AppendModulationSync(mod);
 
-            Gain gain = AUTD.FocalPointGain(x, y, z); // Focal point @ (x, y, z) [mm]
+            Gain gain = AUTD.FocalPointGain(new Vector3d(x, y, z)); // Focal point @ (x, y, z) [mm]
             autd.AppendGainSync(gain);
         }
     }

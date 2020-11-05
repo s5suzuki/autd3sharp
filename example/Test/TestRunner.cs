@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/07/2020
+ * Last Modified: 05/11/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -61,9 +61,9 @@ namespace AUTD3SharpTest.Test
 
                 Console.WriteLine("finish.");
                 autd.Stop();
-                autd.Clear();
             }
 
+            autd.Clear();
             autd.Dispose();
         }
     }
