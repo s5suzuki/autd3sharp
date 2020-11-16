@@ -14,7 +14,7 @@ public class SimpleAUTDController : MonoBehaviour
         _autd.AddDevice(gameObject.transform.position, gameObject.transform.rotation);
 
         string ifname = "write your interface name here";
-        _link = AUTD.SOEMLink(ifname, autd.NumDevices);
+        _link = AUTD.SOEMLink(ifname, _autd.NumDevices);
         _autd.OpenWith(_link);
 
         _autd.Clear();
