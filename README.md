@@ -6,7 +6,7 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Core 2.0+
 
-version: 0.7.0.1
+version: 0.7.1
 
 ## Install
 
@@ -36,6 +36,8 @@ dotnet run
 ## Unity
 
 Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
+
+After importing the package, please enable "Allow 'unsafe' code" in Project Settings. 
 
 # Author
 

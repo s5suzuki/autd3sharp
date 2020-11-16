@@ -4,6 +4,7 @@ using UnityEngine;
 public class SimpleAUTDController : MonoBehaviour
 {
     AUTD _autd = new AUTD();
+    Link _link;
     public GameObject Target;
 
     void Awake()
@@ -12,7 +13,13 @@ public class SimpleAUTDController : MonoBehaviour
 
         _autd.AddDevice(gameObject.transform.position, gameObject.transform.rotation);
 
-        _autd.Open(LinkType.SOEM, "\\Device\\NPF_{161CCDCC-4E53-4982-9F4D-CF129EEA2AE8}");
+        string ifname = "write your interface name here";
+        _link = AUTD.SOEMLink(ifname, autd.NumDevices);
+        _autd.OpenWith(_link);
+
+        _autd.Clear();
+        _autd.Calibrate();
+
         _autd.AppendModulationSync(AUTD.SineModulation(150)); // 150 Hz
     }
 
