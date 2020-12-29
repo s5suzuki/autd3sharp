@@ -8,7 +8,7 @@
     <description>$description$</description>
     <dependencies>
       <group targetFramework=".NETStandard2.1">
-        <dependency id="NETStandard.Library" version="2.1.0" exclude="Build,Analyzers" />
+        <dependency id="NETStandard.Library" version="2.0.3" exclude="Build,Analyzers" />
       </group>
     </dependencies>
     <repository type="git" url="https://github.com/shinolab/autd3sharp.git" />
