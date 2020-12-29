@@ -1,23 +1,24 @@
-﻿using AUTD3Sharp;
-using System;
+﻿using System;
+using AUTD3Sharp;
 
-namespace AUTD3SharpTest.Test
+namespace example.Test
 {
-    internal class SeqTest
+    internal static class SeqTest
     {
         public static void Test(AUTD autd)
         {
-            double x = AUTD.AUTDWidth / 2;
-            double y = AUTD.AUTDHeight / 2;
-            double z = 150;
+            const float x = AUTD.AUTDWidth / 2;
+            const float y = AUTD.AUTDHeight / 2;
+            const float z = 150;
 
-            Modulation mod = AUTD.Modulation(255);
+            var mod = AUTD.Modulation();
             autd.AppendModulationSync(mod);
 
-            Vector3d center = new Vector3d(x, y, z);
-            Vector3d dir = Vector3d.UnitZ;
-            PointSequence seq = AUTD.CircumferencePointSequence(center, dir, 30.0, 200);
-            double f = seq.SetFrequency(200);
+            var center = new Vector3f(x, y, z);
+            var dir = Vector3f.UnitZ;
+            var seq = AUTD.CircumferencePointSequence(center, dir, 30.0f, 200);
+
+            var f = seq.SetFrequency(200);
             Console.WriteLine($"Actual frequency is {f}");
             autd.SetSilentMode(false);
             autd.AppendSequence(seq);

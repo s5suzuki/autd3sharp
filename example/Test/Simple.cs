@@ -13,20 +13,20 @@
 
 using AUTD3Sharp;
 
-namespace AUTD3SharpTest.Test
+namespace example.Test
 {
-    internal class SimpleTest
+    internal static class SimpleTest
     {
         public static void Test(AUTD autd)
         {
-            double x = AUTD.AUTDWidth / 2;
-            double y = AUTD.AUTDHeight / 2;
-            double z = 150;
+            const float x = AUTD.AUTDWidth / 2;
+            const float y = AUTD.AUTDHeight / 2;
+            const float z = 150f;
 
-            Modulation mod = AUTD.SineModulation(150); // AM sin 150 Hz
+            var mod = AUTD.SineModulation(150); // AM sin 150 Hz
             autd.AppendModulationSync(mod);
 
-            Gain gain = AUTD.FocalPointGain(new Vector3d(x, y, z)); // Focal point @ (x, y, z) [mm]
+            var gain = AUTD.FocalPointGain(new Vector3f(x, y, z)); // Focal point @ (x, y, z) [mm]
             autd.AppendGainSync(gain);
         }
     }

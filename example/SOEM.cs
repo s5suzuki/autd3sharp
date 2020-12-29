@@ -12,20 +12,20 @@
  */
 
 
-using AUTD3Sharp;
-using AUTD3SharpTest.Test;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using AUTD3Sharp;
+using example.Test;
 
-namespace AUTD3SharpTest
+namespace example
 {
-    internal class SOEMTest
+    internal static class SOEMTest
     {
-        public static string GetIfname()
+        private static string GetIfname()
         {
-            IEnumerable<EtherCATAdapter> adapters = AUTD.EnumerateAdapters();
-            foreach ((EtherCATAdapter adapter, int index) in adapters.Select((adapter, index) => (adapter, index)))
+            var adapters = AUTD.EnumerateAdapters();
+            var etherCATAdapters = adapters as EtherCATAdapter[] ?? adapters.ToArray();
+            foreach (var (adapter, index) in etherCATAdapters.Select((adapter, index) => (adapter, index)))
             {
                 Console.WriteLine($"[{index}]: {adapter}");
             }
@@ -33,19 +33,19 @@ namespace AUTD3SharpTest
             Console.Write("Choose number: ");
             int i;
             while (!int.TryParse(Console.ReadLine(), out i)) { }
-            return adapters.ElementAt(i).Name;
+            return etherCATAdapters[i].Name;
         }
 
         public static void Test()
         {
             Console.WriteLine("Test with SOEM");
 
-            AUTD autd = new AUTD();
-            autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
+            var autd = new AUTD();
+            autd.AddDevice(Vector3f.Zero, Vector3f.Zero);
             //autd.AddDevice(Vector3d.UnitY * AUTD.AUTDHeight, Vector3d.Zero);
 
-            string ifname = GetIfname();
-            Link link = AUTD.SOEMLink(ifname, autd.NumDevices);
+            var ifname = GetIfname();
+            var link = AUTD.SOEMLink(ifname, autd.NumDevices);
             autd.OpenWith(link);
 
             TestRunner.Run(autd);

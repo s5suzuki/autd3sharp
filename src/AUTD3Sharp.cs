@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/07/2020
+ * Last Modified: 28/12/2020
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -26,18 +26,15 @@
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
 #if UNITY
 using UnityEngine;
-using Vector3d = UnityEngine.Vector3;
-using Quaterniond = UnityEngine.Quaternion;
-using Float = System.Single;
-#else
-using Float = System.Double;
+using Vector3f = UnityEngine.Vector3;
+using Quaternionf = UnityEngine.Quaternion;
+using MathF = UnityEngine.Mathf;
 #endif
 
 [assembly: CLSCompliant(false), ComVisible(false)]
@@ -63,6 +60,8 @@ namespace AUTD3Sharp
     [ComVisible(false)]
     public class Modulation : SafeHandleZeroOrMinusOneIsInvalid
     {
+        internal IntPtr ModPtr => handle;
+
         public Modulation(IntPtr modulation) : base(true)
         {
             SetHandle(modulation);
@@ -77,46 +76,48 @@ namespace AUTD3Sharp
     [ComVisible(false)]
     public class PointSequence : SafeHandleZeroOrMinusOneIsInvalid
     {
+        internal IntPtr SeqPtr => handle;
+
         public PointSequence(IntPtr seq) : base(true)
         {
             SetHandle(seq);
         }
 
-        public void AppendPoint(Vector3d point)
+        public void AppendPoint(Vector3f point)
         {
             AUTD.AdjustVector(ref point);
-            NativeMethods.AUTDSequenceAppnedPoint(handle, point[0], point[1], point[2]);
+            NativeMethods.AUTDSequenceAppendPoint(handle, point[0], point[1], point[2]);
         }
 
-        public void AppendPoints(IList<Vector3d> points)
+        public void AppendPoints(IList<Vector3f> points)
         {
-            double[] points_d = new double[points.Count * 3];
-            for (int i = 0; i < points.Count; i++)
+            var pointsArr = new float[points.Count * 3];
+            for (var i = 0; i < points.Count; i++)
             {
-                Vector3d point = points[i];
+                var point = points[i];
                 AUTD.AdjustVector(ref point);
-                points_d[3 * i] = point[0];
-                points_d[3 * i + 1] = point[1];
-                points_d[3 * i + 2] = point[2];
+                pointsArr[3 * i] = point[0];
+                pointsArr[3 * i + 1] = point[1];
+                pointsArr[3 * i + 2] = point[2];
 
             }
             unsafe
             {
-                fixed (double* pd = points_d)
+                fixed (float* pd = pointsArr)
                 {
-                    NativeMethods.AUTDSequenceAppnedPoints(handle, pd, (ulong)points.Count);
+                    NativeMethods.AUTDSequenceAppendPoints(handle, pd, (ulong)points.Count);
                 }
             }
         }
-        public double SetFrequency(double freq)
+        public float SetFrequency(float freq)
         {
             return NativeMethods.AUTDSequenceSetFreq(handle, freq);
         }
-        public double Frequency()
+        public float Frequency()
         {
             return NativeMethods.AUTDSequenceFreq(handle);
         }
-        public double SamplingFrequency()
+        public float SamplingFrequency()
         {
             return NativeMethods.AUTDSequenceSamplingFreq(handle);
         }
@@ -133,10 +134,12 @@ namespace AUTD3Sharp
 
     internal class AUTDControllerHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public AUTDControllerHandle(bool ownsHandle, int version) : base(ownsHandle)
+        internal IntPtr CntPtr => handle;
+
+        public AUTDControllerHandle(bool ownsHandle) : base(ownsHandle)
         {
             handle = new IntPtr();
-            NativeMethods.AUTDCreateController(out handle, version);
+            NativeMethods.AUTDCreateController(out handle);
         }
 
         protected override bool ReleaseHandle()
@@ -149,7 +152,9 @@ namespace AUTD3Sharp
     [ComVisible(false)]
     public class Link : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public Link(IntPtr handle) : base(true)
+        internal IntPtr LinkPtr => handle;
+
+        public Link(IntPtr handle) : base(false)
         {
             SetHandle(handle);
         }
@@ -188,12 +193,7 @@ namespace AUTD3Sharp
 
         public override bool Equals(object obj)
         {
-            if (!(obj is EtherCATAdapter))
-            {
-                return false;
-            }
-
-            return Equals((EtherCATAdapter)obj);
+            return obj is EtherCATAdapter adapter && Equals(adapter);
         }
 
         public override int GetHashCode()
@@ -229,12 +229,7 @@ namespace AUTD3Sharp
 
         public override bool Equals(object obj)
         {
-            if (!(obj is FirmwareInfo))
-            {
-                return false;
-            }
-
-            return Equals((FirmwareInfo)obj);
+            return obj is FirmwareInfo info && Equals(info);
         }
 
         public override int GetHashCode()
@@ -242,8 +237,6 @@ namespace AUTD3Sharp
             return CpuVersion.GetHashCode() ^ FpgaVersion.GetHashCode();
         }
     }
-
-
 
     public sealed class AUTD : IDisposable
     {
@@ -254,13 +247,12 @@ namespace AUTD3Sharp
         public const float AUTDWidth = 0.192f;
         public const float AUTDHeight = 0.1514f;
 #else
-        public static readonly double UltrasoundWavelength = 8.5;
-        public const double AUTDWidth = 192.0;
-        public const double AUTDHeight = 151.4;
+        public static readonly float UltrasoundWavelength = 8.5f;
+        public const float AUTDWidth = 192.0f;
+        public const float AUTDHeight = 151.4f;
 #endif
-        public const double Pi = 3.14159265;
+        public const float Pi = MathF.PI;
         public const int NumTransInDevice = 249;
-
 #if UNITY
         public readonly static float MeterScale = 1000f;
 #endif
@@ -272,78 +264,65 @@ namespace AUTD3Sharp
         #endregion
 
         #region Controller
-
-        public enum AUTD_VERSION
+        public AUTD()
         {
-            V_0_1 = 0,
-            V_0_6 = 1,
-            V_0_7 = 2,
-        }
-
-        public AUTD(AUTD_VERSION version = AUTD_VERSION.V_0_7)
-        {
-            _autdControllerHandle = new AUTDControllerHandle(true, (int)version);
+            _autdControllerHandle = new AUTDControllerHandle(true);
         }
 
         public int OpenWith(Link link)
         {
-            return NativeMethods.AUTDOpenControllerWith(_autdControllerHandle, link);
+            return NativeMethods.AUTDOpenControllerWith(_autdControllerHandle.CntPtr, link.LinkPtr);
         }
 
         public static IEnumerable<EtherCATAdapter> EnumerateAdapters()
         {
-            int size = NativeMethods.AUTDGetAdapterPointer(out IntPtr handle);
-            for (int i = 0; i < size; i++)
+            var size = NativeMethods.AUTDGetAdapterPointer(out var handle);
+            for (var i = 0; i < size; i++)
             {
-                StringBuilder sb_desc = new StringBuilder(128);
-                StringBuilder sb_name = new StringBuilder(128);
-                NativeMethods.AUTDGetAdapter(handle, i, sb_desc, sb_name);
-                yield return new EtherCATAdapter() { Desc = sb_desc.ToString(), Name = sb_name.ToString() };
+                var sbDesc = new StringBuilder(128);
+                var sbName = new StringBuilder(128);
+                NativeMethods.AUTDGetAdapter(handle, i, sbDesc, sbName);
+                yield return new EtherCATAdapter() { Desc = sbDesc.ToString(), Name = sbName.ToString() };
             }
             NativeMethods.AUTDFreeAdapterPointer(handle);
         }
 
         public IEnumerable<FirmwareInfo> FirmwareInfoList()
         {
-            int size = NativeMethods.AUTDGetFirmwareInfoListPointer(_autdControllerHandle, out IntPtr handle);
-            for (int i = 0; i < size; i++)
+            var size = NativeMethods.AUTDGetFirmwareInfoListPointer(_autdControllerHandle.CntPtr, out var handle);
+            for (var i = 0; i < size; i++)
             {
-                StringBuilder sb_cpu = new StringBuilder(128);
-                StringBuilder sb_fpga = new StringBuilder(128);
-                NativeMethods.AUTDGetFirmwareInfo(handle, i, sb_cpu, sb_fpga);
-                yield return new FirmwareInfo() { CpuVersion = sb_cpu.ToString(), FpgaVersion = sb_fpga.ToString() };
+                var sbCpu = new StringBuilder(128);
+                var sbFpga = new StringBuilder(128);
+                NativeMethods.AUTDGetFirmwareInfo(handle, i, sbCpu, sbFpga);
+                yield return new FirmwareInfo() { CpuVersion = sbCpu.ToString(), FpgaVersion = sbFpga.ToString() };
             }
             NativeMethods.AUTDFreeFirmwareInfoListPointer(handle);
         }
 
 
-        public int AddDevice(Vector3d position, Vector3d rotation)
+        public int AddDevice(Vector3f position, Vector3f rotation)
         {
             return AddDevice(position, rotation, 0);
         }
 
-        public int AddDevice(Vector3d position, Vector3d rotation, int groupId)
+        public int AddDevice(Vector3f position, Vector3f rotation, int groupId)
         {
             AdjustVector(ref position);
-            int res = NativeMethods.AUTDAddDevice(_autdControllerHandle, position[0], position[1], position[2], rotation[0], rotation[1], rotation[2], groupId);
+            var res = NativeMethods.AUTDAddDevice(_autdControllerHandle.CntPtr, position[0], position[1], position[2], rotation[0], rotation[1], rotation[2], groupId);
             return res;
         }
-        public int AddDevice(Vector3d position, Quaterniond quaternion)
+        public int AddDevice(Vector3f position, Quaternionf quaternion)
         {
             return AddDevice(position, quaternion, 0);
         }
 
-        public int AddDevice(Vector3d position, Quaterniond quaternion, int groupId)
+        public int AddDevice(Vector3f position, Quaternionf quaternion, int groupId)
         {
             AdjustVector(ref position);
             AdjustQuaternion(ref quaternion);
-            int res = NativeMethods.AUTDAddDeviceQuaternion(_autdControllerHandle, position[0], position[1], position[2], quaternion[3], quaternion[0], quaternion[1], quaternion[2], groupId);
+            var res = NativeMethods.AUTDAddDeviceQuaternion(_autdControllerHandle.CntPtr, position[0], position[1], position[2], quaternion[3], quaternion[0], quaternion[1], quaternion[2], groupId);
             return res;
-        }
-
-        public void DelDevice(int devId)
-        {
-            NativeMethods.AUTDDelDevice(_autdControllerHandle, devId);
         }
 
         public enum MOD_SAMPLING_FREQ
@@ -389,22 +368,49 @@ namespace AUTD3Sharp
 
         public bool Calibrate(Configuration config)
         {
-            return NativeMethods.AUTDCalibrate(_autdControllerHandle, (int)config.ModSmaplingFrequency, (int)config.ModBufferSize);
+            return NativeMethods.AUTDCalibrate(_autdControllerHandle.CntPtr, (int)config.ModSmaplingFrequency, (int)config.ModBufferSize);
         }
 
         public void Close()
         {
-            NativeMethods.AUTDCloseController(_autdControllerHandle);
+            NativeMethods.AUTDCloseController(_autdControllerHandle.CntPtr);
         }
 
         public void Clear()
         {
-            NativeMethods.AUTDClear(_autdControllerHandle);
+            NativeMethods.AUTDClear(_autdControllerHandle.CntPtr);
         }
 
         public void Stop()
         {
-            NativeMethods.AUTDStop(_autdControllerHandle);
+            NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
+        }
+
+
+        public unsafe void SetDelay(ushort[,] data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            var numDev = NumDevices;
+
+            if (data.GetLength(0) != numDev)
+            {
+                throw new ArgumentOutOfRangeException("Invalid data length. " + numDev + " AUTDs was added.");
+            }
+
+            if (data.GetLength(1) != NumTransInDevice)
+            {
+                throw new ArgumentOutOfRangeException("Some Device have wrong Data length. A device must have " + NumTransInDevice + " data.");
+            }
+
+            var length = data.GetLength(0) * data.GetLength(1);
+            fixed (ushort* r = data)
+            {
+                NativeMethods.AUTDSetDelay(_autdControllerHandle.CntPtr, r, length);
+            }
         }
 
         public void Dispose()
@@ -432,7 +438,7 @@ namespace AUTD3Sharp
 
         public void SetSilentMode(bool mode)
         {
-            NativeMethods.AUTDSetSilentMode(_autdControllerHandle, mode);
+            NativeMethods.AUTDSetSilentMode(_autdControllerHandle.CntPtr, mode);
         }
 
         ~AUTD()
@@ -442,71 +448,40 @@ namespace AUTD3Sharp
         #endregion
 
         #region Property
-        public bool IsOpen
+        public bool IsOpen => NativeMethods.AUTDIsOpen(_autdControllerHandle.CntPtr);
+        public bool SilentMode
         {
-            get
-            {
-                bool res = NativeMethods.AUTDIsOpen(_autdControllerHandle);
-                return res;
-            }
+            get => NativeMethods.AUTDIsSilentMode(_autdControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetSilentMode(_autdControllerHandle.CntPtr, value);
         }
-        public bool IsSilentMode
+        public int NumDevices => NativeMethods.AUTDNumDevices(_autdControllerHandle.CntPtr);
+        public int NumTransducers => NativeMethods.AUTDNumTransducers(_autdControllerHandle.CntPtr);
+        public float Wavelength
         {
-            get
-            {
-                bool res = NativeMethods.AUTDIsSilentMode(_autdControllerHandle);
-                return res;
-            }
+            get => NativeMethods.AUTDWavelength(_autdControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetWavelength(_autdControllerHandle.CntPtr, value);
         }
-        public int NumDevices
-        {
-            get
-            {
-                int res = NativeMethods.AUTDNumDevices(_autdControllerHandle);
-                return res;
-            }
-        }
-        public int NumTransducers
-        {
-            get
-            {
-                int res = NativeMethods.AUTDNumTransducers(_autdControllerHandle);
-                return res;
-            }
-        }
-        public ulong RemainingInBuffer
-        {
-            get
-            {
-                ulong res = NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle);
-                return res;
-            }
-        }
+        public ulong RemainingInBuffer => NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle.CntPtr);
         #endregion
 
         #region Gain
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte AdjustAmp(double amp)
+        private static byte AdjustAmp(float amp)
         {
-            double d = Math.Asin(amp) / Math.PI;
+            var d = MathF.Asin(amp) / MathF.PI;
             return (byte)(511.0 * d);
         }
 
-        public static Gain FocalPointGain(Vector3d point)
-        {
-            return FocalPointGain(point, 0xff);
-        }
-
-        public static Gain FocalPointGain(Vector3d point, double amp)
+        public static Gain FocalPointGain(Vector3f point, float amp)
         {
             return FocalPointGain(point, AdjustAmp(amp));
         }
 
-        public static Gain FocalPointGain(Vector3d point, byte duty)
+        public static Gain FocalPointGain(Vector3f point, byte duty = 0xff)
         {
             AdjustVector(ref point);
-            NativeMethods.AUTDFocalPointGain(out IntPtr gainPtr, point[0], point[1], point[2], duty);
+            NativeMethods.AUTDFocalPointGain(out var gainPtr, point[0], point[1], point[2], duty);
             return new Gain(gainPtr);
         }
 
@@ -517,9 +492,9 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(gainMap));
             }
 
-            IntPtr* gainsPtr = gainMap.GainPointer;
-            int* idPtr = gainMap.IdPointer;
-            NativeMethods.AUTDGroupedGain(out IntPtr gainPtr, idPtr, gainsPtr, gainMap.Size);
+            var gainsPtr = gainMap.GainPointer;
+            var idPtr = gainMap.IdPointer;
+            NativeMethods.AUTDGroupedGain(out var gainPtr, idPtr, gainsPtr, gainMap.Size);
             return new Gain(gainPtr);
         }
 
@@ -528,40 +503,30 @@ namespace AUTD3Sharp
             return GroupedGain(new GainMap(gainPairs));
         }
 
-        public static Gain BesselBeamGain(Vector3d point, Vector3d dir, double thetaZ)
-        {
-            return BesselBeamGain(point, dir, thetaZ, 0xFF);
-        }
-
-        public static Gain BesselBeamGain(Vector3d point, Vector3d dir, double thetaZ, double amp)
+        public static Gain BesselBeamGain(Vector3f point, Vector3f dir, float thetaZ, float amp)
         {
             return BesselBeamGain(point, dir, thetaZ, AdjustAmp(amp));
         }
 
-        public static Gain BesselBeamGain(Vector3d point, Vector3d dir, double thetaZ, byte duty)
+        public static Gain BesselBeamGain(Vector3f point, Vector3f dir, float thetaZ, byte duty = 0xFF)
         {
             AdjustVector(ref point);
             AdjustVector(ref dir);
 
-            NativeMethods.AUTDBesselBeamGain(out IntPtr gainPtr, point[0], point[1], point[2], dir[0], dir[1], dir[2], thetaZ, duty);
+            NativeMethods.AUTDBesselBeamGain(out var gainPtr, point[0], point[1], point[2], dir[0], dir[1], dir[2], thetaZ, duty);
             return new Gain(gainPtr);
         }
 
-        public static Gain PlaneWaveGain(Vector3d dir)
-        {
-            return PlaneWaveGain(dir, 0xFF);
-        }
-
-        public static Gain PlaneWaveGain(Vector3d dir, double amp)
+        public static Gain PlaneWaveGain(Vector3f dir, float amp)
         {
             return PlaneWaveGain(dir, AdjustAmp(amp));
         }
 
-        public static Gain PlaneWaveGain(Vector3d dir, byte duty)
+        public static Gain PlaneWaveGain(Vector3f dir, byte duty = 0xFF)
         {
             AdjustVector(ref dir);
 
-            NativeMethods.AUTDPlaneWaveGain(out IntPtr gainPtr, dir[0], dir[1], dir[2], duty);
+            NativeMethods.AUTDPlaneWaveGain(out var gainPtr, dir[0], dir[1], dir[2], duty);
             return new Gain(gainPtr);
         }
 
@@ -575,12 +540,19 @@ namespace AUTD3Sharp
             LM = 5
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct SDPParams
         {
-            public double Regularization { get; set; }
-            public int Repeat { get; set; }
-            public double Lambda { get; set; }
-            public bool NormalizeAmp { get; set; }
+            private float _regularization;
+            private int _repeat;
+            private float _lambda;
+            [MarshalAs(UnmanagedType.U1)]
+            private bool _normalize;
+
+            public float Regularization { get => _regularization; set => _regularization = value; }
+            public int Repeat { get => _repeat; set => _repeat = value; }
+            public float Lambda { get => _lambda; set => _lambda = value; }
+            public bool NormalizeAmp { get => _normalize; set => _normalize = value; }
 
             public static SDPParams GetDefault()
             {
@@ -594,10 +566,16 @@ namespace AUTD3Sharp
             }
         };
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct EVDParams
         {
-            public double Regularization { get; set; }
-            public bool NormalizeAmp { get; set; }
+            private float _regularization;
+            [MarshalAs(UnmanagedType.U1)]
+            private bool _normalize;
+
+            public float Regularization { get => _regularization; set => _regularization = value; }
+            public bool NormalizeAmp { get => _normalize; set => _normalize = value; }
+
 
             public static EVDParams GetDefault()
             {
@@ -609,12 +587,18 @@ namespace AUTD3Sharp
             }
         };
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct NLSParams
         {
-            public double Eps1 { get; set; }
-            public double Eps2 { get; set; }
-            public int KMax { get; set; }
-            public double Tau { get; set; }
+            private float _eps1;
+            private float _eps2;
+            private int _kmax;
+            private float _tau;
+
+            public float Eps1 { get => _eps1; set => _eps1 = value; }
+            public float Eps2 { get => _eps2; set => _eps2 = value; }
+            public int KMax { get => _kmax; set => _kmax = value; }
+            public float Tau { get => _tau; set => _tau = value; }
 
             public static NLSParams GetDefault()
             {
@@ -628,14 +612,14 @@ namespace AUTD3Sharp
             }
         };
 
-        public static unsafe Gain HoloGain(Vector3d[] focuses, double[] amps)
+        public static Gain HoloGain(Vector3f[] focuses, float[] amps)
         {
             return HoloGainSDP(focuses, amps, null);
         }
 
-        public static unsafe Gain HoloGainSDP(Vector3d[] focuses, double[] amps, SDPParams? param)
+        public static unsafe Gain HoloGainSDP(Vector3f[] focuses, float[] amps, SDPParams? param)
         {
-            IntPtr p = Marshal.AllocHGlobal(sizeof(SDPParams));
+            var p = Marshal.AllocHGlobal(sizeof(SDPParams));
             if (param.HasValue)
             {
                 Marshal.StructureToPtr(param.Value, p, false);
@@ -648,9 +632,9 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.SDP, p);
         }
 
-        public static unsafe Gain HoloGainEVD(Vector3d[] focuses, double[] amps, EVDParams? param)
+        public static unsafe Gain HoloGainEVD(Vector3f[] focuses, float[] amps, EVDParams? param)
         {
-            IntPtr p = Marshal.AllocHGlobal(sizeof(EVDParams));
+            var p = Marshal.AllocHGlobal(sizeof(EVDParams));
             if (param.HasValue)
             {
                 Marshal.StructureToPtr(param.Value, p, false);
@@ -663,9 +647,9 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.EVD, p);
         }
 
-        public static unsafe Gain HoloGainGS(Vector3d[] focuses, double[] amps, uint? repeat)
+        public static Gain HoloGainGS(Vector3f[] focuses, float[] amps, uint? repeat)
         {
-            IntPtr p = Marshal.AllocHGlobal(sizeof(uint));
+            var p = Marshal.AllocHGlobal(sizeof(uint));
             if (repeat.HasValue)
             {
                 Marshal.StructureToPtr(repeat.Value, p, false);
@@ -678,9 +662,9 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.GS, p);
         }
 
-        public static unsafe Gain HoloGainGSPAT(Vector3d[] focuses, double[] amps, uint? repeat)
+        public static Gain HoloGainGSPAT(Vector3f[] focuses, float[] amps, uint? repeat)
         {
-            IntPtr p = Marshal.AllocHGlobal(sizeof(uint));
+            var p = Marshal.AllocHGlobal(sizeof(uint));
             if (repeat.HasValue)
             {
                 Marshal.StructureToPtr(repeat.Value, p, false);
@@ -693,14 +677,14 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.GS_PAT, p);
         }
 
-        public static unsafe Gain HoloGainNaive(Vector3d[] focuses, double[] amps)
+        public static Gain HoloGainNaive(Vector3f[] focuses, float[] amps)
         {
             return HoloGain(focuses, amps, OptMethod.NAIVE, IntPtr.Zero);
         }
 
-        public static unsafe Gain HoloGainLM(Vector3d[] focuses, double[] amps, NLSParams? param)
+        public static unsafe Gain HoloGainLM(Vector3f[] focuses, float[] amps, NLSParams? param)
         {
-            IntPtr p = Marshal.AllocHGlobal(sizeof(NLSParams));
+            var p = Marshal.AllocHGlobal(sizeof(NLSParams));
             if (param.HasValue)
             {
                 Marshal.StructureToPtr(param.Value, p, false);
@@ -713,7 +697,7 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.LM, p);
         }
 
-        private static unsafe Gain HoloGain(Vector3d[] focuses, double[] amps, OptMethod method, IntPtr param)
+        private static unsafe Gain HoloGain(Vector3f[] focuses, float[] amps, OptMethod method, IntPtr param)
         {
             if (focuses == null)
             {
@@ -725,9 +709,9 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(amps));
             }
 
-            int size = amps.Length;
-            double[] foci = new double[size * 3];
-            for (int i = 0; i < size; i++)
+            var size = amps.Length;
+            var foci = new float[size * 3];
+            for (var i = 0; i < size; i++)
             {
                 AdjustVector(ref focuses[i]);
 
@@ -737,8 +721,8 @@ namespace AUTD3Sharp
             }
 
             IntPtr gainPtr;
-            fixed (double* fp = &foci[0])
-            fixed (double* ap = &amps[0])
+            fixed (float* fp = &foci[0])
+            fixed (float* ap = &amps[0])
             {
                 NativeMethods.AUTDHoloGain(out gainPtr, fp, ap, size, (int)method, param);
             }
@@ -747,17 +731,16 @@ namespace AUTD3Sharp
 
         public static Gain TransducerTestGain(int index, byte duty, byte phase)
         {
-            NativeMethods.AUTDTransducerTestGain(out IntPtr gainPtr, index, duty, phase);
+            NativeMethods.AUTDTransducerTestGain(out var gainPtr, index, duty, phase);
             return new Gain(gainPtr);
         }
 
         public static Gain NullGain()
         {
-            NativeMethods.AUTDNullGain(out IntPtr gainPtr);
+            NativeMethods.AUTDNullGain(out var gainPtr);
             return new Gain(gainPtr);
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1814:PreferJaggedArraysOverMultidimensional", MessageId = "0#")]
         public unsafe Gain CustomGain(ushort[,] data)
         {
             if (data == null)
@@ -765,7 +748,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(data));
             }
 
-            int numDev = NumDevices;
+            var numDev = NumDevices;
 
             if (data.GetLength(0) != numDev)
             {
@@ -778,7 +761,7 @@ namespace AUTD3Sharp
             }
 
             IntPtr gainPtr;
-            int length = data.GetLength(0) * data.GetLength(1);
+            var length = data.GetLength(0) * data.GetLength(1);
             fixed (ushort* r = data)
             {
                 NativeMethods.AUTDCustomGain(out gainPtr, r, length);
@@ -789,13 +772,10 @@ namespace AUTD3Sharp
         #endregion
 
         #region Modulation
-        public static Modulation Modulation()
+
+        public static Modulation Modulation(byte amp = 0xFF)
         {
-            return Modulation(0xFF);
-        }
-        public static Modulation Modulation(byte amp)
-        {
-            NativeMethods.AUTDModulation(out IntPtr modPtr, amp);
+            NativeMethods.AUTDModulation(out var modPtr, amp);
             return new Modulation(modPtr);
         }
         public static Modulation CustomModulation(byte[] data)
@@ -810,41 +790,30 @@ namespace AUTD3Sharp
             }
             return new Modulation(modPtr);
         }
-        public static Modulation RawPcmModulation(string fileName, double samplingFreq)
+        public static Modulation RawPcmModulation(string fileName, float samplingFreq)
         {
-            NativeMethods.AUTDRawPCMModulation(out IntPtr modPtr, fileName, samplingFreq);
+            NativeMethods.AUTDRawPCMModulation(out var modPtr, fileName, samplingFreq);
             return new Modulation(modPtr);
         }
         public static Modulation SawModulation(int freq)
         {
-            NativeMethods.AUTDSawModulation(out IntPtr modPtr, freq);
+            NativeMethods.AUTDSawModulation(out var modPtr, freq);
             return new Modulation(modPtr);
         }
-        public static Modulation SineModulation(int freq)
+
+        public static Modulation SquareModulation(int freq, byte low = 0x00, byte high = 0xFF)
         {
-            return SineModulation(freq, 1, 0.5);
-        }
-        public static Modulation SquareModulation(int freq)
-        {
-            return SquareModulation(freq, 0x00, 0xFF);
-        }
-        public static Modulation SquareModulation(int freq, byte low, byte high)
-        {
-            NativeMethods.AUTDSquareModulation(out IntPtr modPtr, freq, low, high);
+            NativeMethods.AUTDSquareModulation(out var modPtr, freq, low, high);
             return new Modulation(modPtr);
         }
-        public static Modulation SineModulation(int freq, double amp)
+        public static Modulation SineModulation(int freq, float amp = 1, float offset = 0.5f)
         {
-            return SineModulation(freq, amp, 0.5);
-        }
-        public static Modulation SineModulation(int freq, double amp, double offset)
-        {
-            NativeMethods.AUTDSineModulation(out IntPtr modPtr, freq, amp, offset);
+            NativeMethods.AUTDSineModulation(out var modPtr, freq, amp, offset);
             return new Modulation(modPtr);
         }
         public static Modulation WavModulation(string fileName)
         {
-            NativeMethods.AUTDWavModulation(out IntPtr modPtr, fileName);
+            NativeMethods.AUTDWavModulation(out var modPtr, fileName);
             return new Modulation(modPtr);
         }
         #endregion
@@ -852,38 +821,38 @@ namespace AUTD3Sharp
         #region Sequence
         public static PointSequence PointSequence()
         {
-            NativeMethods.AUTDSequence(out IntPtr p);
+            NativeMethods.AUTDSequence(out var p);
             return new PointSequence(p);
         }
-        public static PointSequence CircumferencePointSequence(Vector3d center, Vector3d normal, double radius, ulong n)
+        public static PointSequence CircumferencePointSequence(Vector3f center, Vector3f normal, float radius, ulong n)
         {
             AdjustVector(ref center);
             AdjustVector(ref normal);
-            NativeMethods.AUTDCircumSequence(out IntPtr p, center[0], center[1], center[2], normal[0], normal[1], normal[2], radius, n);
+            NativeMethods.AUTDCircumSequence(out var p, center[0], center[1], center[2], normal[0], normal[1], normal[2], radius, n);
             return new PointSequence(p);
         }
         #endregion
 
         #region Link
-        public static Link SOEMLink(string ifname, int device_num)
+        public static Link SOEMLink(string ifname, int deviceNum)
         {
-            NativeMethods.AUTDSOEMLink(out IntPtr plink, ifname, device_num);
-            return new Link(plink);
+            NativeMethods.AUTDSOEMLink(out var link, ifname, deviceNum);
+            return new Link(link);
         }
         public static Link EtherCATLink(string ip4Addr, string amsNetId)
         {
-            NativeMethods.AUTDTwinCATLink(out IntPtr plink, ip4Addr, amsNetId);
-            return new Link(plink);
+            NativeMethods.AUTDTwinCATLink(out var link, ip4Addr, amsNetId);
+            return new Link(link);
         }
         public static Link LocalEtherCATLink()
         {
-            NativeMethods.AUTDLocalTwinCATLink(out IntPtr plink);
-            return new Link(plink);
+            NativeMethods.AUTDLocalTwinCATLink(out var link);
+            return new Link(link);
         }
-        public static Link EmulatorLink(string addr, int port, AUTD autd)
+        public static Link EmulatorLink(string addr, ushort port, AUTD autd)
         {
-            NativeMethods.AUTDEmulatorLink(out IntPtr plink, addr, port, autd._autdControllerHandle);
-            return new Link(plink);
+            NativeMethods.AUTDEmulatorLink(out var link, addr, port, autd._autdControllerHandle.CntPtr);
+            return new Link(link);
         }
         #endregion
 
@@ -895,7 +864,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendGain(_autdControllerHandle, gain);
+            NativeMethods.AUTDAppendGain(_autdControllerHandle.CntPtr, gain.GainPtr);
         }
         public void AppendGainSync(Gain gain, bool waitForSend = false)
         {
@@ -904,7 +873,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendGainSync(_autdControllerHandle, gain, waitForSend);
+            NativeMethods.AUTDAppendGainSync(_autdControllerHandle.CntPtr, gain.GainPtr, waitForSend);
         }
         public void AppendModulation(Modulation mod)
         {
@@ -913,7 +882,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(mod));
             }
 
-            NativeMethods.AUTDAppendModulation(_autdControllerHandle, mod);
+            NativeMethods.AUTDAppendModulation(_autdControllerHandle.CntPtr, mod.ModPtr);
         }
         public void AppendModulationSync(Modulation mod)
         {
@@ -922,7 +891,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(mod));
             }
 
-            NativeMethods.AUTDAppendModulationSync(_autdControllerHandle, mod);
+            NativeMethods.AUTDAppendModulationSync(_autdControllerHandle.CntPtr, mod.ModPtr);
         }
         public void AppendSTMGain(Gain gain)
         {
@@ -931,7 +900,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendSTMGain(_autdControllerHandle, gain);
+            NativeMethods.AUTDAppendSTMGain(_autdControllerHandle.CntPtr, gain.GainPtr);
         }
         public void AppendSTMGain(IList<Gain> gains)
         {
@@ -940,7 +909,7 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(gains));
             }
 
-            foreach (Gain gain in gains)
+            foreach (var gain in gains)
             {
                 AppendSTMGain(gain);
             }
@@ -952,22 +921,22 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(gainList));
             }
 
-            foreach (Gain gain in gainList)
+            foreach (var gain in gainList)
             {
                 AppendSTMGain(gain);
             }
         }
-        public void StartSTModulation(double freq)
+        public void StartSTModulation(float freq)
         {
-            NativeMethods.AUTDStartSTModulation(_autdControllerHandle, freq);
+            NativeMethods.AUTDStartSTModulation(_autdControllerHandle.CntPtr, freq);
         }
         public void StopSTModulation()
         {
-            NativeMethods.AUTDStopSTModulation(_autdControllerHandle);
+            NativeMethods.AUTDStopSTModulation(_autdControllerHandle.CntPtr);
         }
         public void FinishSTModulation()
         {
-            NativeMethods.AUTDFinishSTModulation(_autdControllerHandle);
+            NativeMethods.AUTDFinishSTModulation(_autdControllerHandle.CntPtr);
         }
         public void AppendSequence(PointSequence seq)
         {
@@ -976,57 +945,40 @@ namespace AUTD3Sharp
                 throw new ArgumentNullException(nameof(seq));
             }
 
-            NativeMethods.AUTDAppendSequence(_autdControllerHandle, seq);
+            NativeMethods.AUTDAppendSequence(_autdControllerHandle.CntPtr, seq.SeqPtr);
         }
         public void Flush()
         {
-            NativeMethods.AUTDFlush(_autdControllerHandle);
+            NativeMethods.AUTDFlush(_autdControllerHandle.CntPtr);
         }
-        public int DeviceIdForDeviceIndex(int devIdx)
+        public int DeviceIdxForTransIdx(int devIdx)
         {
-            int res = NativeMethods.AUTDDevIdForDeviceIdx(_autdControllerHandle, devIdx);
+            var res = NativeMethods.AUTDDeviceIdxForTransIdx(_autdControllerHandle.CntPtr, devIdx);
             return res;
         }
-        public int DeviceIdForDTransducerIndex(int transIdx)
+        public unsafe Vector3f TransPosition(int transIdxGlobal)
         {
-            int res = NativeMethods.AUTDDevIdForTransIdx(_autdControllerHandle, transIdx);
-            return res;
+            var fp = NativeMethods.AUTDTransPositionByGlobal(_autdControllerHandle.CntPtr, transIdxGlobal);
+            return new Vector3f(fp[0], fp[1], fp[2]);
         }
-        public unsafe Vector3d TransPosition(int transIdx)
+        public unsafe Vector3f TransPosition(int deviceIdx, int transIdxLocal)
         {
-            double* fp = NativeMethods.AUTDTransPosition(_autdControllerHandle, transIdx);
-            return CreateVector(fp[0], fp[1], fp[2]);
+            var fp = NativeMethods.AUTDTransPositionByLocal(_autdControllerHandle.CntPtr, deviceIdx, transIdxLocal);
+            return new Vector3f(fp[0], fp[1], fp[2]);
         }
-        public unsafe Vector3d TransDirection(int transIdx)
+        public unsafe Vector3f DeviceDirection(int deviceIdx)
         {
-            double* fp = NativeMethods.AUTDTransDirection(_autdControllerHandle, transIdx);
-            return CreateVector(fp[0], fp[1], fp[2]);
+            var fp = NativeMethods.AUTDDeviceDirection(_autdControllerHandle.CntPtr, deviceIdx);
+            return new Vector3f(fp[0], fp[1], fp[2]);
         }
-        #endregion
-
-        #region DEBUG
-#if DEBUG
-        public static void SetDebugLogFunc(Action<string> debugLogFunc)
-        {
-            NativeMethods.DebugLogDelegate callback = new NativeMethods.DebugLogDelegate(debugLogFunc);
-            IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(callback);
-            NativeMethods.SetDebugLog(funcPtr);
-        }
-
-        public static void DebugLog(string msg)
-        {
-            NativeMethods.DebugLog(msg);
-        }
-#endif
         #endregion
 
         #region GeometryAdjust
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-        internal static void AdjustVector(ref Vector3d vector)
+        internal static void AdjustVector(ref Vector3f vector)
         {
 #if LEFT_HANDED
-            vector[2] = -vector[2];
+            vector.z = -vector.z;
 #endif
 #if DIMENSION_M
             vector[0] *= MeterScale;
@@ -1036,19 +988,11 @@ namespace AUTD3Sharp
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Vector3d CreateVector(double x, double y, double z)
-        {
-            return new Vector3d((Float)x, (Float)y, (Float)z);
-        }
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-        internal static void AdjustQuaternion(ref Quaterniond quaternion)
+        private static void AdjustQuaternion(ref Quaternionf quaternion)
         {
 #if LEFT_HANDED
-            quaternion[2] = -quaternion[2];
-            quaternion[3] = -quaternion[3];
+            quaternion.z = -quaternion.z;
+            quaternion.w = -quaternion.w;
 #endif
         }
         #endregion

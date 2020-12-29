@@ -12,25 +12,26 @@
  */
 
 using AUTD3Sharp;
-namespace AUTD3SharpTest.Test
+
+namespace example.Test
 {
-    internal class HoloGainTest
+    internal static class HoloGainTest
     {
         public static void Test(AUTD autd)
         {
-            double x = AUTD.AUTDWidth / 2;
-            double y = AUTD.AUTDHeight / 2;
-            double z = 150.0;
+            const float  x = AUTD.AUTDWidth / 2;
+            const float y = AUTD.AUTDHeight / 2;
+            const float z = 150f;
 
             autd.AppendModulationSync(AUTD.SineModulation(150)); // AM sin 150 HZ
 
-            Vector3d[] focuses = new[] {
-                    new Vector3d(x - 30, y ,z),
-                    new Vector3d(x + 30, y ,z)
+            var focuses = new[] {
+                    new Vector3f(x - 30, y ,z),
+                    new Vector3f(x + 30, y ,z)
                 };
-            double[] amps = new[] {
-                    1.0,
-                    1.0
+            var amps = new[] {
+                    1.0f,
+                    1.0f
                 };
             autd.AppendGainSync(AUTD.HoloGain(focuses, amps));
         }

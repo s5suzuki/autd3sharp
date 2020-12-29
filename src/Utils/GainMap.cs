@@ -54,13 +54,13 @@ namespace AUTD3Sharp
             Size = gainPairs.Length;
             _ids = new int[Size];
             _gains = new IntPtr[Size];
-            for (int i = 0; i < Size; i++)
+            for (var i = 0; i < Size; i++)
             {
                 _ids[i] = gainPairs[i].Id;
                 _gains[i] = gainPairs[i].Gain.GainPtr;
             }
 
-            bool duplication = Size > _ids.GroupBy(i => i).Count();
+            var duplication = Size > _ids.GroupBy(i => i).Count();
             if (duplication)
             {
                 throw new ArgumentException("Multiple Gains are set for the same Group ID");
@@ -68,7 +68,7 @@ namespace AUTD3Sharp
         }
     }
 
-    public struct GainPair : IEquatable<GainPair>
+    public readonly struct GainPair : IEquatable<GainPair>
     {
         public int Id { get; }
         public Gain Gain { get; }

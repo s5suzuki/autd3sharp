@@ -12,11 +12,11 @@
  */
 
 
-using AUTD3Sharp;
-using AUTD3SharpTest.Test;
 using System;
+using AUTD3Sharp;
+using example.Test;
 
-namespace AUTD3SharpTest
+namespace example
 {
     internal class TwinCATTest
     {
@@ -24,11 +24,11 @@ namespace AUTD3SharpTest
         {
             Console.WriteLine("Test with TwinCAT");
 
-            AUTD autd = new AUTD();
-            autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
+            var autd = new AUTD();
+            autd.AddDevice(Vector3f.Zero, Vector3f.Zero);
             //autd.AddDevice(Vector3d.UnitY * AUTD.AUTDHeight, Vector3d.Zero);
 
-            Link link = AUTD.LocalEtherCATLink();
+            var link = AUTD.LocalEtherCATLink();
             autd.OpenWith(link);
 
             TestRunner.Run(autd);

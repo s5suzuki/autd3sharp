@@ -13,21 +13,21 @@
 
 using AUTD3Sharp;
 
-namespace AUTD3SharpTest.Test
+namespace example.Test
 {
-    internal class BesselBeamTest
+    internal static class BesselBeamTest
     {
         public static void Test(AUTD autd)
         {
-            double x = AUTD.AUTDWidth / 2;
-            double y = AUTD.AUTDHeight / 2;
+            const float x = AUTD.AUTDWidth / 2;
+            const float y = AUTD.AUTDHeight / 2;
 
-            Modulation mod = AUTD.SineModulation(150); // AM sin 150 Hz
+            var mod = AUTD.SineModulation(150); // AM sin 150 Hz
             autd.AppendModulationSync(mod);
 
-            Vector3d start = new Vector3d(x, y, 0);
-            Vector3d dir = Vector3d.UnitZ;
-            autd.AppendGainSync(AUTD.BesselBeamGain(start, dir, 13.0 / 180 * AUTD.Pi)); // BesselBeam from (x, y, 0), theta = 13 deg
+            var start = new Vector3f(x, y, 0f);
+            var dir = Vector3f.UnitZ;
+            autd.AppendGainSync(AUTD.BesselBeamGain(start, dir, 13.0f / 180 * AUTD.Pi)); // BesselBeam from (x, y, 0), theta = 13 deg
         }
     }
 }

@@ -4,9 +4,9 @@
 
 # autd3sharp
 
-[autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Core 2.0+
+[autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Standard 2.1
 
-version: 0.7.1
+version: 0.8.0
 
 ## Install
 

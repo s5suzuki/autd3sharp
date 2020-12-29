@@ -11,49 +11,51 @@
  * 
  */
 
-using AUTD3Sharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AUTD3Sharp;
 
-namespace AUTD3SharpTest.Test
+namespace example.Test
 {
     internal delegate void TestFn(AUTD autd);
 
-    public class TestRunner
+    public static class TestRunner
     {
         public static void Run(AUTD autd)
         {
-            List<(TestFn, string)> examples = new List<(TestFn, string)> { (SimpleTest.Test, "Single Focal Point Test"),
-             (BesselBeamTest.Test, "BesselBeam Test"),
-             (HoloGainTest.Test, "Multiple Focal Points Test"),
-             (STMTest.Test, "Spatio-Temporal Modulation Test"),
-             (SeqTest.Test, "PointSequence Test (Hardware STM)"),
+            var examples = new List<(TestFn, string)> {(SimpleTest.Test, "Single Focal Point Test"),
+                 (BesselBeamTest.Test, "BesselBeam Test"),
+                 (HoloGainTest.Test, "Multiple Focal Points Test"),
+                 (STMTest.Test, "Spatio-Temporal Modulation Test"),
+                 (SeqTest.Test, "PointSequence Test (Hardware STM)")
              };
 
             autd.Clear();
             autd.Calibrate();
 
-            foreach ((FirmwareInfo firm, int index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
+            autd.Wavelength = 8.5f; // mm
+
+            foreach (var (firm, index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
             {
                 Console.WriteLine($"AUTD {index}: {firm}");
             }
 
             while (true)
             {
-                for (int i = 0; i < examples.Count; i++)
+                for (var i = 0; i < examples.Count; i++)
                 {
                     Console.WriteLine($"[{i}]: {examples[i].Item2}");
                 }
                 Console.WriteLine("[Others]: finish");
                 Console.Write("Choose number: ");
 
-                if (!int.TryParse(Console.ReadLine(), out int idx) || idx >= examples.Count)
+                if (!int.TryParse(Console.ReadLine(), out var idx) || idx >= examples.Count)
                 {
                     break;
                 }
 
-                TestFn fn = examples[idx].Item1;
+                var fn = examples[idx].Item1;
                 fn(autd);
 
                 Console.WriteLine("press any key to finish...");

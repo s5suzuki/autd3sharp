@@ -11,31 +11,31 @@
  * 
  */
 
-using AUTD3Sharp;
 using System;
+using AUTD3Sharp;
 
-namespace AUTD3SharpTest.Test
+namespace example.Test
 {
-    internal class STMTest
+    internal static class STMTest
     {
         public static void Test(AUTD autd)
         {
-            double x = AUTD.AUTDWidth / 2;
-            double y = AUTD.AUTDHeight / 2;
-            double z = 150.0;
+            const float x = AUTD.AUTDWidth / 2;
+            const float y = AUTD.AUTDHeight / 2;
+            const float z = 150f;
 
             autd.SetSilentMode(false);
 
-            autd.AppendModulationSync(AUTD.Modulation(255)); // static
+            autd.AppendModulationSync(AUTD.Modulation()); // static
 
-            double radius = 30.0;
-            int size = 200;
-            Vector3d center = new Vector3d(x, y, z);
-            for (int i = 0; i < size; i++)
+            const float radius = 30.0f;
+            const int size = 200;
+            var center = new Vector3f(x, y, z);
+            for (var i = 0; i < size; i++)
             {
-                double theta = 2 * Math.PI * i / size;
-                Vector3d r = new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
-                Gain f = AUTD.FocalPointGain(center + radius * r);
+                var theta = 2 * AUTD.Pi * i / size;
+                var r = new Vector3f(MathF.Cos(theta), MathF.Sin(theta), 0);
+                var f = AUTD.FocalPointGain(center + radius * r);
                 autd.AppendSTMGain(f);
             }
             autd.StartSTModulation(1);

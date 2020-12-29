@@ -11,9 +11,9 @@
  * 
  */
 
-namespace AUTD3SharpTest
+namespace example
 {
-    internal class Program
+    internal static class Program
     {
         private static void Main()
         {
