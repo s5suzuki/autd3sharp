@@ -13,20 +13,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v1.7.2
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 3.1.x
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d . -f 1,2,3)
     - name: Download latest binary
       run: | 
         wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
-        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-arm32.tar.gz
-        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-arm64.tar.gz
         wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
         wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
-        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x86.zip
     - name: Replace latest binary
       run: |
         tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
@@ -34,21 +31,10 @@ jobs:
         unzip -o autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
         rm -f ./src/native/windows/x64/*
         rm -f ./src/native/linux/x64/*
-        rm -f ./src/native/osx/universal/*
+        rm -f ./src/native/osx/x64/*
         \cp bin/*.dll ./src/native/windows/x64/
         \cp bin/*.so ./src/native/linux/x64/
-        \cp bin/*.dylib ./src/native/osx/universal/
-
-        tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-arm32.tar.gz
-        unzip -o autd3-${{ steps.get_version.outputs.VERSION }}-win-x86.zip
-        rm -f ./src/native/linux/arm32/*
-        rm -f ./src/native/windows/x86/*
-        \cp bin/*.dll ./src/native/windows/x86/
-        \cp bin/*.so ./src/native/linux/arm32/
-        
-        tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-arm64.tar.gz
-        rm -f ./src/native/linux/arm64/*
-        \cp bin/*.so ./src/native/linux/arm64/
+        \cp bin/*.dylib ./src/native/osx/x64/
     - name: Build with dotnet and publish to NuGet
       run: |
         dotnet build -c:Release /p:Platform=x64

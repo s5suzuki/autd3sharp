@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Platforms>x64;x86</Platforms>
+    <Platforms>x64</Platforms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.9.0</Version>
+    <Version>0.9.0.1</Version>
     <Authors>Shun Suzuki</Authors>
     <Company>Shinolab</Company>
     <Description>AUTD3 library wrapper for .Net</Description>
@@ -36,11 +36,8 @@
   <Target Name="GetNativeLibraryFiles">
   <ItemGroup>
     <BuildOutputInPackage Include="native\windows\x64\*.dll" />
-    <BuildOutputInPackage Include="native\windows\x86\*.dll" />
     <BuildOutputInPackage Include="native\linux\x64\*.so" />
-    <BuildOutputInPackage Include="native\linux\arm32\*.so" />
-    <BuildOutputInPackage Include="native\linux\arm64\*.so" />
-    <BuildOutputInPackage Include="native\osx\universal\*.dylib" />
+    <BuildOutputInPackage Include="native\osx\x64\*.dylib" />
   </ItemGroup>
   </Target>
 
@@ -48,15 +45,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 </Project>
