@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/12/2020
+ * Last Modified: 08/03/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -325,39 +325,45 @@ namespace AUTD3Sharp
             return res;
         }
 
-        public enum MOD_SAMPLING_FREQ
+        public enum ModSamplingFreq
         {
-            SMPL_125_HZ = 125,
-            SMPL_250_HZ = 250,
-            SMPL_500_HZ = 500,
-            SMPL_1_KHZ = 1000,
-            SMPL_2_KHZ = 2000,
-            SMPL_4_KHZ = 4000,
-            SMPL_8_KHZ = 8000,
+            Smpl125Hz = 125,
+            Smpl250Hz = 250,
+            Smpl500Hz = 500,
+            Smpl1Khz = 1000,
+            Smpl2Khz = 2000,
+            Smpl4Khz = 4000,
+            Smpl8Khz = 8000,
         };
 
-        public enum MOD_BUF_SIZE
+        public enum ModBufSize
         {
-            BUF_125 = 125,
-            BUF_250 = 250,
-            BUF_500 = 500,
-            BUF_1000 = 1000,
-            BUF_2000 = 2000,
-            BUF_4000 = 4000,
-            BUF_8000 = 8000,
-            BUF_16000 = 16000,
-            BUF_32000 = 32000,
+            Buf125 = 125,
+            Buf250 = 250,
+            Buf500 = 500,
+            Buf1000 = 1000,
+            Buf2000 = 2000,
+            Buf4000 = 4000,
+            Buf8000 = 8000,
+            Buf16000 = 16000,
+            Buf32000 = 32000,
         };
 
         public class Configuration
         {
-            public MOD_SAMPLING_FREQ ModSmaplingFrequency { get; set; }
-            public MOD_BUF_SIZE ModBufferSize { get; set; }
+            public ModSamplingFreq ModSamplingFrequency { get; }
+            public ModBufSize ModBufferSize { get; }
 
             public Configuration()
             {
-                ModSmaplingFrequency = MOD_SAMPLING_FREQ.SMPL_4_KHZ;
-                ModBufferSize = MOD_BUF_SIZE.BUF_4000;
+                ModSamplingFrequency = ModSamplingFreq.Smpl4Khz;
+                ModBufferSize = ModBufSize.Buf4000;
+            }
+
+            public Configuration(ModSamplingFreq modSamplingFrequency, ModBufSize modBufferSize)
+            {
+                ModSamplingFrequency = modSamplingFrequency;
+                ModBufferSize = modBufferSize;
             }
         }
 
@@ -368,7 +374,7 @@ namespace AUTD3Sharp
 
         public bool Calibrate(Configuration config)
         {
-            return NativeMethods.AUTDCalibrate(_autdControllerHandle.CntPtr, (int)config.ModSmaplingFrequency, (int)config.ModBufferSize);
+            return NativeMethods.AUTDCalibrate(_autdControllerHandle.CntPtr, (int)config.ModSamplingFrequency, (int)config.ModBufferSize);
         }
 
         public void Close()
@@ -384,33 +390,6 @@ namespace AUTD3Sharp
         public void Stop()
         {
             NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
-        }
-
-
-        public unsafe void SetDelay(ushort[,] data)
-        {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            var numDev = NumDevices;
-
-            if (data.GetLength(0) != numDev)
-            {
-                throw new ArgumentOutOfRangeException("Invalid data length. " + numDev + " AUTDs was added.");
-            }
-
-            if (data.GetLength(1) != NumTransInDevice)
-            {
-                throw new ArgumentOutOfRangeException("Some Device have wrong Data length. A device must have " + NumTransInDevice + " data.");
-            }
-
-            var length = data.GetLength(0) * data.GetLength(1);
-            fixed (ushort* r = data)
-            {
-                NativeMethods.AUTDSetDelay(_autdControllerHandle.CntPtr, r, length);
-            }
         }
 
         public void Dispose()
@@ -592,12 +571,12 @@ namespace AUTD3Sharp
         {
             private float _eps1;
             private float _eps2;
-            private int _kmax;
+            private int _k_max;
             private float _tau;
 
             public float Eps1 { get => _eps1; set => _eps1 = value; }
             public float Eps2 { get => _eps2; set => _eps2 = value; }
-            public int KMax { get => _kmax; set => _kmax = value; }
+            public int KMax { get => _k_max; set => _k_max = value; }
             public float Tau { get => _tau; set => _tau = value; }
 
             public static NLSParams GetDefault()
@@ -847,11 +826,6 @@ namespace AUTD3Sharp
         public static Link LocalEtherCATLink()
         {
             NativeMethods.AUTDLocalTwinCATLink(out var link);
-            return new Link(link);
-        }
-        public static Link EmulatorLink(string addr, ushort port, AUTD autd)
-        {
-            NativeMethods.AUTDEmulatorLink(out var link, addr, port, autd._autdControllerHandle.CntPtr);
             return new Link(link);
         }
         #endregion

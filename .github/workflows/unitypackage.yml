@@ -44,6 +44,8 @@ jobs:
           cp -f src/AUTD3Sharp.cs ./unity/Assets/AUTD/Scripts
           cp -f src/NativeMethods.cs ./unity/Assets/AUTD/Scripts
           cp -f src/Utils/GainMap.cs ./unity/Assets/AUTD/Scripts/Util
+          cp -f LICENSE ./unity/Assets/AUTD
+          cp -f NOTICE ./unity/Assets/AUTD
       - name: Enumerate Asstes
         run: |
           find . -name '*.meta' >> metaList

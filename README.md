@@ -6,9 +6,9 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Standard 2.1
 
-version: 0.8.0
+version: 0.9.0
 
-## Install
+## :hammer_and_wrench: Install
 
 Please install using NuGet
 
@@ -16,11 +16,11 @@ https://www.nuget.org/packages/autd3sharp
 
 If you are using .Net Framework, please place autd3capi.dll in the output directory by your self.
 
-## Requirements
+## :ballot_box_with_check: Requirements
 
-If you are using Windows, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
+If you use Windows and `SOEMLink`, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
 
-## Example
+## :beginner: Example
 
 * Please refer to [example](./example)
 
@@ -30,15 +30,18 @@ dotnet run
 ```
 
 * If you are using Linux/macOS, you may need to run as root (e.g. `sudo dotnet run`).
+    * On Ubuntu 20.04, you may need to specify runtime (e.g. `sudo dotnet run -r ubuntu-x64`).
 
-* On Ubuntu 20.04, you may need to specify runtime (e.g. `sudo dotnet run -r ubuntu-x64`).
-
-## Unity
+## :video_game: Unity
 
 Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
 
 After importing the package, please enable "Allow 'unsafe' code" in Project Settings. 
 
+## :copyright: LICENSE
+
+See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
+
 # Author
 
-Shun Suzuki 2018-2020
+Shun Suzuki 2018-2021
