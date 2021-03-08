@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/07/2020
+ * Last Modified: 09/03/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -19,20 +19,22 @@ namespace example.Test
     {
         public static void Test(AUTD autd)
         {
-            const float  x = AUTD.AUTDWidth / 2;
-            const float y = AUTD.AUTDHeight / 2;
-            const float z = 150f;
+            const float x = AUTD.TransSize * (AUTD.NumTransInX - 1) / 2.0f;
+            const float y = AUTD.TransSize * (AUTD.NumTransInY - 1) / 2.0f;
+            const float z = 150.0f;
 
             autd.AppendModulationSync(AUTD.SineModulation(150)); // AM sin 150 HZ
 
+            var center = new Vector3f(x, y, z);
             var focuses = new[] {
-                    new Vector3f(x - 30, y ,z),
-                    new Vector3f(x + 30, y ,z)
+                    center + 30.0f * Vector3f.UnitX,
+                    center - 30.0f * Vector3f.UnitX
                 };
             var amps = new[] {
-                    1.0f,
-                    1.0f
+                    1f,
+                    1f
                 };
+
             autd.AppendGainSync(AUTD.HoloGain(focuses, amps));
         }
     }

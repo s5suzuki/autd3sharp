@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 08/03/2021
+ * Last Modified: 09/03/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -243,16 +243,18 @@ namespace AUTD3Sharp
         #region const
 
 #if DIMENSION_M
-        public static readonly float UltrasoundWavelength = 0.0085f;
         public const float AUTDWidth = 0.192f;
         public const float AUTDHeight = 0.1514f;
+        public const float TransSize = 0.01016f;
 #else
-        public static readonly float UltrasoundWavelength = 8.5f;
         public const float AUTDWidth = 192.0f;
         public const float AUTDHeight = 151.4f;
+        public const float TransSize = 10.16f;
 #endif
         public const float Pi = MathF.PI;
         public const int NumTransInDevice = 249;
+        public const int NumTransInX = 18;
+        public const int NumTransInY = 14;
 #if UNITY
         public readonly static float MeterScale = 1000f;
 #endif
