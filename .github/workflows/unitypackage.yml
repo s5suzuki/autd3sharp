@@ -26,12 +26,12 @@ jobs:
       - name: Download latest binary
         run: | 
           wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
-          wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-x64.tar.gz
+          wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
           wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
       - name: Replace latest binary
         run: |
           tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
-          tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-macos-x64.tar.gz
+          tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
           unzip -o autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
           rm -f ./unity/Assets/AUTD/Plugins/x86_64/*.dll
           rm -f ./unity/Assets/AUTD/Plugins/x86_64/*.so
