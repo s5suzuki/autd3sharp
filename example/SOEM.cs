@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/07/2020
+ * Last Modified: 06/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -21,11 +21,10 @@ namespace example
 {
     internal static class SOEMTest
     {
-        private static string GetIfname()
+        public static string GetIfname()
         {
             var adapters = AUTD.EnumerateAdapters();
-            var etherCATAdapters = adapters as EtherCATAdapter[] ?? adapters.ToArray();
-            foreach (var (adapter, index) in etherCATAdapters.Select((adapter, index) => (adapter, index)))
+            foreach ((var adapter, var index) in adapters.Select((adapter, index) => (adapter, index)))
             {
                 Console.WriteLine($"[{index}]: {adapter}");
             }
@@ -33,7 +32,7 @@ namespace example
             Console.Write("Choose number: ");
             int i;
             while (!int.TryParse(Console.ReadLine(), out i)) { }
-            return etherCATAdapters[i].Name;
+            return adapters.ElementAt(i).Name;
         }
 
         public static void Test()
@@ -46,7 +45,12 @@ namespace example
 
             var ifname = GetIfname();
             var link = AUTD.SOEMLink(ifname, autd.NumDevices);
-            autd.OpenWith(link);
+
+            if (!autd.OpenWith(link))
+            {
+                Console.WriteLine(autd.LastError);
+                return;
+            }
 
             TestRunner.Run(autd);
         }

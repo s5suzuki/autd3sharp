@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/07/2020
+ * Last Modified: 06/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -29,7 +29,11 @@ namespace example
             //autd.AddDevice(Vector3d.UnitY * AUTD.AUTDHeight, Vector3d.Zero);
 
             var link = AUTD.LocalEtherCATLink();
-            autd.OpenWith(link);
+            if (!autd.OpenWith(link))
+            {
+                Console.WriteLine(autd.LastError);
+                return;
+            }
 
             TestRunner.Run(autd);
         }

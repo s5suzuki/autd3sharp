@@ -6,7 +6,7 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Standard 2.1
 
-version: 0.9.0.2
+version: 0.9.1-alpha
 
 ## :hammer_and_wrench: Install
 
@@ -37,6 +37,13 @@ dotnet run
 Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
 
 After importing the package, please enable "Allow 'unsafe' code" in Project Settings. 
+
+## :mortar_board: Citing
+
+If you use this SDK in your research please consider to include the following citation in your publications:
+
+* [S. Suzuki, S. Inoue, M. Fujiwara, Y. Makino and H. Shinoda, "AUTD3: Scalable Airborne Ultrasound Tactile Display," in IEEE Transactions on Haptics, doi: 10.1109/TOH.2021.3069976.](https://ieeexplore.ieee.org/document/9392322)
+* S. Inoue, Y. Makino and H. Shinoda "Scalable Architecture for Airborne Ultrasound Tactile Display", Asia Haptics 2016
 
 ## :copyright: LICENSE
 

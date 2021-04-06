@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 09/03/2021
+ * Last Modified: 06/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -83,13 +83,13 @@ namespace AUTD3Sharp
             SetHandle(seq);
         }
 
-        public void AppendPoint(Vector3f point)
+        public bool AddPoint(Vector3f point)
         {
             AUTD.AdjustVector(ref point);
-            NativeMethods.AUTDSequenceAppendPoint(handle, point[0], point[1], point[2]);
+            return NativeMethods.AUTDSequenceAddPoint(handle, point[0], point[1], point[2]);
         }
 
-        public void AppendPoints(IList<Vector3f> points)
+        public bool AddPoints(IList<Vector3f> points)
         {
             var pointsArr = new float[points.Count * 3];
             for (var i = 0; i < points.Count; i++)
@@ -105,7 +105,7 @@ namespace AUTD3Sharp
             {
                 fixed (float* pd = pointsArr)
                 {
-                    NativeMethods.AUTDSequenceAppendPoints(handle, pd, (ulong)points.Count);
+                    return NativeMethods.AUTDSequenceAddPoints(handle, pd, (ulong)points.Count);
                 }
             }
         }
@@ -271,7 +271,7 @@ namespace AUTD3Sharp
             _autdControllerHandle = new AUTDControllerHandle(true);
         }
 
-        public int OpenWith(Link link)
+        public bool OpenWith(Link link)
         {
             return NativeMethods.AUTDOpenControllerWith(_autdControllerHandle.CntPtr, link.LinkPtr);
         }
@@ -302,7 +302,6 @@ namespace AUTD3Sharp
             NativeMethods.AUTDFreeFirmwareInfoListPointer(handle);
         }
 
-
         public int AddDevice(Vector3f position, Vector3f rotation)
         {
             return AddDevice(position, rotation, 0);
@@ -311,9 +310,9 @@ namespace AUTD3Sharp
         public int AddDevice(Vector3f position, Vector3f rotation, int groupId)
         {
             AdjustVector(ref position);
-            var res = NativeMethods.AUTDAddDevice(_autdControllerHandle.CntPtr, position[0], position[1], position[2], rotation[0], rotation[1], rotation[2], groupId);
-            return res;
+            return NativeMethods.AUTDAddDevice(_autdControllerHandle.CntPtr, position[0], position[1], position[2], rotation[0], rotation[1], rotation[2], groupId);
         }
+
         public int AddDevice(Vector3f position, Quaternionf quaternion)
         {
             return AddDevice(position, quaternion, 0);
@@ -323,8 +322,17 @@ namespace AUTD3Sharp
         {
             AdjustVector(ref position);
             AdjustQuaternion(ref quaternion);
-            var res = NativeMethods.AUTDAddDeviceQuaternion(_autdControllerHandle.CntPtr, position[0], position[1], position[2], quaternion[3], quaternion[0], quaternion[1], quaternion[2], groupId);
-            return res;
+            return NativeMethods.AUTDAddDeviceQuaternion(_autdControllerHandle.CntPtr, position[0], position[1], position[2], quaternion[3], quaternion[0], quaternion[1], quaternion[2], groupId);
+        }
+
+        public int DeleteDevice(int idx)
+        {
+            return NativeMethods.AUTDDeleteDevice(_autdControllerHandle.CntPtr, idx);
+        }
+
+        public void ClearDevices()
+        {
+            NativeMethods.AUTDClearDevices(_autdControllerHandle.CntPtr);
         }
 
         public enum ModSamplingFreq
@@ -369,29 +377,29 @@ namespace AUTD3Sharp
             }
         }
 
-        public bool Calibrate()
+        public bool Synchronize()
         {
-            return Calibrate(new Configuration());
+            return Synchronize(new Configuration());
         }
 
-        public bool Calibrate(Configuration config)
+        public bool Synchronize(Configuration config)
         {
-            return NativeMethods.AUTDCalibrate(_autdControllerHandle.CntPtr, (int)config.ModSamplingFrequency, (int)config.ModBufferSize);
+            return NativeMethods.AUTDSynchronize(_autdControllerHandle.CntPtr, (int)config.ModSamplingFrequency, (int)config.ModBufferSize);
         }
 
-        public void Close()
+        public bool Close()
         {
-            NativeMethods.AUTDCloseController(_autdControllerHandle.CntPtr);
+            return NativeMethods.AUTDCloseController(_autdControllerHandle.CntPtr);
         }
 
-        public void Clear()
+        public bool Clear()
         {
-            NativeMethods.AUTDClear(_autdControllerHandle.CntPtr);
+            return NativeMethods.AUTDClear(_autdControllerHandle.CntPtr);
         }
 
-        public void Stop()
+        public bool Stop()
         {
-            NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
+            return NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
         }
 
         public void Dispose()
@@ -443,6 +451,17 @@ namespace AUTD3Sharp
             set => NativeMethods.AUTDSetWavelength(_autdControllerHandle.CntPtr, value);
         }
         public ulong RemainingInBuffer => NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle.CntPtr);
+
+        public string LastError
+        {
+            get
+            {
+                var size = NativeMethods.AUTDGetLastError(null);
+                var sb = new StringBuilder(size);
+                NativeMethods.AUTDGetLastError(sb);
+                return sb.ToString();
+            }
+        }
         #endregion
 
         #region Gain
@@ -771,10 +790,11 @@ namespace AUTD3Sharp
             }
             return new Modulation(modPtr);
         }
-        public static Modulation RawPcmModulation(string fileName, float samplingFreq)
+        public static Modulation? RawPcmModulation(string fileName, float samplingFreq)
         {
-            NativeMethods.AUTDRawPCMModulation(out var modPtr, fileName, samplingFreq);
-            return new Modulation(modPtr);
+            var sb = new StringBuilder(128);
+            var res = NativeMethods.AUTDRawPCMModulation(out var modPtr, fileName, samplingFreq, sb);
+            return res ? new Modulation(modPtr) : null;
         }
         public static Modulation SawModulation(int freq)
         {
@@ -792,10 +812,11 @@ namespace AUTD3Sharp
             NativeMethods.AUTDSineModulation(out var modPtr, freq, amp, offset);
             return new Modulation(modPtr);
         }
-        public static Modulation WavModulation(string fileName)
+        public static Modulation? WavModulation(string fileName)
         {
-            NativeMethods.AUTDWavModulation(out var modPtr, fileName);
-            return new Modulation(modPtr);
+            var sb = new StringBuilder(128);
+            var res = NativeMethods.AUTDWavModulation(out var modPtr, fileName, sb);
+            return res ? new Modulation(modPtr) : null;
         }
         #endregion
 
@@ -833,52 +854,52 @@ namespace AUTD3Sharp
         #endregion
 
         #region LowLevelInterface
-        public void AppendGain(Gain gain)
+        public bool AppendGain(Gain gain)
         {
             if (gain == null)
             {
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendGain(_autdControllerHandle.CntPtr, gain.GainPtr);
+            return NativeMethods.AUTDAppendGain(_autdControllerHandle.CntPtr, gain.GainPtr);
         }
-        public void AppendGainSync(Gain gain, bool waitForSend = false)
+        public bool AppendGainSync(Gain gain, bool waitForSend = false)
         {
             if (gain == null)
             {
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendGainSync(_autdControllerHandle.CntPtr, gain.GainPtr, waitForSend);
+            return NativeMethods.AUTDAppendGainSync(_autdControllerHandle.CntPtr, gain.GainPtr, waitForSend);
         }
-        public void AppendModulation(Modulation mod)
+        public bool AppendModulation(Modulation mod)
         {
             if (mod == null)
             {
                 throw new ArgumentNullException(nameof(mod));
             }
 
-            NativeMethods.AUTDAppendModulation(_autdControllerHandle.CntPtr, mod.ModPtr);
+            return NativeMethods.AUTDAppendModulation(_autdControllerHandle.CntPtr, mod.ModPtr);
         }
-        public void AppendModulationSync(Modulation mod)
+        public bool AppendModulationSync(Modulation mod)
         {
             if (mod == null)
             {
                 throw new ArgumentNullException(nameof(mod));
             }
 
-            NativeMethods.AUTDAppendModulationSync(_autdControllerHandle.CntPtr, mod.ModPtr);
+            return NativeMethods.AUTDAppendModulationSync(_autdControllerHandle.CntPtr, mod.ModPtr);
         }
-        public void AppendSTMGain(Gain gain)
+        public void AddSTMGain(Gain gain)
         {
             if (gain == null)
             {
                 throw new ArgumentNullException(nameof(gain));
             }
 
-            NativeMethods.AUTDAppendSTMGain(_autdControllerHandle.CntPtr, gain.GainPtr);
+            NativeMethods.AUTDAddSTMGain(_autdControllerHandle.CntPtr, gain.GainPtr);
         }
-        public void AppendSTMGain(IList<Gain> gains)
+        public void AddSTMGain(IList<Gain> gains)
         {
             if (gains == null)
             {
@@ -887,10 +908,10 @@ namespace AUTD3Sharp
 
             foreach (var gain in gains)
             {
-                AppendSTMGain(gain);
+                AddSTMGain(gain);
             }
         }
-        public void AppendSTMGain(params Gain[] gainList)
+        public void AddSTMGain(params Gain[] gainList)
         {
             if (gainList == null)
             {
@@ -899,29 +920,29 @@ namespace AUTD3Sharp
 
             foreach (var gain in gainList)
             {
-                AppendSTMGain(gain);
+                AddSTMGain(gain);
             }
         }
-        public void StartSTModulation(float freq)
+        public bool StartSTModulation(float freq)
         {
-            NativeMethods.AUTDStartSTModulation(_autdControllerHandle.CntPtr, freq);
+            return NativeMethods.AUTDStartSTModulation(_autdControllerHandle.CntPtr, freq);
         }
-        public void StopSTModulation()
+        public bool StopSTModulation()
         {
-            NativeMethods.AUTDStopSTModulation(_autdControllerHandle.CntPtr);
+            return NativeMethods.AUTDStopSTModulation(_autdControllerHandle.CntPtr);
         }
-        public void FinishSTModulation()
+        public bool FinishSTModulation()
         {
-            NativeMethods.AUTDFinishSTModulation(_autdControllerHandle.CntPtr);
+            return NativeMethods.AUTDFinishSTModulation(_autdControllerHandle.CntPtr);
         }
-        public void AppendSequence(PointSequence seq)
+        public bool AppendSequence(PointSequence seq)
         {
             if (seq == null)
             {
                 throw new ArgumentNullException(nameof(seq));
             }
 
-            NativeMethods.AUTDAppendSequence(_autdControllerHandle.CntPtr, seq.SeqPtr);
+            return NativeMethods.AUTDAppendSequence(_autdControllerHandle.CntPtr, seq.SeqPtr);
         }
         public void Flush()
         {
