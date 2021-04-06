@@ -44,7 +44,7 @@ namespace AUTD3Sharp
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetFirmwareInfoListPointer(IntPtr handle, out IntPtr @out);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)] public static extern void AUTDGetFirmwareInfo(IntPtr pFirmInfoList, int index, StringBuilder cpuVer, StringBuilder fpgaVer);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeFirmwareInfoListPointer(IntPtr pFirmInfoList);
-        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)] public static extern int AUTDGetLastError(StringBuilder desc);
+        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)] public static extern int AUTDGetLastError(StringBuilder? desc);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsOpen(IntPtr handle);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsSilentMode(IntPtr handle);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern float AUTDWavelength(IntPtr handle);

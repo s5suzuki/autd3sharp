@@ -166,10 +166,16 @@ namespace AUTD3Sharp
     }
 
 
-    public struct EtherCATAdapter : IEquatable<EtherCATAdapter>
+    public readonly struct EtherCATAdapter : IEquatable<EtherCATAdapter>
     {
-        public string Desc { get; internal set; }
-        public string Name { get; internal set; }
+        public string Desc { get; }
+        public string Name { get; }
+
+        internal EtherCATAdapter(string desc, string name)
+        {
+            Desc = desc;
+            Name = name;
+        }
 
         public override string ToString()
         {
@@ -191,7 +197,7 @@ namespace AUTD3Sharp
             return !left.Equals(right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is EtherCATAdapter adapter && Equals(adapter);
         }
@@ -202,10 +208,17 @@ namespace AUTD3Sharp
         }
     }
 
-    public struct FirmwareInfo : IEquatable<FirmwareInfo>
+    public readonly struct FirmwareInfo : IEquatable<FirmwareInfo>
     {
-        public string CpuVersion { get; internal set; }
-        public string FpgaVersion { get; internal set; }
+        public string CpuVersion { get; }
+        public string FpgaVersion { get; }
+
+        internal FirmwareInfo(string cpu, string fpga)
+        {
+            CpuVersion = cpu;
+            FpgaVersion = fpga;
+        }
+
 
         public override string ToString()
         {
@@ -227,7 +240,7 @@ namespace AUTD3Sharp
             return !left.Equals(right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is FirmwareInfo info && Equals(info);
         }
@@ -284,7 +297,7 @@ namespace AUTD3Sharp
                 var sbDesc = new StringBuilder(128);
                 var sbName = new StringBuilder(128);
                 NativeMethods.AUTDGetAdapter(handle, i, sbDesc, sbName);
-                yield return new EtherCATAdapter() { Desc = sbDesc.ToString(), Name = sbName.ToString() };
+                yield return new EtherCATAdapter(sbDesc.ToString(), sbName.ToString());
             }
             NativeMethods.AUTDFreeAdapterPointer(handle);
         }
@@ -297,7 +310,7 @@ namespace AUTD3Sharp
                 var sbCpu = new StringBuilder(128);
                 var sbFpga = new StringBuilder(128);
                 NativeMethods.AUTDGetFirmwareInfo(handle, i, sbCpu, sbFpga);
-                yield return new FirmwareInfo() { CpuVersion = sbCpu.ToString(), FpgaVersion = sbFpga.ToString() };
+                yield return new FirmwareInfo(sbCpu.ToString(), sbFpga.ToString());
             }
             NativeMethods.AUTDFreeFirmwareInfoListPointer(handle);
         }

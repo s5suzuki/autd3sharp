@@ -32,7 +32,7 @@ namespace example.Test
              };
 
             autd.Clear();
-            autd.Calibrate();
+            autd.Synchronize();
 
             autd.Wavelength = 8.5f; // mm
 

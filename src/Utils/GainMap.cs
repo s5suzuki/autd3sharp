@@ -4,7 +4,7 @@
  * Created Date: 07/10/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 05/09/2019
+ * Last Modified: 06/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -93,7 +93,7 @@ namespace AUTD3Sharp
             return Id == other.Id && Gain == other.Gain;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is GainPair pair)
             {
