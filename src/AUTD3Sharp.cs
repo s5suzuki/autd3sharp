@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/04/2021
+ * Last Modified: 07/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -315,23 +315,13 @@ namespace AUTD3Sharp
             NativeMethods.AUTDFreeFirmwareInfoListPointer(handle);
         }
 
-        public int AddDevice(Vector3f position, Vector3f rotation)
-        {
-            return AddDevice(position, rotation, 0);
-        }
-
-        public int AddDevice(Vector3f position, Vector3f rotation, int groupId)
+        public int AddDevice(Vector3f position, Vector3f rotation, int groupId = 0)
         {
             AdjustVector(ref position);
             return NativeMethods.AUTDAddDevice(_autdControllerHandle.CntPtr, position[0], position[1], position[2], rotation[0], rotation[1], rotation[2], groupId);
         }
 
-        public int AddDevice(Vector3f position, Quaternionf quaternion)
-        {
-            return AddDevice(position, quaternion, 0);
-        }
-
-        public int AddDevice(Vector3f position, Quaternionf quaternion, int groupId)
+        public int AddDevice(Vector3f position, Quaternionf quaternion, int groupId = 0)
         {
             AdjustVector(ref position);
             AdjustQuaternion(ref quaternion);
@@ -357,7 +347,7 @@ namespace AUTD3Sharp
             Smpl2Khz = 2000,
             Smpl4Khz = 4000,
             Smpl8Khz = 8000,
-        };
+        }
 
         public enum ModBufSize
         {
@@ -370,7 +360,7 @@ namespace AUTD3Sharp
             Buf8000 = 8000,
             Buf16000 = 16000,
             Buf32000 = 32000,
-        };
+        }
 
         public class Configuration
         {
@@ -465,7 +455,7 @@ namespace AUTD3Sharp
         }
         public ulong RemainingInBuffer => NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle.CntPtr);
 
-        public string LastError
+        public static string LastError
         {
             get
             {
@@ -577,7 +567,7 @@ namespace AUTD3Sharp
                     NormalizeAmp = true,
                 };
             }
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct EVDParams
@@ -598,7 +588,7 @@ namespace AUTD3Sharp
                     NormalizeAmp = true,
                 };
             }
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct NLSParams
@@ -623,7 +613,7 @@ namespace AUTD3Sharp
                     Tau = -1,
                 };
             }
-        };
+        }
 
         public static Gain HoloGain(Vector3f[] focuses, float[] amps)
         {

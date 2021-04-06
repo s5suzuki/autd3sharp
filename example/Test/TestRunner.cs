@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 05/11/2020
+ * Last Modified: 07/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -36,10 +36,9 @@ namespace example.Test
 
             autd.Wavelength = 8.5f; // mm
 
-            foreach (var (firm, index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
-            {
-                Console.WriteLine($"AUTD {index}: {firm}");
-            }
+            var firmInfoList = autd.FirmwareInfoList().ToArray();
+            for (var i = 0; i < firmInfoList.Length; i++)
+                Console.WriteLine($"AUTD {i}: CPU={firmInfoList[i].CpuVersion}, FPGA={firmInfoList[i].FpgaVersion}");
 
             while (true)
             {
@@ -66,6 +65,7 @@ namespace example.Test
             }
 
             autd.Clear();
+            autd.Close();
             autd.Dispose();
         }
     }

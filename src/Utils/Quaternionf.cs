@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/04/2021
+ * Last Modified: 07/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -45,7 +45,7 @@ namespace AUTD3Sharp
                     0 => x,
                     1 => y,
                     2 => z,
-                    _ => throw new ArgumentOutOfRangeException(nameof(index)),
+                    _ => throw new ArgumentOutOfRangeException(nameof(index))
                 };
             }
         }

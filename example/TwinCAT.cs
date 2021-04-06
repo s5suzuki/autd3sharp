@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/04/2021
+ * Last Modified: 07/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -31,7 +31,7 @@ namespace example
             var link = AUTD.LocalEtherCATLink();
             if (!autd.OpenWith(link))
             {
-                Console.WriteLine(autd.LastError);
+                Console.WriteLine(AUTD.LastError);
                 return;
             }
 
