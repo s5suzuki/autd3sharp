@@ -41,12 +41,11 @@ jobs:
           \cp bin/*.dylib ./unity/Assets/AUTD/Plugins/x86_64/
       - name: Replace latest scripts
         run: |
-          cp -f src/AUTD3Sharp.cs ./unity/Assets/AUTD/Scripts
-          cp -f src/NativeMethods.cs ./unity/Assets/AUTD/Scripts
+          cp -f src/*.cs ./unity/Assets/AUTD/Scripts/
           cp -f src/Utils/GainMap.cs ./unity/Assets/AUTD/Scripts/Util
           cp -f LICENSE ./unity/Assets/AUTD
           cp -f NOTICE ./unity/Assets/AUTD
-      - name: Enumerate Asstes
+      - name: Enumerate Assets
         run: |
           find . -name '*.meta' >> metaList
         working-directory: ./unity
