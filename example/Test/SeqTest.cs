@@ -1,5 +1,6 @@
 ﻿using System;
 using AUTD3Sharp;
+using AUTD3Sharp.Utils;
 
 namespace example.Test
 {
@@ -11,7 +12,7 @@ namespace example.Test
             const float y = AUTD.AUTDHeight / 2;
             const float z = 150;
 
-            var mod = AUTD.Modulation();
+            var mod = Modulation.StaticModulation();
             autd.AppendModulationSync(mod);
 
             var center = new Vector3f(x, y, z);

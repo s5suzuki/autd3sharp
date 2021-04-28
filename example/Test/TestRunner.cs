@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 07/04/2021
+ * Last Modified: 28/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -42,17 +42,12 @@ namespace example.Test
 
             while (true)
             {
-                for (var i = 0; i < examples.Count; i++)
-                {
-                    Console.WriteLine($"[{i}]: {examples[i].Item2}");
-                }
+                for (var i = 0; i < examples.Count; i++) Console.WriteLine($"[{i}]: {examples[i].Item2}");
+
                 Console.WriteLine("[Others]: finish");
                 Console.Write("Choose number: ");
 
-                if (!int.TryParse(Console.ReadLine(), out var idx) || idx >= examples.Count)
-                {
-                    break;
-                }
+                if (!int.TryParse(Console.ReadLine(), out var idx) || idx >= examples.Count) break;
 
                 var fn = examples[idx].Item1;
                 fn(autd);

@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/04/2021
+ * Last Modified: 28/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -13,6 +13,7 @@
 
 using System;
 using AUTD3Sharp;
+using AUTD3Sharp.Utils;
 
 namespace example.Test
 {
@@ -26,7 +27,7 @@ namespace example.Test
 
             autd.SetSilentMode(false);
 
-            autd.AppendModulationSync(AUTD.Modulation()); // static
+            autd.AppendModulationSync(Modulation.StaticModulation()); // static
 
             const float radius = 30.0f;
             const int size = 200;
@@ -35,10 +36,10 @@ namespace example.Test
             {
                 var theta = 2 * AUTD.Pi * i / size;
                 var r = new Vector3f(MathF.Cos(theta), MathF.Sin(theta), 0);
-                var f = AUTD.FocalPointGain(center + radius * r);
+                var f = Gain.FocalPointGain(center + radius * r);
                 autd.AddSTMGain(f);
             }
-            autd.StartSTModulation(1);
+            autd.StartSTM(1);
         }
     }
 }
