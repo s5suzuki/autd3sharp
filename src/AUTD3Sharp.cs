@@ -11,11 +11,8 @@
  * 
  */
 
-#if UNITY_2018_3_OR_NEWER
-#define UNITY
-#endif
 
-#if UNITY
+#if UNITY_2018_3_OR_NEWER
 #define LEFT_HANDED
 #define DIMENSION_M
 #else
@@ -31,7 +28,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using AUTD3Sharp.Utils;
 
-#if UNITY
+#if UNITY_2018_3_OR_NEWER
 using UnityEngine;
 using Vector3f = UnityEngine.Vector3;
 using Quaternionf = UnityEngine.Quaternion;
@@ -66,6 +63,7 @@ namespace AUTD3Sharp
         public const float AUTDWidth = 0.192f;
         public const float AUTDHeight = 0.1514f;
         public const float TransSize = 0.01016f;
+        public readonly static float MeterScale = 1000f;
 #else
         public const float AUTDWidth = 192.0f;
         public const float AUTDHeight = 151.4f;
@@ -75,9 +73,6 @@ namespace AUTD3Sharp
         public const int NumTransInDevice = 249;
         public const int NumTransInX = 18;
         public const int NumTransInY = 14;
-#if UNITY
-        public readonly static float MeterScale = 1000f;
-#endif
         #endregion
 
         #region field

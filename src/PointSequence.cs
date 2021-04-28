@@ -17,6 +17,13 @@ using System.Runtime.InteropServices;
 using AUTD3Sharp.Utils;
 using Microsoft.Win32.SafeHandles;
 
+#if UNITY_2018_3_OR_NEWER
+using UnityEngine;
+using Vector3f = UnityEngine.Vector3;
+using Quaternionf = UnityEngine.Quaternion;
+using MathF = UnityEngine.Mathf;
+#endif
+
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
