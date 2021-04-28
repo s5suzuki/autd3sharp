@@ -1,10 +1,10 @@
 ﻿/*
- * File: Quaterniond.cs
+ * File: Quaternionf.cs
  * Project: Util
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 07/04/2021
+ * Last Modified: 28/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -13,7 +13,7 @@
 
 using System;
 
-namespace AUTD3Sharp
+namespace AUTD3Sharp.Utils
 {
     public readonly struct Quaternionf : IEquatable<Quaternionf>
     {
@@ -52,37 +52,18 @@ namespace AUTD3Sharp
         #endregion
 
         #region arithmetic
-        public static bool operator ==(Quaternionf left, Quaternionf right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Quaternionf left, Quaternionf right)
-        {
-            return !left.Equals(right);
-        }
-
-        public bool Equals(Quaternionf other)
-        {
-            return w.Equals(other.w) && x.Equals(other.x) && y.Equals(other.y) && z.Equals(other.z);
-        }
-
+        public static bool operator ==(Quaternionf left, Quaternionf right) => left.Equals(right);
+        public static bool operator !=(Quaternionf left, Quaternionf right) => !left.Equals(right);
+        public bool Equals(Quaternionf other) => w.Equals(other.w) && x.Equals(other.x) && y.Equals(other.y) && z.Equals(other.z);
         public override bool Equals(object? obj)
         {
-            if (obj is Quaternionf qua)
-            {
-                return Equals(qua);
-            }
-
+            if (obj is Quaternionf qua) return Equals(qua);
             return false;
         }
         #endregion
 
         #region util
-        public override int GetHashCode()
-        {
-            return w.GetHashCode() ^ x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
-        }
+        public override int GetHashCode() => w.GetHashCode() ^ x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
         #endregion
     }
 }
