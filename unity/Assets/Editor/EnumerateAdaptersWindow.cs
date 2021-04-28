@@ -1,11 +1,24 @@
-﻿using UnityEditor;
+﻿/*
+ * File: EnumerateAdaptersWindow.cs
+ * Project: Editor
+ * Created Date: 03/07/2020
+ * Author: Shun Suzuki
+ * -----
+ * Last Modified: 07/04/2021
+ * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
+ * -----
+ * Copyright (c) 2021 Hapis Lab. All rights reserved.
+ * 
+ */
+
+using UnityEditor;
 using UnityEngine;
 using AUTD3Sharp;
 using System.Linq;
 
 public class EnumerateAdaptersWindow : EditorWindow
 {
-    EtherCATAdapter[] _adapters;
+    EtherCATAdapter[]? _adapters = null;
     Vector2 _leftScrollPos = Vector2.zero;
 
     private void OnEnable()
@@ -27,7 +40,7 @@ public class EnumerateAdaptersWindow : EditorWindow
         {
             _leftScrollPos = sv.scrollPosition;
 
-            foreach (var adapter in _adapters)
+            foreach (var adapter in _adapters ?? new EtherCATAdapter[]{})
             {
                 using (new GUILayout.HorizontalScope(GUI.skin.box))
                 {
@@ -41,3 +54,4 @@ public class EnumerateAdaptersWindow : EditorWindow
         }
     }
 }
+ 

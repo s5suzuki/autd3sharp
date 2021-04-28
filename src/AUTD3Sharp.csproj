@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Platforms>x64</Platforms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.9.0.2</Version>
+    <Version>0.9.1</Version>
     <Authors>Shun Suzuki</Authors>
     <Company>Shinolab</Company>
     <Description>AUTD3 library wrapper for .Net</Description>
@@ -17,10 +17,11 @@
 
   <PropertyGroup>
       <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+      <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-      <None Include="LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
+      <None Include="LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
   </ItemGroup>
 
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">

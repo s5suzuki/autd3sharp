@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/07/2020
+ * Last Modified: 06/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -36,7 +36,7 @@ namespace example.Test
                 var theta = 2 * AUTD.Pi * i / size;
                 var r = new Vector3f(MathF.Cos(theta), MathF.Sin(theta), 0);
                 var f = AUTD.FocalPointGain(center + radius * r);
-                autd.AppendSTMGain(f);
+                autd.AddSTMGain(f);
             }
             autd.StartSTModulation(1);
         }

@@ -1,2 +1,0 @@
-﻿[*.cs]
-dotnet_diagnostic.IDE0004.severity = none
