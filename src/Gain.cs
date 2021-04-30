@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 30/04/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -131,12 +131,13 @@ namespace AUTD3Sharp
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct NLSParams
+        public unsafe struct NLSParams
         {
             public float Eps1 { get; set; }
             public float Eps2 { get; set; }
             public int KMax { get; set; }
             public float Tau { get; set; }
+            public float* Initial { get; set; }
 
             public static NLSParams GetDefault()
             {
@@ -145,7 +146,8 @@ namespace AUTD3Sharp
                     Eps1 = -1,
                     Eps2 = -1,
                     KMax = -1,
-                    Tau = -1
+                    Tau = -1,
+                    Initial = null
                 };
             }
         }
