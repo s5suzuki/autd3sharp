@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 01/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -268,20 +268,20 @@ namespace AUTD3Sharp
 
         public unsafe Vector3f TransPosition(int transIdxGlobal)
         {
-            var fp = NativeMethods.AUTDTransPositionByGlobal(_autdControllerHandle.CntPtr, transIdxGlobal);
-            return new Vector3f(fp[0], fp[1], fp[2]);
+            NativeMethods.AUTDTransPositionByGlobal(_autdControllerHandle.CntPtr, transIdxGlobal, out var x, out var y, out var z);
+            return new Vector3f(x, y, z);
         }
 
         public unsafe Vector3f TransPosition(int deviceIdx, int transIdxLocal)
         {
-            var fp = NativeMethods.AUTDTransPositionByLocal(_autdControllerHandle.CntPtr, deviceIdx, transIdxLocal);
-            return new Vector3f(fp[0], fp[1], fp[2]);
+            NativeMethods.AUTDTransPositionByLocal(_autdControllerHandle.CntPtr, deviceIdx, transIdxLocal, out var x, out var y, out var z);
+            return new Vector3f(x, y, z);
         }
 
         public unsafe Vector3f DeviceDirection(int deviceIdx)
         {
-            var fp = NativeMethods.AUTDDeviceDirection(_autdControllerHandle.CntPtr, deviceIdx);
-            return new Vector3f(fp[0], fp[1], fp[2]);
+            NativeMethods.AUTDDeviceDirection(_autdControllerHandle.CntPtr, deviceIdx, out var x, out var y, out var z);
+            return new Vector3f(x, y, z);
         }
         #endregion
 

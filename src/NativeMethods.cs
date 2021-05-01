@@ -4,7 +4,7 @@
  * Created Date: 13/06/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/04/2021
+ * Last Modified: 01/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -93,8 +93,8 @@ namespace AUTD3Sharp
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDAppendSequence(IntPtr handle, IntPtr seq);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFlush(IntPtr handle);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDeviceIdxForTransIdx(IntPtr handle, int globalTransIdx);
-        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern float* AUTDTransPositionByGlobal(IntPtr handle, int globalTransIdx);
-        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern float* AUTDTransPositionByLocal(IntPtr handle, int deviceIdx, int localTransIdx);
-        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern float* AUTDDeviceDirection(IntPtr handle, int deviceIdx);
+        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDTransPositionByGlobal(IntPtr handle, int globalTransIdx, out float x, out float y, out float z);
+        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDTransPositionByLocal(IntPtr handle, int deviceIdx, int localTransIdx, out float x, out float y, out float z);
+        [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeviceDirection(IntPtr handle, int deviceIdx, out float x, out float y, out float z);
     }
 }
