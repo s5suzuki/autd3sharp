@@ -11,6 +11,7 @@
  * 
  */
 
+using System;
 using AUTD3Sharp;
 using AUTD3Sharp.Utils;
 
@@ -18,6 +19,26 @@ namespace example.Test
 {
     internal static class HoloGainTest
     {
+        private static Gain SelectOpt(Vector3f[] foci, float[] amps)
+        {
+            var opts = new[] { "SDP", "EVD", "GS", "GSPAT", "Naive", "LM" };
+            for (var j = 0; j < opts.Length; j++)
+                Console.WriteLine($"[{j}]: {opts[j]}");
+            Console.Write("Choose number: ");
+            int i;
+            while (!int.TryParse(Console.ReadLine(), out i)) { }
+            return i switch
+            {
+                0 => Gain.HoloGainSDP(foci, amps, null),
+                1 => Gain.HoloGainEVD(foci, amps, null),
+                2 => Gain.HoloGainGS(foci, amps, null),
+                3 => Gain.HoloGainGSPAT(foci, amps, null),
+                4 => Gain.HoloGainNaive(foci, amps),
+                5 => Gain.HoloGainLM(foci, amps, null),
+                _ => Gain.HoloGainSDP(foci, amps, null),
+            };
+        }
+
         public static void Test(AUTD autd)
         {
             const float x = AUTD.TransSize * (AUTD.NumTransInX - 1) / 2.0f;
@@ -27,7 +48,7 @@ namespace example.Test
             autd.AppendModulationSync(Modulation.SineModulation(150)); // AM sin 150 HZ
 
             var center = new Vector3f(x, y, z);
-            var focuses = new[] {
+            var foci = new[] {
                     center + 30.0f * Vector3f.UnitX,
                     center - 30.0f * Vector3f.UnitX
                 };
@@ -36,7 +57,7 @@ namespace example.Test
                     1f
                 };
 
-            autd.AppendGainSync(Gain.HoloGain(focuses, amps));
+            autd.AppendGainSync(SelectOpt(foci, amps));
         }
     }
 }
