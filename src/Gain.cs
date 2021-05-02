@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 30/04/2021
+ * Last Modified: 02/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -84,7 +84,7 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        private enum OptMethod
+        public enum OptMethod
         {
             SDP = 0,
             EVD = 1,
@@ -211,7 +211,7 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.LM, p);
         }
 
-        private static unsafe Gain HoloGain(Vector3f[] focuses, float[] amps, OptMethod method, IntPtr param)
+        public static unsafe Gain HoloGain(Vector3f[] focuses, float[] amps, OptMethod method, IntPtr param)
         {
             if (focuses == null) throw new ArgumentNullException(nameof(focuses));
             if (amps == null) throw new ArgumentNullException(nameof(amps));
