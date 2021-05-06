@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/05/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -90,17 +90,42 @@ namespace AUTD3Sharp
             EVD = 1,
             GS = 2,
             GSPAT = 3,
-            NAIVE = 4,
+            Naive = 4,
             LM = 5
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct SDPParams
         {
-            public float Regularization { get; set; }
-            public int Repeat { get; set; }
-            public float Lambda { get; set; }
-            [field: MarshalAs(UnmanagedType.U1)] public bool NormalizeAmp { get; set; }
+            private float _regularization;
+            private int _repeat;
+            private float _lambda;
+            [MarshalAs(UnmanagedType.U1)] private bool _normalizeAmp;
+
+            public float Regularization
+            {
+                get => _regularization;
+                set => _regularization = value;
+            }
+
+            public int Repeat
+            {
+                get => _repeat;
+                set => _repeat = value;
+            }
+
+            public float Lambda
+            {
+                get => _lambda;
+                set => _lambda = value;
+            }
+
+
+            public bool NormalizeAmp
+            {
+                get => _normalizeAmp;
+                set => _normalizeAmp = value;
+            }
 
             public static SDPParams GetDefault()
             {
@@ -117,8 +142,21 @@ namespace AUTD3Sharp
         [StructLayout(LayoutKind.Sequential)]
         public struct EVDParams
         {
-            public float Regularization { get; set; }
-            [field: MarshalAs(UnmanagedType.U1)] public bool NormalizeAmp { get; set; }
+            private float _regularization;
+            [MarshalAs(UnmanagedType.U1)] private bool _normalizeAmp;
+
+            public float Regularization
+            {
+                get => _regularization;
+                set => _regularization = value;
+            }
+
+
+            public bool NormalizeAmp
+            {
+                get => _normalizeAmp;
+                set => _normalizeAmp = value;
+            }
 
             public static EVDParams GetDefault()
             {
@@ -133,11 +171,41 @@ namespace AUTD3Sharp
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct NLSParams
         {
-            public float Eps1 { get; set; }
-            public float Eps2 { get; set; }
-            public int KMax { get; set; }
-            public float Tau { get; set; }
-            public float* Initial { get; set; }
+            private float _eps1;
+            private float _eps2;
+            private int _kMax;
+            private float _tau;
+            private float* _initial;
+
+            public float Eps1
+            {
+                get => _eps1;
+                set => _eps1 = value;
+            }
+
+            public float Eps2
+            {
+                get => _eps2;
+                set => _eps2 = value;
+            }
+
+            public int KMax
+            {
+                get => _kMax;
+                set => _kMax = value;
+            }
+
+            public float Tau
+            {
+                get => _tau;
+                set => _tau = value;
+            }
+
+            public float* Initial
+            {
+                get => _initial;
+                set => _initial = value;
+            }
 
             public static NLSParams GetDefault()
             {
@@ -198,7 +266,7 @@ namespace AUTD3Sharp
             return HoloGain(focuses, amps, OptMethod.GSPAT, p);
         }
 
-        public static Gain HoloGainNaive(Vector3f[] focuses, float[] amps) => HoloGain(focuses, amps, OptMethod.NAIVE, IntPtr.Zero);
+        public static Gain HoloGainNaive(Vector3f[] focuses, float[] amps) => HoloGain(focuses, amps, OptMethod.Naive, IntPtr.Zero);
 
         public static unsafe Gain HoloGainLM(Vector3f[] focuses, float[] amps, NLSParams? param)
         {
