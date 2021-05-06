@@ -4,7 +4,7 @@
  * Created Date: 13/06/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 01/05/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -57,7 +57,12 @@ namespace AUTD3Sharp
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDBesselBeamGain(out IntPtr gain, float x, float y, float z, float nX, float nY, float nZ, float thetaZ, byte duty);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDPlaneWaveGain(out IntPtr gain, float nX, float nY, float nZ, byte duty);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDCustomGain(out IntPtr gain, ushort* data, int dataLength);
-        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGain(out IntPtr gain, float* points, float* amps, int size, int method, IntPtr @params);
+        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainSDP(out IntPtr gain, float* points, float* amps, int size, float alpha, float lambda, ulong repeat, [MarshalAs(UnmanagedType.U1)] bool normalize);
+        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainEVD(out IntPtr gain, float* points, float* amps, int size, float gamma, [MarshalAs(UnmanagedType.U1)] bool normalize);
+        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainNaive(out IntPtr gain, float* points, float* amps, int size);
+        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainGS(out IntPtr gain, float* points, float* amps, int size, ulong repeat);
+        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainGSPAT(out IntPtr gain, float* points, float* amps, int size, ulong repeat);
+        [DllImport(HoloGainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainLM(out IntPtr gain, float* points, float* amps, int size, float eps_1, float eps_2, float tau, ulong k_max, float* initial, int initial_size);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDTransducerTestGain(out IntPtr gain, int idx, byte duty, byte phase);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDNullGain(out IntPtr gain);
         [DllImport(MainDllName, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeleteGain(IntPtr gain);

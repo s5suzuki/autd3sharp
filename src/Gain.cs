@@ -84,202 +84,33 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public enum OptMethod
+        public static Gain HoloGain(Vector3f[] focuses, float[] amps) => HoloGainSDP(focuses, amps);
+
+        public static Gain HoloGainSDP(Vector3f[] focuses, float[] amps, float alpha = 1e-3f, float lambda = 0.9f, ulong repeat = 100, bool normalize = true)
         {
-            SDP = 0,
-            EVD = 1,
-            GS = 2,
-            GSPAT = 3,
-            Naive = 4,
-            LM = 5
+            if (focuses == null) throw new ArgumentNullException(nameof(focuses));
+            if (amps == null) throw new ArgumentNullException(nameof(amps));
+
+            var size = amps.Length;
+            var foci = new float[size * 3];
+            for (var i = 0; i < size; i++)
+            {
+                AUTD.AdjustVector(ref focuses[i]);
+                foci[3 * i] = focuses[i][0];
+                foci[3 * i + 1] = focuses[i][1];
+                foci[3 * i + 2] = focuses[i][2];
+            }
+            IntPtr gainPtr;
+            unsafe
+            {
+                fixed (float* fp = &foci[0])
+                fixed (float* ap = &amps[0])
+                    NativeMethods.AUTDHoloGainSDP(out gainPtr, fp, ap, size, alpha, lambda, repeat, normalize);
+            }
+            return new Gain(gainPtr);
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SDPParams
-        {
-            private float _regularization;
-            private int _repeat;
-            private float _lambda;
-            [MarshalAs(UnmanagedType.U1)] private bool _normalizeAmp;
-
-            public float Regularization
-            {
-                get => _regularization;
-                set => _regularization = value;
-            }
-
-            public int Repeat
-            {
-                get => _repeat;
-                set => _repeat = value;
-            }
-
-            public float Lambda
-            {
-                get => _lambda;
-                set => _lambda = value;
-            }
-
-
-            public bool NormalizeAmp
-            {
-                get => _normalizeAmp;
-                set => _normalizeAmp = value;
-            }
-
-            public static SDPParams GetDefault()
-            {
-                return new SDPParams
-                {
-                    Regularization = -1,
-                    Repeat = -1,
-                    Lambda = -1,
-                    NormalizeAmp = true
-                };
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct EVDParams
-        {
-            private float _regularization;
-            [MarshalAs(UnmanagedType.U1)] private bool _normalizeAmp;
-
-            public float Regularization
-            {
-                get => _regularization;
-                set => _regularization = value;
-            }
-
-
-            public bool NormalizeAmp
-            {
-                get => _normalizeAmp;
-                set => _normalizeAmp = value;
-            }
-
-            public static EVDParams GetDefault()
-            {
-                return new EVDParams
-                {
-                    Regularization = -1,
-                    NormalizeAmp = true
-                };
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public unsafe struct NLSParams
-        {
-            private float _eps1;
-            private float _eps2;
-            private int _kMax;
-            private float _tau;
-            private float* _initial;
-
-            public float Eps1
-            {
-                get => _eps1;
-                set => _eps1 = value;
-            }
-
-            public float Eps2
-            {
-                get => _eps2;
-                set => _eps2 = value;
-            }
-
-            public int KMax
-            {
-                get => _kMax;
-                set => _kMax = value;
-            }
-
-            public float Tau
-            {
-                get => _tau;
-                set => _tau = value;
-            }
-
-            public float* Initial
-            {
-                get => _initial;
-                set => _initial = value;
-            }
-
-            public static NLSParams GetDefault()
-            {
-                return new NLSParams
-                {
-                    Eps1 = -1,
-                    Eps2 = -1,
-                    KMax = -1,
-                    Tau = -1,
-                    Initial = null
-                };
-            }
-        }
-
-        public static Gain HoloGain(Vector3f[] focuses, float[] amps) => HoloGainSDP(focuses, amps, null);
-
-        public static unsafe Gain HoloGainSDP(Vector3f[] focuses, float[] amps, SDPParams? param)
-        {
-            var p = Marshal.AllocHGlobal(sizeof(SDPParams));
-            if (param.HasValue)
-                Marshal.StructureToPtr(param.Value, p, false);
-            else
-                p = IntPtr.Zero;
-
-            return HoloGain(focuses, amps, OptMethod.SDP, p);
-        }
-
-        public static unsafe Gain HoloGainEVD(Vector3f[] focuses, float[] amps, EVDParams? param)
-        {
-            var p = Marshal.AllocHGlobal(sizeof(EVDParams));
-            if (param.HasValue)
-                Marshal.StructureToPtr(param.Value, p, false);
-            else
-                p = IntPtr.Zero;
-
-            return HoloGain(focuses, amps, OptMethod.EVD, p);
-        }
-
-        public static Gain HoloGainGS(Vector3f[] focuses, float[] amps, uint? repeat)
-        {
-            var p = Marshal.AllocHGlobal(sizeof(uint));
-            if (repeat.HasValue)
-                Marshal.StructureToPtr(repeat.Value, p, false);
-            else
-                p = IntPtr.Zero;
-
-            return HoloGain(focuses, amps, OptMethod.GS, p);
-        }
-
-        public static Gain HoloGainGSPAT(Vector3f[] focuses, float[] amps, uint? repeat)
-        {
-            var p = Marshal.AllocHGlobal(sizeof(uint));
-            if (repeat.HasValue)
-                Marshal.StructureToPtr(repeat.Value, p, false);
-            else
-                p = IntPtr.Zero;
-
-            return HoloGain(focuses, amps, OptMethod.GSPAT, p);
-        }
-
-        public static Gain HoloGainNaive(Vector3f[] focuses, float[] amps) => HoloGain(focuses, amps, OptMethod.Naive, IntPtr.Zero);
-
-        public static unsafe Gain HoloGainLM(Vector3f[] focuses, float[] amps, NLSParams? param)
-        {
-            var p = Marshal.AllocHGlobal(sizeof(NLSParams));
-            if (param.HasValue)
-                Marshal.StructureToPtr(param.Value, p, false);
-            else
-                p = IntPtr.Zero;
-
-            return HoloGain(focuses, amps, OptMethod.LM, p);
-        }
-
-        public static unsafe Gain HoloGain(Vector3f[] focuses, float[] amps, OptMethod method, IntPtr param)
+        public static Gain HoloGainEVD(Vector3f[] focuses, float[] amps, float gamma = 1, bool normalize = true)
         {
             if (focuses == null) throw new ArgumentNullException(nameof(focuses));
             if (amps == null) throw new ArgumentNullException(nameof(amps));
@@ -295,9 +126,122 @@ namespace AUTD3Sharp
             }
 
             IntPtr gainPtr;
-            fixed (float* fp = &foci[0])
-            fixed (float* ap = &amps[0])
-                NativeMethods.AUTDHoloGain(out gainPtr, fp, ap, size, (int)method, param);
+            unsafe
+            {
+                fixed (float* fp = &foci[0])
+                fixed (float* ap = &amps[0])
+                    NativeMethods.AUTDHoloGainEVD(out gainPtr, fp, ap, size, gamma, normalize);
+            }
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGainGS(Vector3f[] focuses, float[] amps, ulong repeat = 100)
+        {
+            if (focuses == null) throw new ArgumentNullException(nameof(focuses));
+            if (amps == null) throw new ArgumentNullException(nameof(amps));
+
+            var size = amps.Length;
+            var foci = new float[size * 3];
+            for (var i = 0; i < size; i++)
+            {
+                AUTD.AdjustVector(ref focuses[i]);
+                foci[3 * i] = focuses[i][0];
+                foci[3 * i + 1] = focuses[i][1];
+                foci[3 * i + 2] = focuses[i][2];
+            }
+
+            IntPtr gainPtr;
+            unsafe
+            {
+                fixed (float* fp = &foci[0])
+                fixed (float* ap = &amps[0])
+                    NativeMethods.AUTDHoloGainGS(out gainPtr, fp, ap, size, repeat);
+            }
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGainGSPAT(Vector3f[] focuses, float[] amps, uint repeat = 100)
+        {
+            if (focuses == null) throw new ArgumentNullException(nameof(focuses));
+            if (amps == null) throw new ArgumentNullException(nameof(amps));
+
+            var size = amps.Length;
+            var foci = new float[size * 3];
+            for (var i = 0; i < size; i++)
+            {
+                AUTD.AdjustVector(ref focuses[i]);
+                foci[3 * i] = focuses[i][0];
+                foci[3 * i + 1] = focuses[i][1];
+                foci[3 * i + 2] = focuses[i][2];
+            }
+
+            IntPtr gainPtr;
+            unsafe
+            {
+                fixed (float* fp = &foci[0])
+                fixed (float* ap = &amps[0])
+                    NativeMethods.AUTDHoloGainGSPAT(out gainPtr, fp, ap, size, repeat);
+            }
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGainNaive(Vector3f[] focuses, float[] amps)
+        {
+            if (focuses == null) throw new ArgumentNullException(nameof(focuses));
+            if (amps == null) throw new ArgumentNullException(nameof(amps));
+
+            var size = amps.Length;
+            var foci = new float[size * 3];
+            for (var i = 0; i < size; i++)
+            {
+                AUTD.AdjustVector(ref focuses[i]);
+                foci[3 * i] = focuses[i][0];
+                foci[3 * i + 1] = focuses[i][1];
+                foci[3 * i + 2] = focuses[i][2];
+            }
+
+            IntPtr gainPtr;
+            unsafe
+            {
+                fixed (float* fp = &foci[0])
+                fixed (float* ap = &amps[0])
+                    NativeMethods.AUTDHoloGainNaive(out gainPtr, fp, ap, size);
+            }
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGainLM(Vector3f[] focuses, float[] amps, float eps_1 = 1e-8f, float eps_2 = 1e-8f, float tau = 1e-3f, ulong k_max = 5, float[]? initial = null)
+        {
+            if (focuses == null) throw new ArgumentNullException(nameof(focuses));
+            if (amps == null) throw new ArgumentNullException(nameof(amps));
+
+            var size = amps.Length;
+            var foci = new float[size * 3];
+            for (var i = 0; i < size; i++)
+            {
+                AUTD.AdjustVector(ref focuses[i]);
+                foci[3 * i] = focuses[i][0];
+                foci[3 * i + 1] = focuses[i][1];
+                foci[3 * i + 2] = focuses[i][2];
+            }
+
+            IntPtr gainPtr;
+            unsafe
+            {
+                if (initial == null)
+                {
+                    fixed (float* fp = &foci[0])
+                    fixed (float* ap = &amps[0])
+                        NativeMethods.AUTDHoloGainLM(out gainPtr, fp, ap, size, eps_1, eps_2, tau, k_max, null, 0);
+                }
+                else
+                {
+                    fixed (float* fp = &foci[0])
+                    fixed (float* ap = &amps[0])
+                    fixed (float* ip = &initial[0])
+                        NativeMethods.AUTDHoloGainLM(out gainPtr, fp, ap, size, eps_1, eps_2, tau, k_max, ip, initial.Length);
+                }
+            }
             return new Gain(gainPtr);
         }
 
