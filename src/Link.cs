@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -22,7 +22,7 @@ namespace AUTD3Sharp
     {
         internal IntPtr LinkPtr => handle;
 
-        public Link(IntPtr handle) : base(false)
+        internal Link(IntPtr handle) : base(false)
         {
             SetHandle(handle);
         }

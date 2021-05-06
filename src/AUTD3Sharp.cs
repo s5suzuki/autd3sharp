@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 01/05/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -191,21 +191,6 @@ namespace AUTD3Sharp
                 NativeMethods.AUTDGetLastError(sb);
                 return sb.ToString();
             }
-        }
-        #endregion
-
-        #region Sequence
-        public static PointSequence PointSequence()
-        {
-            NativeMethods.AUTDSequence(out var p);
-            return new PointSequence(p);
-        }
-        public static PointSequence CircumferencePointSequence(Vector3f center, Vector3f normal, float radius, ulong n)
-        {
-            AdjustVector(ref center);
-            AdjustVector(ref normal);
-            NativeMethods.AUTDCircumSequence(out var p, center[0], center[1], center[2], normal[0], normal[1], normal[2], radius, n);
-            return new PointSequence(p);
         }
         #endregion
 

@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -31,7 +31,7 @@ namespace AUTD3Sharp
     {
         internal IntPtr SeqPtr => handle;
 
-        public PointSequence(IntPtr seq) : base(true)
+        internal PointSequence(IntPtr seq) : base(true)
         {
             SetHandle(seq);
         }
@@ -66,9 +66,24 @@ namespace AUTD3Sharp
                     return NativeMethods.AUTDSequenceAddPoints(handle, pd, (ulong)points.Count);
             }
         }
+
         public float SetFrequency(float freq) => NativeMethods.AUTDSequenceSetFreq(handle, freq);
         public float Frequency() => NativeMethods.AUTDSequenceFreq(handle);
         public float SamplingFrequency() => NativeMethods.AUTDSequenceSamplingFreq(handle);
         public ushort SamplingFrequencyDivision() => NativeMethods.AUTDSequenceSamplingFreqDiv(handle);
+
+        public static PointSequence Create()
+        {
+            NativeMethods.AUTDSequence(out var p);
+            return new PointSequence(p);
+        }
+
+        public static PointSequence CircumferencePointSequence(Vector3f center, Vector3f normal, float radius, ulong n)
+        {
+            AUTD.AdjustVector(ref center);
+            AUTD.AdjustVector(ref normal);
+            NativeMethods.AUTDCircumSequence(out var p, center[0], center[1], center[2], normal[0], normal[1], normal[2], radius, n);
+            return new PointSequence(p);
+        }
     }
 }

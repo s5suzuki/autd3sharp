@@ -31,7 +31,7 @@ namespace AUTD3Sharp
     {
         internal IntPtr GainPtr => handle;
 
-        public Gain(IntPtr gain) : base(true)
+        internal Gain(IntPtr gain) : base(true)
         {
             SetHandle(gain);
         }
