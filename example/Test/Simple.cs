@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -23,6 +23,8 @@ namespace example.Test
             const float x = AUTD.AUTDWidth / 2;
             const float y = AUTD.AUTDHeight / 2;
             const float z = 150f;
+
+            autd.SilentMode = true;
 
             var mod = Modulation.SineModulation(150); // AM sin 150 Hz
             autd.AppendModulationSync(mod);

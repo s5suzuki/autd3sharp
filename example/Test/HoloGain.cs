@@ -4,7 +4,7 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 06/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -29,13 +29,13 @@ namespace example.Test
             while (!int.TryParse(Console.ReadLine(), out i)) { }
             return i switch
             {
-                0 => Gain.HoloGainSDP(foci, amps, null),
-                1 => Gain.HoloGainEVD(foci, amps, null),
-                2 => Gain.HoloGainGS(foci, amps, null),
-                3 => Gain.HoloGainGSPAT(foci, amps, null),
+                0 => Gain.HoloGainSDP(foci, amps),
+                1 => Gain.HoloGainEVD(foci, amps),
+                2 => Gain.HoloGainGS(foci, amps),
+                3 => Gain.HoloGainGSPAT(foci, amps),
                 4 => Gain.HoloGainNaive(foci, amps),
-                5 => Gain.HoloGainLM(foci, amps, null),
-                _ => Gain.HoloGainSDP(foci, amps, null),
+                5 => Gain.HoloGainLM(foci, amps),
+                _ => Gain.HoloGainSDP(foci, amps),
             };
         }
 
@@ -45,17 +45,21 @@ namespace example.Test
             const float y = AUTD.TransSize * (AUTD.NumTransInY - 1) / 2.0f;
             const float z = 150.0f;
 
+            autd.SilentMode = true;
+
             autd.AppendModulationSync(Modulation.SineModulation(150)); // AM sin 150 HZ
 
             var center = new Vector3f(x, y, z);
-            var foci = new[] {
-                    center + 30.0f * Vector3f.UnitX,
-                    center - 30.0f * Vector3f.UnitX
-                };
-            var amps = new[] {
-                    1f,
-                    1f
-                };
+            var foci = new[]
+            {
+                center + 30.0f * Vector3f.UnitX,
+                center - 30.0f * Vector3f.UnitX
+            };
+            var amps = new[]
+            {
+                1f,
+                1f
+            };
 
             autd.AppendGainSync(SelectOpt(foci, amps));
         }

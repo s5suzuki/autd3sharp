@@ -12,6 +12,8 @@ namespace example.Test
             const float y = AUTD.AUTDHeight / 2;
             const float z = 150;
 
+            autd.SilentMode = false;
+
             var mod = Modulation.StaticModulation();
             autd.AppendModulationSync(mod);
 
@@ -21,7 +23,6 @@ namespace example.Test
 
             var f = seq.SetFrequency(200);
             Console.WriteLine($"Actual frequency is {f}");
-            autd.SetSilentMode(false);
             autd.AppendSequence(seq);
         }
     }
