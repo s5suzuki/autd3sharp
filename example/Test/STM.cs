@@ -4,15 +4,15 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/05/2021
+ * Last Modified: 23/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
  * 
  */
 
-using System;
 using AUTD3Sharp;
+using System;
 using AUTD3Sharp.Utils;
 
 namespace example.Test
@@ -21,22 +21,23 @@ namespace example.Test
     {
         public static void Test(AUTD autd)
         {
-            const float x = AUTD.AUTDWidth / 2;
-            const float y = AUTD.AUTDHeight / 2;
-            const float z = 150f;
+            const double x = AUTD.AUTDWidth / 2;
+            const double y = AUTD.AUTDHeight / 2;
+            const double z = 150.0;
 
-            autd.SilentMode = false;
+            autd.SilentMode = true;
 
-            autd.AppendModulationSync(Modulation.StaticModulation()); // static
+            var mod = Modulation.Static();
+            autd.Send(mod);
 
-            const float radius = 30.0f;
+            const double radius = 30.0;
             const int size = 200;
-            var center = new Vector3f(x, y, z);
+            var center = new Vector3d(x, y, z);
             for (var i = 0; i < size; i++)
             {
                 var theta = 2 * AUTD.Pi * i / size;
-                var r = new Vector3f(MathF.Cos(theta), MathF.Sin(theta), 0);
-                var f = Gain.FocalPointGain(center + radius * r);
+                var r = new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
+                var f = Gain.FocalPoint(center + radius * r);
                 autd.AddSTMGain(f);
             }
             autd.StartSTM(1);

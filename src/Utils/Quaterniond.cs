@@ -1,10 +1,10 @@
 ﻿/*
- * File: Quaternionf.cs
+ * File: Quaterniond.cs
  * Project: Util
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 23/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -15,10 +15,10 @@ using System;
 
 namespace AUTD3Sharp.Utils
 {
-    public readonly struct Quaternionf : IEquatable<Quaternionf>
+    public readonly struct Quaterniond : IEquatable<Quaterniond>
     {
         #region ctor
-        public Quaternionf(float x, float y, float z, float w)
+        public Quaterniond(double x, double y, double z, double w)
         {
             this.w = w;
             this.x = x;
@@ -28,14 +28,14 @@ namespace AUTD3Sharp.Utils
         #endregion
 
         #region property
-        public float w { get; }
-        public float x { get; }
-        public float y { get; }
-        public float z { get; }
+        public double w { get; }
+        public double x { get; }
+        public double y { get; }
+        public double z { get; }
         #endregion
 
         #region indexcer
-        public float this[int index]
+        public double this[int index]
         {
             get
             {
@@ -52,12 +52,12 @@ namespace AUTD3Sharp.Utils
         #endregion
 
         #region arithmetic
-        public static bool operator ==(Quaternionf left, Quaternionf right) => left.Equals(right);
-        public static bool operator !=(Quaternionf left, Quaternionf right) => !left.Equals(right);
-        public bool Equals(Quaternionf other) => w.Equals(other.w) && x.Equals(other.x) && y.Equals(other.y) && z.Equals(other.z);
+        public static bool operator ==(Quaterniond left, Quaterniond right) => left.Equals(right);
+        public static bool operator !=(Quaterniond left, Quaterniond right) => !left.Equals(right);
+        public bool Equals(Quaterniond other) => w.Equals(other.w) && x.Equals(other.x) && y.Equals(other.y) && z.Equals(other.z);
         public override bool Equals(object? obj)
         {
-            if (obj is Quaternionf qua) return Equals(qua);
+            if (obj is Quaterniond qua) return Equals(qua);
             return false;
         }
         #endregion

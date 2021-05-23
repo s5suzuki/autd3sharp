@@ -4,45 +4,48 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 23/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
  * 
  */
 
+using AUTD3Sharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AUTD3Sharp;
 
 namespace example.Test
 {
     internal delegate void TestFn(AUTD autd);
 
-    public static class TestRunner
+    public class TestRunner
     {
         public static void Run(AUTD autd)
         {
-            var examples = new List<(TestFn, string)> {(SimpleTest.Test, "Single Focal Point Test"),
-                 (BesselBeamTest.Test, "BesselBeam Test"),
-                 (HoloGainTest.Test, "Multiple Focal Points Test"),
-                 (STMTest.Test, "Spatio-Temporal Modulation Test"),
-                 (SeqTest.Test, "PointSequence Test (Hardware STM)")
+            var examples = new List<(TestFn, string)> { (SimpleTest.Test, "Single Focal Point Test"),
+             (BesselBeamTest.Test, "BesselBeam Test"),
+             (HoloGainTest.Test, "Multiple Focal Points Test"),
+             (STMTest.Test, "Spatio-Temporal Modulation Test"),
+             (SeqTest.Test, "PointSequence Test (Hardware STM)"),
+             (AdvancedTest.Test, "Advanced Test (Custom gain/modulation, and output delay)"),
              };
+            if (autd.NumDevices == 2)
+            {
+                examples.Add((GroupTest.Test, "Grouped gain Test"));
+            }
 
             autd.Clear();
             autd.Synchronize();
 
-            autd.Wavelength = 8.5f; // mm
-
-            var firmInfoList = autd.FirmwareInfoList().ToArray();
-            for (var i = 0; i < firmInfoList.Length; i++)
-                Console.WriteLine($"AUTD {i}: CPU={firmInfoList[i].CpuVersion}, FPGA={firmInfoList[i].FpgaVersion}");
+            foreach (var (firm, index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
+                Console.WriteLine($"AUTD {index}: {firm}");
 
             while (true)
             {
-                for (var i = 0; i < examples.Count; i++) Console.WriteLine($"[{i}]: {examples[i].Item2}");
+                for (var i = 0; i < examples.Count; i++)
+                    Console.WriteLine($"[{i}]: {examples[i].Item2}");
 
                 Console.WriteLine("[Others]: finish");
                 Console.Write("Choose number: ");
@@ -57,10 +60,10 @@ namespace example.Test
 
                 Console.WriteLine("finish.");
                 autd.Stop();
+                autd.FinishSTM();
+                autd.Clear();
             }
 
-            autd.Clear();
-            autd.Close();
             autd.Dispose();
         }
     }

@@ -16,7 +16,7 @@ using AUTD3Sharp.Utils;
 
 namespace example.Test
 {
-    internal static class SimpleTest
+    internal static class GroupTest
     {
         public static void Test(AUTD autd)
         {
@@ -24,8 +24,22 @@ namespace example.Test
             const double y = AUTD.AUTDHeight / 2;
             const double z = 150;
 
+            var center = new Vector3d(x, y, z);
+
+            var g1 = Gain.FocalPoint(center);
+
+            var focuses = new[] {
+                center + 30.0 * Vector3d.UnitX,
+                center - 30.0 * Vector3d.UnitX
+            };
+            var amps = new[] {
+                1.0,
+                1.0
+            };
+            var g2 = Gain.HoloGSPAT(focuses, amps);
+
+            var gain = Gain.Grouped(new GainPair(0, g1), new GainPair(1, g2));
             var mod = Modulation.Sine(150); // AM sin 150 Hz
-            var gain = Gain.FocalPoint(new Vector3d(x, y, z)); // Focal point @ (x, y, z) [mm]
             autd.Send(gain, mod);
         }
     }

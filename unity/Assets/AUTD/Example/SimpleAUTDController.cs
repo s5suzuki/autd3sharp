@@ -4,7 +4,7 @@
  * Created Date: 08/03/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 23/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -28,18 +28,18 @@ public class SimpleAUTDController : MonoBehaviour
 
         string ifname = @"write your interface name here";
         _link = Link.SOEMLink(ifname, _autd.NumDevices);
-        _autd.OpenWith(_link);
+        _autd.Open(_link);
 
         _autd.Clear();
         _autd.Synchronize();
 
-        _autd.AppendModulationSync(Modulation.SineModulation(150)); // 150 Hz
+        _autd.Send(Modulation.Sine(150)); // 150 Hz
     }
 
     void Update()
     {
         if (Target != null)
-            _autd.AppendGainSync(Gain.FocalPointGain(Target.transform.position));
+            _autd.Send(Gain.FocalPoint(Target.transform.position));
     }
 
     private void OnApplicationQuit()

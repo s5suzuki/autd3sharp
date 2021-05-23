@@ -4,20 +4,21 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/05/2021
+ * Last Modified: 23/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
  * 
  */
 
-
 #if UNITY_2018_3_OR_NEWER
 #define LEFT_HANDED
 #define DIMENSION_M
+#define USE_SINGLE
 #else
 #define RIGHT_HANDED
 #define DIMENSION_MM
+#define USE_DOUBLE
 #endif
 
 using Microsoft.Win32.SafeHandles;
@@ -26,13 +27,15 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using AUTD3Sharp.Utils;
 
 #if UNITY_2018_3_OR_NEWER
 using UnityEngine;
-using Vector3f = UnityEngine.Vector3;
-using Quaternionf = UnityEngine.Quaternion;
-using MathF = UnityEngine.Mathf;
+using Vector3 = UnityEngine.Vector3;
+using Quaternion = UnityEngine.Quaternion;
+using Math = UnityEngine.Mathf;
+#else
+using Vector3 = AUTD3Sharp.Utils.Vector3d;
+using Quaternion = AUTD3Sharp.Utils.Quaterniond;
 #endif
 
 [assembly: CLSCompliant(false), ComVisible(false)]
@@ -59,34 +62,48 @@ namespace AUTD3Sharp
     {
         #region const
 
+#if USE_SINGLE
 #if DIMENSION_M
-        public const float AUTDWidth = 0.192f;
-        public const float AUTDHeight = 0.1514f;
-        public const float TransSize = 0.01016f;
-        public readonly static float MeterScale = 1000f;
+        public const float MeterScale = 1000.0f;
 #else
-        public const float AUTDWidth = 192.0f;
-        public const float AUTDHeight = 151.4f;
-        public const float TransSize = 10.16f;
+        public const float MeterScale = 1;
 #endif
-        public const float Pi = MathF.PI;
+        public const float AUTDWidth = 192.0f / MeterScale;
+        public const float AUTDHeight = 151.4f / MeterScale;
+        public const float TransSize = 10.16f / MeterScale;
+        public const float Pi = Math.PI;
+#else
+#if DIMENSION_M
+        public const double MeterScale = 1000.0;
+#else
+        public const double MeterScale = 1;
+#endif
+        public const double AUTDWidth = 192.0 / MeterScale;
+        public const double AUTDHeight = 151.4 / MeterScale;
+        public const double TransSize = 10.16 / MeterScale;
+        public const double Pi = Math.PI;
+#endif
         public const int NumTransInDevice = 249;
         public const int NumTransInX = 18;
         public const int NumTransInY = 14;
+
         #endregion
 
         #region field
+
         private bool _isDisposed;
         private readonly AUTDControllerHandle _autdControllerHandle;
+
         #endregion
 
         #region Controller
+
         public AUTD()
         {
             _autdControllerHandle = new AUTDControllerHandle(true);
         }
 
-        public bool OpenWith(Link link) => NativeMethods.AUTDOpenControllerWith(_autdControllerHandle.CntPtr, link.LinkPtr);
+        public bool Open(Link link) => NativeMethods.AUTDOpenController(_autdControllerHandle.CntPtr, link.LinkPtr);
 
         public static IEnumerable<EtherCATAdapter> EnumerateAdapters()
         {
@@ -98,6 +115,7 @@ namespace AUTD3Sharp
                 NativeMethods.AUTDGetAdapter(handle, i, sbDesc, sbName);
                 yield return new EtherCATAdapter(sbDesc.ToString(), sbName.ToString());
             }
+
             NativeMethods.AUTDFreeAdapterPointer(handle);
         }
 
@@ -111,35 +129,54 @@ namespace AUTD3Sharp
                 NativeMethods.AUTDGetFirmwareInfo(handle, i, sbCpu, sbFpga);
                 yield return new FirmwareInfo(sbCpu.ToString(), sbFpga.ToString());
             }
+
             NativeMethods.AUTDFreeFirmwareInfoListPointer(handle);
         }
 
-        public int AddDevice(Vector3f position, Vector3f rotation, int groupId = 0)
+#if UNITY_2018_3_OR_NEWER
+#else
+        public int AddDevice(Vector3 position, Vector3 rotation, int groupId = 0)
         {
-            AdjustVector(ref position);
-            return NativeMethods.AUTDAddDevice(_autdControllerHandle.CntPtr, position[0], position[1], position[2], rotation[0], rotation[1], rotation[2], groupId);
+            var (x, y, z) = Adjust(position);
+            var (rx, ry, rz) = Adjust(rotation, false);
+            return NativeMethods.AUTDAddDevice(_autdControllerHandle.CntPtr, x, y, z, rx, ry, rz, groupId);
         }
+#endif
 
-        public int AddDevice(Vector3f position, Quaternionf quaternion, int groupId = 0)
+        public int AddDevice(Vector3 position, Quaternion quaternion, int groupId = 0)
         {
-            AdjustVector(ref position);
-            AdjustQuaternion(ref quaternion);
-            return NativeMethods.AUTDAddDeviceQuaternion(_autdControllerHandle.CntPtr, position[0], position[1], position[2], quaternion[3], quaternion[0], quaternion[1], quaternion[2], groupId);
+            var (x, y, z) = Adjust(position);
+            var (qw, qx, qy, qz) = Adjust(quaternion);
+            return NativeMethods.AUTDAddDeviceQuaternion(_autdControllerHandle.CntPtr, x, y, z, qw, qx, qy, qz,
+                groupId);
         }
 
         public int DeleteDevice(int idx) => NativeMethods.AUTDDeleteDevice(_autdControllerHandle.CntPtr, idx);
 
         public void ClearDevices() => NativeMethods.AUTDClearDevices(_autdControllerHandle.CntPtr);
 
-        public bool Synchronize() => Synchronize(new Configuration());
-
-        public bool Synchronize(Configuration config) => NativeMethods.AUTDSynchronize(_autdControllerHandle.CntPtr, (int)config.ModSamplingFrequency, (int)config.ModBufferSize);
+        public bool Synchronize(ushort modSamplingDiv = 10, ushort modBufSize = 4000) =>
+            NativeMethods.AUTDSynchronize(_autdControllerHandle.CntPtr, modSamplingDiv, modBufSize);
 
         public bool Close() => NativeMethods.AUTDCloseController(_autdControllerHandle.CntPtr);
 
         public bool Clear() => NativeMethods.AUTDClear(_autdControllerHandle.CntPtr);
 
         public bool Stop() => NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
+
+        public bool SetOutputDelay(ushort[,] delays)
+        {
+            if (delays.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
+            if (delays.GetLength(1) != NumTransInDevice)
+                throw new ArgumentException("The number of transducers are incorrect.");
+            unsafe
+            {
+                fixed (ushort* p = delays)
+                    return NativeMethods.AUTDSetOutputDelay(_autdControllerHandle.CntPtr, p);
+            }
+        }
+
+        public bool UpdateControlFlags() => NativeMethods.AUTDUpdateCtrlFlags(_autdControllerHandle.CntPtr);
 
         public void Dispose()
         {
@@ -158,29 +195,49 @@ namespace AUTD3Sharp
             _isDisposed = true;
         }
 
-        public void SetSilentMode(bool mode) => NativeMethods.AUTDSetSilentMode(_autdControllerHandle.CntPtr, mode);
-
         ~AUTD()
         {
             Dispose(false);
         }
+
         #endregion
 
         #region Property
+
         public bool IsOpen => NativeMethods.AUTDIsOpen(_autdControllerHandle.CntPtr);
+
         public bool SilentMode
         {
             get => NativeMethods.AUTDIsSilentMode(_autdControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetSilentMode(_autdControllerHandle.CntPtr, value);
         }
+
+        public bool ReadsFPGAInfo
+        {
+            set => NativeMethods.AUTDSetReadFPGAInfo(_autdControllerHandle.CntPtr, value);
+        }
+
+        public byte[] FPGAInfo
+        {
+            get
+            {
+                var infos = new byte[NumDevices];
+                unsafe
+                {
+                    fixed (byte* p = infos)
+                        NativeMethods.AUTDReadFPGAInfo(_autdControllerHandle.CntPtr, p);
+                }
+                return infos;
+            }
+        }
+
         public int NumDevices => NativeMethods.AUTDNumDevices(_autdControllerHandle.CntPtr);
         public int NumTransducers => NativeMethods.AUTDNumTransducers(_autdControllerHandle.CntPtr);
-        public float Wavelength
+        public double Wavelength
         {
             get => NativeMethods.AUTDWavelength(_autdControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetWavelength(_autdControllerHandle.CntPtr, value);
         }
-        public ulong RemainingInBuffer => NativeMethods.AUTDRemainingInBuffer(_autdControllerHandle.CntPtr);
 
         public static string LastError
         {
@@ -195,26 +252,21 @@ namespace AUTD3Sharp
         #endregion
 
         #region LowLevelInterface
-        public bool AppendGain(Gain gain)
+        public bool Send(Gain gain)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDAppendGain(_autdControllerHandle.CntPtr, gain.GainPtr);
+            return NativeMethods.AUTDSendGain(_autdControllerHandle.CntPtr, gain.GainPtr);
         }
-        public bool AppendGainSync(Gain gain, bool waitForSend = false)
+        public bool Send(Modulation mod)
+        {
+            if (mod == null) throw new ArgumentNullException(nameof(mod));
+            return NativeMethods.AUTDSendModulation(_autdControllerHandle.CntPtr, mod.ModPtr);
+        }
+        public bool Send(Gain gain, Modulation mod)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDAppendGainSync(_autdControllerHandle.CntPtr, gain.GainPtr, waitForSend);
-        }
-        public bool AppendModulation(Modulation mod)
-        {
             if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDAppendModulation(_autdControllerHandle.CntPtr, mod.ModPtr);
-        }
-
-        public bool AppendModulationSync(Modulation mod)
-        {
-            if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDAppendModulationSync(_autdControllerHandle.CntPtr, mod.ModPtr);
+            return NativeMethods.AUTDSendGainModulation(_autdControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr);
         }
 
         public void AddSTMGain(Gain gain)
@@ -229,67 +281,132 @@ namespace AUTD3Sharp
             foreach (var gain in gains) AddSTMGain(gain);
         }
 
-        public void AddSTMGain(params Gain[] gainList)
-        {
-            if (gainList == null) throw new ArgumentNullException(nameof(gainList));
-            foreach (var gain in gainList) AddSTMGain(gain);
-        }
+        public bool StartSTM(double freq) => NativeMethods.AUTDStartSTM(_autdControllerHandle.CntPtr, freq);
 
-        public bool StartSTM(float freq) => NativeMethods.AUTDStartSTModulation(_autdControllerHandle.CntPtr, freq);
+        public bool StopSTM() => NativeMethods.AUTDStopSTM(_autdControllerHandle.CntPtr);
 
-        public bool StopSTM() => NativeMethods.AUTDStopSTModulation(_autdControllerHandle.CntPtr);
+        public bool FinishSTM() => NativeMethods.AUTDFinishSTM(_autdControllerHandle.CntPtr);
 
-        public bool FinishSTM() => NativeMethods.AUTDFinishSTModulation(_autdControllerHandle.CntPtr);
-
-        public bool AppendSequence(PointSequence seq)
+        public bool Send(PointSequence seq)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
-            return NativeMethods.AUTDAppendSequence(_autdControllerHandle.CntPtr, seq.SeqPtr);
+            return NativeMethods.AUTDSendSequence(_autdControllerHandle.CntPtr, seq.SeqPtr);
         }
-
-        public void Flush() => NativeMethods.AUTDFlush(_autdControllerHandle.CntPtr);
 
         public int DeviceIdxForTransIdx(int devIdx) => NativeMethods.AUTDDeviceIdxForTransIdx(_autdControllerHandle.CntPtr, devIdx);
 
-        public unsafe Vector3f TransPosition(int transIdxGlobal)
+        public Vector3 TransPosition(int transIdxGlobal)
         {
-            NativeMethods.AUTDTransPositionByGlobal(_autdControllerHandle.CntPtr, transIdxGlobal, out var x, out var y, out var z);
-            return new Vector3f(x, y, z);
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            unsafe
+            {
+                NativeMethods.AUTDTransPositionByGlobal(_autdControllerHandle.CntPtr, transIdxGlobal, &x, &y, &z);
+            }
+            return Adjust(x, y, z);
         }
 
-        public unsafe Vector3f TransPosition(int deviceIdx, int transIdxLocal)
+        public Vector3 TransPosition(int deviceIdx, int transIdxLocal)
         {
-            NativeMethods.AUTDTransPositionByLocal(_autdControllerHandle.CntPtr, deviceIdx, transIdxLocal, out var x, out var y, out var z);
-            return new Vector3f(x, y, z);
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            unsafe
+            {
+                NativeMethods.AUTDTransPositionByLocal(_autdControllerHandle.CntPtr, deviceIdx, transIdxLocal, &x, &y,
+                    &z);
+            }
+
+            return Adjust(x, y, z);
         }
 
-        public unsafe Vector3f DeviceDirection(int deviceIdx)
+        public Vector3 DeviceDirectionX(int deviceIdx)
         {
-            NativeMethods.AUTDDeviceDirection(_autdControllerHandle.CntPtr, deviceIdx, out var x, out var y, out var z);
-            return new Vector3f(x, y, z);
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            unsafe
+            {
+
+                NativeMethods.AUTDDeviceXDirection(_autdControllerHandle.CntPtr, deviceIdx, &x, &y, &z);
+            }
+
+            return Adjust(x, y, z, false);
+        }
+
+        public Vector3 DeviceDirectionY(int deviceIdx)
+        {
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            unsafe
+            {
+                NativeMethods.AUTDDeviceYDirection(_autdControllerHandle.CntPtr, deviceIdx, &x, &y, &z);
+            }
+
+            return Adjust(x, y, z, false);
+        }
+
+        public Vector3 DeviceDirectionZ(int deviceIdx)
+        {
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            unsafe
+            {
+                NativeMethods.AUTDDeviceZDirection(_autdControllerHandle.CntPtr, deviceIdx, &x, &y, &z);
+            }
+
+            return Adjust(x, y, z, false);
         }
         #endregion
 
         #region GeometryAdjust
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AdjustVector(ref Vector3f vector)
+        internal static (double, double, double) Adjust(Vector3 vector, bool scaling = true)
         {
 #if LEFT_HANDED
             vector.z = -vector.z;
 #endif
 #if DIMENSION_M
-            vector[0] *= MeterScale;
-            vector[1] *= MeterScale;
-            vector[2] *= MeterScale;
+            if (scaling) vector = vector * MeterScale;
+#endif
+#if USE_SINGLE
+            return ((double)vector.x, (double)vector.y, (double)vector.z);
+#else
+            return (vector.x, vector.y, vector.z);
 #endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void AdjustQuaternion(ref Quaternionf quaternion)
+        internal static Vector3 Adjust(double x, double y, double z, bool scaling = true)
+        {
+#if USE_SINGLE
+            var vector = new Vector3((float)x, (float)y, (float)z);
+#else
+            var vector = new Vector3(x, y, z);
+#endif
+#if LEFT_HANDED
+            vector.z = -vector.z;
+#endif
+#if DIMENSION_M
+            if (scaling) vector *= MeterScale;
+#endif
+            return vector;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static (double, double, double, double) Adjust(Quaternion quaternion)
         {
 #if LEFT_HANDED
             quaternion.z = -quaternion.z;
             quaternion.w = -quaternion.w;
+#endif
+#if USE_SINGLE
+            return ((double)quaternion.w, (double)quaternion.x, (double)quaternion.y, (double)quaternion.z);
+#else
+            return (quaternion.w, quaternion.x, quaternion.y, quaternion.z);
 #endif
         }
         #endregion

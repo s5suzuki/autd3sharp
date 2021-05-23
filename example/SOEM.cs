@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/04/2021
+ * Last Modified: 23/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -12,22 +12,22 @@
  */
 
 
+using AUTD3Sharp;
+using AUTD3SharpTest.Test;
 using System;
 using System.Linq;
-using AUTD3Sharp;
 using AUTD3Sharp.Utils;
-using example.Test;
 
 namespace example
 {
     internal static class SOEMTest
     {
-        private static string GetIfname()
+        public static string GetIfname()
         {
             var adapters = AUTD.EnumerateAdapters();
             var etherCATAdapters = adapters as EtherCATAdapter[] ?? adapters.ToArray();
-            for (var j = 0; j < etherCATAdapters.Length; j++)
-                Console.WriteLine($"[{j}]: {etherCATAdapters[j].Desc}, {etherCATAdapters[j].Name}");
+            foreach (var (adapter, index) in etherCATAdapters.Select((adapter, index) => (adapter, index)))
+                Console.WriteLine($"[{index}]: {adapter}");
 
             Console.Write("Choose number: ");
             int i;
@@ -40,13 +40,13 @@ namespace example
             Console.WriteLine("Test with SOEM");
 
             var autd = new AUTD();
-            autd.AddDevice(Vector3f.Zero, Vector3f.Zero);
-            //autd.AddDevice(Vector3d.UnitY * AUTD.AUTDHeight, Vector3d.Zero);
+            autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 0);
+            autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 1);
 
             var ifname = GetIfname();
             var link = Link.SOEMLink(ifname, autd.NumDevices);
 
-            if (!autd.OpenWith(link))
+            if (!autd.Open(link))
             {
                 Console.WriteLine(AUTD.LastError);
                 return;

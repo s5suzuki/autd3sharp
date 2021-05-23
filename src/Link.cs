@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/05/2021
+ * Last Modified: 21/05/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -35,15 +35,9 @@ namespace AUTD3Sharp
             return new Link(link);
         }
 
-        public static Link EtherCATLink(string ip4Addr, string amsNetId)
+        public static Link EtherCATLink()
         {
-            NativeMethods.AUTDTwinCATLink(out var link, ip4Addr, amsNetId);
-            return new Link(link);
-        }
-
-        public static Link LocalEtherCATLink()
-        {
-            NativeMethods.AUTDLocalTwinCATLink(out var link);
+            NativeMethods.AUTDTwinCATLink(out var link);
             return new Link(link);
         }
     }
