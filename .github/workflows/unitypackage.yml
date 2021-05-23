@@ -42,7 +42,7 @@ jobs:
       - name: Replace latest scripts
         run: |
           cp -f src/*.cs ./unity/Assets/AUTD/Scripts/
-          cp -f src/Utils/GainMap.cs ./unity/Assets/AUTD/Scripts/Util
+          cp -f src/Utils/GainPair.cs ./unity/Assets/AUTD/Scripts/Utils
           cp -f LICENSE ./unity/Assets/AUTD
           cp -f NOTICE ./unity/Assets/AUTD
       - name: Enumerate Assets
