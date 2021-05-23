@@ -13,10 +13,10 @@
 
 
 using AUTD3Sharp;
-using AUTD3SharpTest.Test;
 using System;
 using System.Linq;
 using AUTD3Sharp.Utils;
+using example.Test;
 
 namespace example
 {
@@ -40,12 +40,11 @@ namespace example
             Console.WriteLine("Test with SOEM");
 
             var autd = new AUTD();
-            autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 0);
-            autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 1);
+            autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
+            //autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 1);
 
             var ifname = GetIfname();
             var link = Link.SOEMLink(ifname, autd.NumDevices);
-
             if (!autd.Open(link))
             {
                 Console.WriteLine(AUTD.LastError);

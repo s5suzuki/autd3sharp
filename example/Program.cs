@@ -11,7 +11,7 @@
  * 
  */
 
-namespace AUTD3SharpTest
+namespace example
 {
     internal class Program
     {

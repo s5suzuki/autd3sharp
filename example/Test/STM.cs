@@ -25,13 +25,13 @@ namespace example.Test
             const double y = AUTD.AUTDHeight / 2;
             const double z = 150.0;
 
-            autd.SilentMode = true;
+            autd.SilentMode = false;
 
             var mod = Modulation.Static();
             autd.Send(mod);
 
             const double radius = 30.0;
-            const int size = 200;
+            const int size = 100;
             var center = new Vector3d(x, y, z);
             for (var i = 0; i < size; i++)
             {
@@ -40,7 +40,7 @@ namespace example.Test
                 var f = Gain.FocalPoint(center + radius * r);
                 autd.AddSTMGain(f);
             }
-            autd.StartSTM(1);
+            autd.StartSTM(0.5);
         }
     }
 }

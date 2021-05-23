@@ -13,9 +13,9 @@
 
 
 using AUTD3Sharp;
-using AUTD3SharpTest.Test;
 using System;
 using AUTD3Sharp.Utils;
+using example.Test;
 
 namespace example
 {
@@ -29,7 +29,11 @@ namespace example
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
 
             var link = Link.EtherCATLink();
-            autd.Open(link);
+            if (!autd.Open(link))
+            {
+                Console.WriteLine(AUTD.LastError);
+                return;
+            }
 
             TestRunner.Run(autd);
         }

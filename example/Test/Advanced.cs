@@ -13,7 +13,7 @@
 
 using AUTD3Sharp;
 
-namespace AUTD3SharpTest.Test
+namespace example.Test
 {
     public class AdvancedTest
     {
