@@ -86,8 +86,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetAdapterPointer(out IntPtr @out);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDGetAdapter(IntPtr pAdapter, int index, StringBuilder? desc, StringBuilder? name);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeAdapterPointer(IntPtr pAdapter);
-        [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSOEMLink(out IntPtr @out, string ifname, int deviceNum);
+        [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSOEMLink(out IntPtr @out, string ifname, int deviceNum, uint cycleTicks, uint bucketSize);
         [DllImport("autd3capi-twincat-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDTwinCATLink(out IntPtr @out);
-
     }
 }
