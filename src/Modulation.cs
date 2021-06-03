@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 03/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -13,7 +13,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Text;
 using Microsoft.Win32.SafeHandles;
 
 namespace AUTD3Sharp

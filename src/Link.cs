@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 27/05/2021
+ * Last Modified: 03/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -29,9 +29,9 @@ namespace AUTD3Sharp
 
         protected override bool ReleaseHandle() => true;
 
-        public static Link SOEMLink(string ifname, int deviceNum, uint cycleTicks = 1, uint bucketSize = 32)
+        public static Link SOEMLink(string ifname, int deviceNum, uint cycleTicks = 1)
         {
-            NativeMethods.AUTDSOEMLink(out var link, ifname, deviceNum, cycleTicks, bucketSize);
+            NativeMethods.AUTDSOEMLink(out var link, ifname, deviceNum, cycleTicks);
             return new Link(link);
         }
 

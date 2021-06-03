@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 03/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -251,6 +251,22 @@ namespace AUTD3Sharp
                     fixed (double* ip = &initial[0])
                         NativeMethods.AUTDHoloGainLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, ip, initial.Length);
                 }
+            }
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGreedy(Vector3[] focuses, double[] amps, int phaseDiv = 16)
+        {
+            CheckFociAmps(focuses, amps);
+
+            var size = amps.Length;
+            var foci = PackFoci(focuses);
+            IntPtr gainPtr;
+            unsafe
+            {
+                fixed (double* fp = &foci[0])
+                fixed (double* ap = &amps[0])
+                    NativeMethods.AUTDHoloGainGreedy(out gainPtr, fp, ap, size, phaseDiv);
             }
             return new Gain(gainPtr);
         }

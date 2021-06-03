@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 03/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -54,6 +54,32 @@ namespace AUTD3Sharp
         protected override bool ReleaseHandle()
         {
             NativeMethods.AUTDFreeController(handle);
+            return true;
+        }
+    }
+
+    [ComVisible(false)]
+    public class STMController : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        internal STMController(IntPtr ptr) : base(true)
+        {
+            handle = ptr;
+        }
+
+        public bool AddSTMGain(Gain gain)
+        {
+            if (gain == null) throw new ArgumentNullException(nameof(gain));
+            return NativeMethods.AUTDAddSTMGain(handle, gain.GainPtr);
+        }
+
+        public bool StartSTM(double freq) => NativeMethods.AUTDStartSTM(handle, freq);
+
+        public bool StopSTM() => NativeMethods.AUTDStopSTM(handle);
+
+        public bool FinishSTM() => NativeMethods.AUTDFinishSTM(handle);
+
+        protected override bool ReleaseHandle()
+        {
             return true;
         }
     }
@@ -212,6 +238,12 @@ namespace AUTD3Sharp
             set => NativeMethods.AUTDSetSilentMode(_autdControllerHandle.CntPtr, value);
         }
 
+        public bool ForceFan
+        {
+            get => NativeMethods.AUTDIsForceFan(_autdControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetForceFan(_autdControllerHandle.CntPtr, value);
+        }
+
         public bool ReadsFPGAInfo
         {
             set => NativeMethods.AUTDSetReadFPGAInfo(_autdControllerHandle.CntPtr, value);
@@ -269,28 +301,16 @@ namespace AUTD3Sharp
             return NativeMethods.AUTDSendGainModulation(_autdControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr);
         }
 
-        public void AddSTMGain(Gain gain)
-        {
-            if (gain == null) throw new ArgumentNullException(nameof(gain));
-            NativeMethods.AUTDAddSTMGain(_autdControllerHandle.CntPtr, gain.GainPtr);
-        }
-
-        public void AddSTMGain(IList<Gain> gains)
-        {
-            if (gains == null) throw new ArgumentNullException(nameof(gains));
-            foreach (var gain in gains) AddSTMGain(gain);
-        }
-
-        public bool StartSTM(double freq) => NativeMethods.AUTDStartSTM(_autdControllerHandle.CntPtr, freq);
-
-        public bool StopSTM() => NativeMethods.AUTDStopSTM(_autdControllerHandle.CntPtr);
-
-        public bool FinishSTM() => NativeMethods.AUTDFinishSTM(_autdControllerHandle.CntPtr);
-
         public bool Send(PointSequence seq)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
             return NativeMethods.AUTDSendSequence(_autdControllerHandle.CntPtr, seq.SeqPtr);
+        }
+
+        public STMController STM()
+        {
+            NativeMethods.AUTDSTMController(out var handle, _autdControllerHandle.CntPtr);
+            return new STMController(handle);
         }
 
         public int DeviceIdxForTransIdx(int devIdx) => NativeMethods.AUTDDeviceIdxForTransIdx(_autdControllerHandle.CntPtr, devIdx);

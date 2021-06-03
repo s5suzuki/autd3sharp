@@ -21,8 +21,10 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeController(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsOpen(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsSilentMode(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsForceFan(IntPtr handle);
         [DllImport("autd3capi", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetSilentMode(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool mode);
         [DllImport("autd3capi", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetReadFPGAInfo(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool readsFpgaInfo);
+        [DllImport("autd3capi", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetForceFan(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool force);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern double AUTDWavelength(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetWavelength(IntPtr handle, double wavelength);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDReadFPGAInfo(IntPtr handle, byte* @out);
@@ -71,7 +73,8 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendModulation(IntPtr handle, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGainModulation(IntPtr handle, IntPtr gain, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendSequence(IntPtr handle, IntPtr seq);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDAddSTMGain(IntPtr handle, IntPtr gain);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSTMController(out IntPtr @out, IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDAddSTMGain(IntPtr handle, IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDStartSTM(IntPtr handle, double freq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDStopSTM(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDFinishSTM(IntPtr handle);
@@ -83,10 +86,12 @@ namespace AUTD3Sharp
         [DllImport("autd3capi-holo-gain", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainGS(out IntPtr gain, IntPtr backend, double* points, double* amps, int size, ulong repeat);
         [DllImport("autd3capi-holo-gain", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainGSPAT(out IntPtr gain, IntPtr backend, double* points, double* amps, int size, ulong repeat);
         [DllImport("autd3capi-holo-gain", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainLM(out IntPtr gain, IntPtr backend, double* points, double* amps, int size, double eps1, double eps2, double tau, ulong kMax, double* initial, int initialSize);
+        [DllImport("autd3capi-holo-gain", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDHoloGainGreedy(out IntPtr gain, double* points, double* amps, int size, int phaseDiv);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetAdapterPointer(out IntPtr @out);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDGetAdapter(IntPtr pAdapter, int index, StringBuilder? desc, StringBuilder? name);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeAdapterPointer(IntPtr pAdapter);
-        [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSOEMLink(out IntPtr @out, string ifname, int deviceNum, uint cycleTicks, uint bucketSize);
+        [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSOEMLink(out IntPtr @out, string ifname, int deviceNum, uint cycleTicks);
         [DllImport("autd3capi-twincat-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDTwinCATLink(out IntPtr @out);
+
     }
 }
