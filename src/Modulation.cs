@@ -61,7 +61,7 @@ namespace AUTD3Sharp
             return new Modulation(modPtr);
         }
 
-        public static Modulation Sine(int freq, float amp = 1, float offset = 0.5f)
+        public static Modulation Sine(int freq, double amp = 1, double offset = 0.5f)
         {
             NativeMethods.AUTDSineModulation(out var modPtr, freq, amp, offset);
             return new Modulation(modPtr);

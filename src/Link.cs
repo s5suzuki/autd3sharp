@@ -29,13 +29,13 @@ namespace AUTD3Sharp
 
         protected override bool ReleaseHandle() => true;
 
-        public static Link SOEMLink(string ifname, int deviceNum, uint cycleTicks = 1)
+        public static Link SOEM(string ifname, int deviceNum, uint cycleTicks = 1)
         {
             NativeMethods.AUTDSOEMLink(out var link, ifname, deviceNum, cycleTicks);
             return new Link(link);
         }
 
-        public static Link EtherCATLink()
+        public static Link TwinCAT()
         {
             NativeMethods.AUTDTwinCATLink(out var link);
             return new Link(link);
