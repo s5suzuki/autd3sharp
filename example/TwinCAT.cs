@@ -28,7 +28,7 @@ namespace example
             var autd = new AUTD();
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
 
-            var link = Link.EtherCATLink();
+            var link = Link.TwinCAT();
             if (!autd.Open(link))
             {
                 Console.WriteLine(AUTD.LastError);
