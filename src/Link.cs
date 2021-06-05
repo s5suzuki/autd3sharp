@@ -31,13 +31,13 @@ namespace AUTD3Sharp
 
         public static Link SOEM(string ifname, int deviceNum, uint cycleTicks = 1)
         {
-            NativeMethods.AUTDSOEMLink(out var link, ifname, deviceNum, cycleTicks);
+            NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks);
             return new Link(link);
         }
 
         public static Link TwinCAT()
         {
-            NativeMethods.AUTDTwinCATLink(out var link);
+            NativeMethods.AUTDLinkTwinCAT(out var link);
             return new Link(link);
         }
     }

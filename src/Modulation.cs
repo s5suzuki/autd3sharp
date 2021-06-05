@@ -35,7 +35,7 @@ namespace AUTD3Sharp
 
         public static Modulation Static(byte amp = 0xFF)
         {
-            NativeMethods.AUTDStaticModulation(out var modPtr, amp);
+            NativeMethods.AUTDModulationStatic(out var modPtr, amp);
             return new Modulation(modPtr);
         }
 
@@ -44,26 +44,26 @@ namespace AUTD3Sharp
             IntPtr modPtr;
             unsafe
             {
-                fixed (byte* p = data) NativeMethods.AUTDCustomModulation(out modPtr, p, (uint)data.Length);
+                fixed (byte* p = data) NativeMethods.AUTDModulationCustom(out modPtr, p, (uint)data.Length);
             }
-            return new Modulation(modPtr);
-        }
-
-        public static Modulation Saw(int freq)
-        {
-            NativeMethods.AUTDSawModulation(out var modPtr, freq);
             return new Modulation(modPtr);
         }
 
         public static Modulation Square(int freq, byte low = 0x00, byte high = 0xFF)
         {
-            NativeMethods.AUTDSquareModulation(out var modPtr, freq, low, high);
+            NativeMethods.AUTDModulationSquare(out var modPtr, freq, low, high);
             return new Modulation(modPtr);
         }
 
         public static Modulation Sine(int freq, double amp = 1, double offset = 0.5f)
         {
-            NativeMethods.AUTDSineModulation(out var modPtr, freq, amp, offset);
+            NativeMethods.AUTDModulationSine(out var modPtr, freq, amp, offset);
+            return new Modulation(modPtr);
+        }
+
+        public static Modulation SinePressure(int freq, double amp = 1, double offset = 0.5f)
+        {
+            NativeMethods.AUTDModulationSinePressure(out var modPtr, freq, amp, offset);
             return new Modulation(modPtr);
         }
     }

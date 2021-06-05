@@ -55,16 +55,16 @@ namespace AUTD3Sharp
         public static Gain FocalPoint(Vector3 point, byte duty = 0xff)
         {
             var (x, y, z) = AUTD.Adjust(point);
-            NativeMethods.AUTDFocalPointGain(out var gainPtr, x, y, z, duty);
+            NativeMethods.AUTDGainFocalPoint(out var gainPtr, x, y, z, duty);
             return new Gain(gainPtr);
         }
 
         public static Gain Grouped(params GainPair[] gainPairs)
         {
             if (gainPairs == null) throw new ArgumentNullException(nameof(gainPairs));
-            NativeMethods.AUTDGroupedGain(out var gainPtr);
+            NativeMethods.AUTDGainGrouped(out var gainPtr);
             foreach (var gainPair in gainPairs)
-                NativeMethods.AUTDGroupedGainAdd(gainPtr, gainPair.Id, gainPair.Gain.GainPtr);
+                NativeMethods.AUTDGainGroupedAdd(gainPtr, gainPair.Id, gainPair.Gain.GainPtr);
             return new Gain(gainPtr);
         }
 
@@ -73,7 +73,7 @@ namespace AUTD3Sharp
         {
             var (x, y, z) = AUTD.Adjust(point);
             var (dx, dy, dz) = AUTD.Adjust(dir, false);
-            NativeMethods.AUTDBesselBeamGain(out var gainPtr, x, y, z, dx, dy, dz, thetaZ, duty);
+            NativeMethods.AUTDGainBesselBeam(out var gainPtr, x, y, z, dx, dy, dz, thetaZ, duty);
             return new Gain(gainPtr);
         }
 
@@ -81,7 +81,7 @@ namespace AUTD3Sharp
         public static Gain PlaneWave(Vector3 dir, byte duty = 0xFF)
         {
             var (dx, dy, dz) = AUTD.Adjust(dir, false);
-            NativeMethods.AUTDPlaneWaveGain(out var gainPtr, dx, dy, dz, duty);
+            NativeMethods.AUTDGainPlaneWave(out var gainPtr, dx, dy, dz, duty);
             return new Gain(gainPtr);
         }
 
@@ -131,7 +131,7 @@ namespace AUTD3Sharp
             {
                 fixed (double* fp = &foci[0])
                 fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDHoloGainSDP(out gainPtr, backend, fp, ap, size, alpha, lambda, repeat, normalize);
+                    NativeMethods.AUTDGainHoloSDP(out gainPtr, backend, fp, ap, size, alpha, lambda, repeat, normalize);
             }
             NativeMethods.AUTDDeleteBackend(backend);
             return new Gain(gainPtr);
@@ -155,7 +155,7 @@ namespace AUTD3Sharp
             {
                 fixed (double* fp = &foci[0])
                 fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDHoloGainEVD(out gainPtr, backend, fp, ap, size, gamma, normalize);
+                    NativeMethods.AUTDGainHoloEVD(out gainPtr, backend, fp, ap, size, gamma, normalize);
             }
             return new Gain(gainPtr);
         }
@@ -176,7 +176,7 @@ namespace AUTD3Sharp
             {
                 fixed (double* fp = &foci[0])
                 fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDHoloGainGS(out gainPtr, backend, fp, ap, size, repeat);
+                    NativeMethods.AUTDGainHoloGS(out gainPtr, backend, fp, ap, size, repeat);
             }
             return new Gain(gainPtr);
         }
@@ -197,7 +197,7 @@ namespace AUTD3Sharp
             {
                 fixed (double* fp = &foci[0])
                 fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDHoloGainGSPAT(out gainPtr, backend, fp, ap, size, repeat);
+                    NativeMethods.AUTDGainHoloGSPAT(out gainPtr, backend, fp, ap, size, repeat);
             }
             return new Gain(gainPtr);
         }
@@ -218,7 +218,7 @@ namespace AUTD3Sharp
             {
                 fixed (double* fp = &foci[0])
                 fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDHoloGainNaive(out gainPtr, backend, fp, ap, size);
+                    NativeMethods.AUTDGainHoloNaive(out gainPtr, backend, fp, ap, size);
             }
             return new Gain(gainPtr);
         }
@@ -242,14 +242,14 @@ namespace AUTD3Sharp
                 {
                     fixed (double* fp = &foci[0])
                     fixed (double* ap = &amps[0])
-                        NativeMethods.AUTDHoloGainLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, null, 0);
+                        NativeMethods.AUTDGainHoloLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, null, 0);
                 }
                 else
                 {
                     fixed (double* fp = &foci[0])
                     fixed (double* ap = &amps[0])
                     fixed (double* ip = &initial[0])
-                        NativeMethods.AUTDHoloGainLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, ip, initial.Length);
+                        NativeMethods.AUTDGainHoloLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, ip, initial.Length);
                 }
             }
             return new Gain(gainPtr);
@@ -266,20 +266,20 @@ namespace AUTD3Sharp
             {
                 fixed (double* fp = &foci[0])
                 fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDHoloGainGreedy(out gainPtr, fp, ap, size, phaseDiv);
+                    NativeMethods.AUTDGainHoloGreedy(out gainPtr, fp, ap, size, phaseDiv);
             }
             return new Gain(gainPtr);
         }
 
         public static Gain TransducerTest(int index, byte duty, byte phase)
         {
-            NativeMethods.AUTDTransducerTestGain(out var gainPtr, index, duty, phase);
+            NativeMethods.AUTDGainTransducerTest(out var gainPtr, index, duty, phase);
             return new Gain(gainPtr);
         }
 
         public static Gain Null()
         {
-            NativeMethods.AUTDNullGain(out var gainPtr);
+            NativeMethods.AUTDGainNull(out var gainPtr);
             return new Gain(gainPtr);
         }
 
@@ -291,7 +291,7 @@ namespace AUTD3Sharp
             var length = data.GetLength(0) * data.GetLength(1);
             unsafe
             {
-                fixed (ushort* r = data) NativeMethods.AUTDCustomGain(out gainPtr, r, length);
+                fixed (ushort* r = data) NativeMethods.AUTDGainCustom(out gainPtr, r, length);
             }
 
             return new Gain(gainPtr);

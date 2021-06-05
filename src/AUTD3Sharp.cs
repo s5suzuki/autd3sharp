@@ -246,7 +246,8 @@ namespace AUTD3Sharp
 
         public bool ReadsFPGAInfo
         {
-            set => NativeMethods.AUTDSetReadFPGAInfo(_autdControllerHandle.CntPtr, value);
+            get => NativeMethods.AUTDIsReadsFPGAInfo(_autdControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetReadsFPGAInfo(_autdControllerHandle.CntPtr, value);
         }
 
         public byte[] FPGAInfo
@@ -257,7 +258,7 @@ namespace AUTD3Sharp
                 unsafe
                 {
                     fixed (byte* p = infos)
-                        NativeMethods.AUTDReadFPGAInfo(_autdControllerHandle.CntPtr, p);
+                        NativeMethods.AUTDGetFPGAInfo(_autdControllerHandle.CntPtr, p);
                 }
                 return infos;
             }
@@ -267,8 +268,13 @@ namespace AUTD3Sharp
         public int NumTransducers => NativeMethods.AUTDNumTransducers(_autdControllerHandle.CntPtr);
         public double Wavelength
         {
-            get => NativeMethods.AUTDWavelength(_autdControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetWavelength(_autdControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetWavelength(_autdControllerHandle.CntPtr, value);
+        }
+        public double Attenuation
+        {
+            get => NativeMethods.AUTDGetAttenuation(_autdControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetAttenuation(_autdControllerHandle.CntPtr, value);
         }
 
         public static string LastError
