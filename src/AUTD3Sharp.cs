@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/06/2021
+ * Last Modified: 18/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -181,23 +181,20 @@ namespace AUTD3Sharp
 
         public void ClearDevices() => NativeMethods.AUTDClearDevices(_autdControllerHandle.CntPtr);
 
-        public bool Synchronize(ushort modSamplingDiv = 10, ushort modBufSize = 4000) =>
-            NativeMethods.AUTDSynchronize(_autdControllerHandle.CntPtr, modSamplingDiv, modBufSize);
-
         public bool Close() => NativeMethods.AUTDCloseController(_autdControllerHandle.CntPtr);
 
         public bool Clear() => NativeMethods.AUTDClear(_autdControllerHandle.CntPtr);
 
         public bool Stop() => NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
 
-        public bool SetOutputDelay(ushort[,] delays)
+        public bool SetOutputDelay(byte[,] delays)
         {
             if (delays.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
             if (delays.GetLength(1) != NumTransInDevice)
                 throw new ArgumentException("The number of transducers are incorrect.");
             unsafe
             {
-                fixed (ushort* p = delays)
+                fixed (byte* p = delays)
                     return NativeMethods.AUTDSetOutputDelay(_autdControllerHandle.CntPtr, p);
             }
         }

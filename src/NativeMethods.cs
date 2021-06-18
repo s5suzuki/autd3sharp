@@ -15,7 +15,6 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDAddDeviceQuaternion(IntPtr handle, double x, double y, double z, double qw, double qx, double qy, double qz, int gid);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDDeleteDevice(IntPtr handle, int idx);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDClearDevices(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSynchronize(IntPtr handle, ushort modSmplFreqDiv, ushort modBufSize);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDCloseController(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDClear(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeController(IntPtr handle);
@@ -32,7 +31,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSetAttenuation(IntPtr handle, double attenuation);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetFPGAInfo(IntPtr handle, byte* @out);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDUpdateCtrlFlags(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetOutputDelay(IntPtr handle, ushort* delay);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetOutputDelay(IntPtr handle, byte* delay);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetLastError(StringBuilder? error);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDNumDevices(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDNumTransducers(IntPtr handle);

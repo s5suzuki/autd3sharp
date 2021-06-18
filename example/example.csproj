@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AUTD3Sharp" Version="1.2.0" />
+    <PackageReference Include="AUTD3Sharp" Version="1.3.0" />
   </ItemGroup>
 
 </Project>

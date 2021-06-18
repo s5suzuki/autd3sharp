@@ -4,7 +4,7 @@
  * Created Date: 23/05/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 18/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -21,7 +21,7 @@ namespace example.Test
         {
             autd.SilentMode = false;
 
-            var delays = new ushort[autd.NumDevices, AUTD.NumTransInDevice];
+            var delays = new byte[autd.NumDevices, AUTD.NumTransInDevice];
             delays[0, 0] = 4;
             autd.SetOutputDelay(delays);
 
