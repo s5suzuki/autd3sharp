@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 18/06/2021
+ * Last Modified: 19/06/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -186,6 +186,8 @@ namespace AUTD3Sharp
         public bool Clear() => NativeMethods.AUTDClear(_autdControllerHandle.CntPtr);
 
         public bool Stop() => NativeMethods.AUTDStop(_autdControllerHandle.CntPtr);
+        public bool Pause() => NativeMethods.AUTDPause(_autdControllerHandle.CntPtr);
+        public bool Resume() => NativeMethods.AUTDResume(_autdControllerHandle.CntPtr);
 
         public bool SetOutputDelay(byte[,] delays)
         {
@@ -196,6 +198,30 @@ namespace AUTD3Sharp
             {
                 fixed (byte* p = delays)
                     return NativeMethods.AUTDSetOutputDelay(_autdControllerHandle.CntPtr, p);
+            }
+        }
+
+        public bool SetEnable(byte[,] enable)
+        {
+            if (enable.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
+            if (enable.GetLength(1) != NumTransInDevice)
+                throw new ArgumentException("The number of transducers are incorrect.");
+            unsafe
+            {
+                fixed (byte* p = enable)
+                    return NativeMethods.AUTDSetEnable(_autdControllerHandle.CntPtr, p);
+            }
+        }
+
+        public bool SetDelayEnable(ushort[,] delay_enable)
+        {
+            if (delay_enable.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
+            if (delay_enable.GetLength(1) != NumTransInDevice)
+                throw new ArgumentException("The number of transducers are incorrect.");
+            unsafe
+            {
+                fixed (ushort* p = delay_enable)
+                    return NativeMethods.AUTDSetDelayEnable(_autdControllerHandle.CntPtr, p);
             }
         }
 
