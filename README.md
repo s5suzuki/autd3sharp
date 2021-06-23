@@ -14,11 +14,9 @@ Please install using NuGet
 
 https://www.nuget.org/packages/autd3sharp
 
-If you are using .Net Framework, please place autd3capi.dll in the output directory by your self.
-
 ## :ballot_box_with_check: Requirements
 
-If you use Windows and `SOEMLink`, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
+If you use Windows and `Link.SOEM`, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
 
 ## :beginner: Example
 
