@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 19/06/2021
+ * Last Modified: 06/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -201,27 +201,28 @@ namespace AUTD3Sharp
             }
         }
 
-        public bool SetEnable(byte[,] enable)
+        public bool SetDutyOffset(byte[,] offset)
         {
-            if (enable.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
-            if (enable.GetLength(1) != NumTransInDevice)
+            if (offset.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
+            if (offset.GetLength(1) != NumTransInDevice)
                 throw new ArgumentException("The number of transducers are incorrect.");
             unsafe
             {
-                fixed (byte* p = enable)
-                    return NativeMethods.AUTDSetEnable(_autdControllerHandle.CntPtr, p);
+                fixed (byte* p = offset)
+                    return NativeMethods.AUTDSetDutyOffset(_autdControllerHandle.CntPtr, p);
             }
         }
 
-        public bool SetDelayEnable(ushort[,] delay_enable)
+        public bool SetDelayOffset(byte[,] delay, byte[,] offset)
         {
-            if (delay_enable.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
-            if (delay_enable.GetLength(1) != NumTransInDevice)
+            if ((delay.GetLength(0) != NumDevices) || (offset.GetLength(0) != NumDevices)) throw new ArgumentException("The number of devices are incorrect.");
+            if ((delay.GetLength(1) != NumTransInDevice) || offset.GetLength(1) != NumTransInDevice)
                 throw new ArgumentException("The number of transducers are incorrect.");
             unsafe
             {
-                fixed (ushort* p = delay_enable)
-                    return NativeMethods.AUTDSetDelayEnable(_autdControllerHandle.CntPtr, p);
+                fixed (byte* pd = delay)
+                fixed (byte* po = offset)
+                    return NativeMethods.AUTDSetDelayOffset(_autdControllerHandle.CntPtr, pd, po);
             }
         }
 

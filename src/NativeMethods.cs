@@ -32,8 +32,8 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetFPGAInfo(IntPtr handle, byte* @out);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDUpdateCtrlFlags(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetOutputDelay(IntPtr handle, byte* delay);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetEnable(IntPtr handle, byte* enable);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetDelayEnable(IntPtr handle, ushort* delay_enable);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetDutyOffset(IntPtr handle, byte* offset);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSetDelayOffset(IntPtr handle, byte* delay, byte* offset);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetLastError(StringBuilder? error);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDNumDevices(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDNumTransducers(IntPtr handle);
