@@ -99,6 +99,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkSOEM(out IntPtr @out, string ifname, int deviceNum, uint cycleTicks);
         [DllImport("autd3capi-twincat-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkTwinCAT(out IntPtr @out);
 
+        [DllImport("autd3capi-emulator-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkEmulator(out IntPtr @out, ushort port, IntPtr cnt);
     }
 }
 
