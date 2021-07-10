@@ -17,8 +17,12 @@ namespace example
     {
         private static void Main()
         {
-            SOEMTest.Test();
+            //SOEMTest.Test();
             //TwinCATTest.Test();
+
+            //// If you use emulator, execute `autd-emulator.exe` before
+            //// `autd-emulator.exe` is available on https://github.com/shinolab/autd-emulator/releases
+            //EmulatorTest.Test();
         }
     }
 }
