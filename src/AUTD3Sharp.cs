@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 10/07/2021
+ * Last Modified: 20/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -441,7 +441,7 @@ namespace AUTD3Sharp
             vector.z = -vector.z;
 #endif
 #if DIMENSION_M
-            if (scaling) vector *= MeterScale;
+            if (scaling) vector /= MeterScale;
 #endif
             return vector;
         }
