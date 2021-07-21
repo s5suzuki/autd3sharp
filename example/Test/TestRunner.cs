@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/07/2021
+ * Last Modified: 21/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -29,6 +29,7 @@ namespace example.Test
              (HoloGainTest.Test, "Multiple Focal Points Test"),
              (STMTest.Test, "Spatio-Temporal Modulation Test"),
              (SeqTest.Test, "PointSequence Test (Hardware STM)"),
+             (SeqGainTest.Test, "GainSequence Test (Hardware STM with arbitrary Gain)"),
              (AdvancedTest.Test, "Advanced Test (Custom gain/modulation, and output delay)"),
              };
             if (autd.NumDevices == 2)
@@ -62,6 +63,7 @@ namespace example.Test
                 autd.Clear();
             }
 
+            autd.Close();
             autd.Dispose();
         }
     }
