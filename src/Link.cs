@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 10/07/2021
+ * Last Modified: 21/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -29,9 +29,15 @@ namespace AUTD3Sharp
 
         protected override bool ReleaseHandle() => true;
 
-        public static Link SOEM(string ifname, int deviceNum, uint cycleTicks = 1)
+        public static Link SOEM(string ifname, int deviceNum, uint cycleTicks = 1, Action<string>? errorHandler = null)
         {
-            NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks);
+            var errorHandlerPtr = IntPtr.Zero;
+            if (errorHandler != null)
+            {
+                var callback = new NativeMethods.ErrorHandlerDelegate(errorHandler);
+                errorHandlerPtr = Marshal.GetFunctionPointerForDelegate(callback);
+            }
+            NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks, errorHandlerPtr);
             return new Link(link);
         }
 

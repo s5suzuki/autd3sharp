@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 20/07/2021
+ * Last Modified: 21/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -335,6 +335,12 @@ namespace AUTD3Sharp
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
             return NativeMethods.AUTDSendSequence(AUTDControllerHandle.CntPtr, seq.SeqPtr);
+        }
+
+        public bool Send(GainSequence seq)
+        {
+            if (seq == null) throw new ArgumentNullException(nameof(seq));
+            return NativeMethods.AUTDSendGainSequence(AUTDControllerHandle.CntPtr, seq.SeqPtr);
         }
 
         public STMController STM()

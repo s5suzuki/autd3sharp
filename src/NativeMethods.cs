@@ -62,8 +62,12 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDModulationSquare(out IntPtr mod, int freq, byte low, byte high);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeleteModulation(IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSequence(out IntPtr @out);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDGainSequence(out IntPtr @out);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoint(IntPtr seq, double x, double y, double z);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoints(IntPtr seq, double* points, ulong size);
+
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddGain(IntPtr seq, IntPtr gain);
+
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern double AUTDSequenceSetFreq(IntPtr seq, double freq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern double AUTDSequenceFreq(IntPtr seq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern uint AUTDSequencePeriod(IntPtr seq);
@@ -79,6 +83,8 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendModulation(IntPtr handle, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGainModulation(IntPtr handle, IntPtr gain, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendSequence(IntPtr handle, IntPtr seq);
+
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGainSequence(IntPtr handle, IntPtr seq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSTMController(out IntPtr @out, IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDAddSTMGain(IntPtr handle, IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDStartSTM(IntPtr handle, double freq);
@@ -96,7 +102,9 @@ namespace AUTD3Sharp
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern int AUTDGetAdapterPointer(out IntPtr @out);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDGetAdapter(IntPtr pAdapter, int index, StringBuilder? desc, StringBuilder? name);
         [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDFreeAdapterPointer(IntPtr pAdapter);
-        [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkSOEM(out IntPtr @out, string ifname, int deviceNum, uint cycleTicks);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)] public delegate void ErrorHandlerDelegate(string str);
+        [DllImport("autd3capi-soem-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkSOEM(out IntPtr @out, string ifname, int deviceNum, uint cycleTicks, IntPtr handler);
         [DllImport("autd3capi-twincat-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkTwinCAT(out IntPtr @out);
 
         [DllImport("autd3capi-emulator-link", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDLinkEmulator(out IntPtr @out, ushort port, IntPtr cnt);

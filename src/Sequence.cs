@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 21/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -26,11 +26,11 @@ using Vector3 = AUTD3Sharp.Utils.Vector3d;
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
-    public class PointSequence : SafeHandleZeroOrMinusOneIsInvalid
+    public abstract class Sequence : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal IntPtr SeqPtr => handle;
 
-        internal PointSequence(IntPtr seq) : base(true)
+        internal Sequence(IntPtr seq) : base(true)
         {
             SetHandle(seq);
         }
@@ -39,6 +39,27 @@ namespace AUTD3Sharp
         {
             NativeMethods.AUTDDeleteSequence(handle);
             return true;
+        }
+
+        public double Frequency
+        {
+            get => NativeMethods.AUTDSequenceFreq(handle);
+            set => NativeMethods.AUTDSequenceSetFreq(handle, value);
+        }
+
+        public double SamplingFrequency => NativeMethods.AUTDSequenceSamplingFreq(handle);
+        public ushort SamplingFrequencyDivision => NativeMethods.AUTDSequenceSamplingFreqDiv(handle);
+
+        public uint SamplingFrequencyPeriod => NativeMethods.AUTDSequenceSamplingPeriod(handle);
+        public uint Period => NativeMethods.AUTDSequencePeriod(handle);
+    }
+
+    [ComVisible(false)]
+    public class PointSequence : Sequence
+    {
+
+        internal PointSequence(IntPtr seq) : base(seq)
+        {
         }
 
         public bool AddPoint(Vector3 point)
@@ -64,18 +85,6 @@ namespace AUTD3Sharp
             }
         }
 
-        public double Frequency
-        {
-            get => NativeMethods.AUTDSequenceFreq(handle);
-            set => NativeMethods.AUTDSequenceSetFreq(handle, value);
-        }
-
-        public double SamplingFrequency => NativeMethods.AUTDSequenceSamplingFreq(handle);
-        public ushort SamplingFrequencyDivision => NativeMethods.AUTDSequenceSamplingFreqDiv(handle);
-
-        public uint SamplingFrequencyPeriod => NativeMethods.AUTDSequenceSamplingPeriod(handle);
-        public uint Period => NativeMethods.AUTDSequencePeriod(handle);
-
         public static PointSequence Create()
         {
             NativeMethods.AUTDSequence(out var p);
@@ -88,6 +97,26 @@ namespace AUTD3Sharp
             var (nx, ny, nz) = AUTD.Adjust(normal, false);
             NativeMethods.AUTDCircumSequence(out var p, x, y, z, nx, ny, nz, radius, n);
             return new PointSequence(p);
+        }
+    }
+
+
+    [ComVisible(false)]
+    public class GainSequence : Sequence
+    {
+        internal GainSequence(IntPtr seq) : base(seq)
+        {
+        }
+
+        public bool AddGain(Gain gain)
+        {
+            return NativeMethods.AUTDSequenceAddGain(handle, gain.GainPtr);
+        }
+
+        public static GainSequence Create()
+        {
+            NativeMethods.AUTDGainSequence(out var p);
+            return new GainSequence(p);
         }
     }
 }
