@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/07/2021
+ * Last Modified: 28/07/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -101,6 +101,13 @@ namespace AUTD3Sharp
     }
 
 
+    public enum GainMode : ushort
+    {
+        DUTY_PHASE_FULL = 1,
+        PHASE_FULL = 2,
+        PHASE_HALF = 4
+    }
+
     [ComVisible(false)]
     public class GainSequence : Sequence
     {
@@ -113,9 +120,9 @@ namespace AUTD3Sharp
             return NativeMethods.AUTDSequenceAddGain(handle, gain.GainPtr);
         }
 
-        public static GainSequence Create()
+        public static GainSequence Create(GainMode gainMode = GainMode.DUTY_PHASE_FULL)
         {
-            NativeMethods.AUTDGainSequence(out var p);
+            NativeMethods.AUTDGainSequence(out var p, (ushort)gainMode);
             return new GainSequence(p);
         }
     }
