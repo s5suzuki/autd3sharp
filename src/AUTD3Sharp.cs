@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/07/2021
+ * Last Modified: 07/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -314,21 +314,21 @@ namespace AUTD3Sharp
         #endregion
 
         #region LowLevelInterface
-        public bool Send(Gain gain)
+        public bool Send(Gain gain, bool wait_for_msg_processed = true)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr);
+            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr, wait_for_msg_processed);
         }
         public bool Send(Modulation mod)
         {
             if (mod == null) throw new ArgumentNullException(nameof(mod));
             return NativeMethods.AUTDSendModulation(AUTDControllerHandle.CntPtr, mod.ModPtr);
         }
-        public bool Send(Gain gain, Modulation mod)
+        public bool Send(Gain gain, Modulation mod, bool wait_for_msg_processed = true)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
             if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr);
+            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr, wait_for_msg_processed);
         }
 
         public bool Send(PointSequence seq)

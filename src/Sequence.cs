@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/07/2021
+ * Last Modified: 07/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
@@ -62,13 +63,13 @@ namespace AUTD3Sharp
         {
         }
 
-        public bool AddPoint(Vector3 point)
+        public bool AddPoint(Vector3 point, byte duty = 0xFF)
         {
             var (x, y, z) = AUTD.Adjust(point);
-            return NativeMethods.AUTDSequenceAddPoint(handle, x, y, z);
+            return NativeMethods.AUTDSequenceAddPoint(handle, x, y, z, duty);
         }
 
-        public bool AddPoints(IList<Vector3> points)
+        public bool AddPoints(IList<Vector3> points, IList<byte> duties)
         {
             var pointsArr = new double[points.Count * 3];
             for (var i = 0; i < points.Count; i++)
@@ -78,10 +79,14 @@ namespace AUTD3Sharp
                 pointsArr[3 * i + 1] = y;
                 pointsArr[3 * i + 2] = z;
             }
+
+            var dutiesArr = duties.ToArray();
+
             unsafe
             {
-                fixed (double* pd = pointsArr)
-                    return NativeMethods.AUTDSequenceAddPoints(handle, pd, (ulong)points.Count);
+                fixed (double* pp = pointsArr)
+                fixed (byte* pd = dutiesArr)
+                    return NativeMethods.AUTDSequenceAddPoints(handle, pp, (ulong)points.Count, pd, (ulong)duties.Count);
             }
         }
 

@@ -64,8 +64,8 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDDeleteModulation(IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDSequence(out IntPtr @out);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] public static extern void AUTDGainSequence(out IntPtr @out, ushort gain_mode);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoint(IntPtr seq, double x, double y, double z);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoints(IntPtr seq, double* points, ulong size);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoint(IntPtr seq, double x, double y, double z, byte duty);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoints(IntPtr seq, double* points, ulong points_size, byte* duties, ulong duties_size);
 
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddGain(IntPtr seq, IntPtr gain);
 
@@ -80,9 +80,9 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDStop(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDPause(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDResume(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGain(IntPtr handle, IntPtr gain);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGain(IntPtr handle, IntPtr gain, bool wait_for_msg_processed);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendModulation(IntPtr handle, IntPtr mod);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGainModulation(IntPtr handle, IntPtr gain, IntPtr mod);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGainModulation(IntPtr handle, IntPtr gain, IntPtr mod, bool wait_for_msg_processed);
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendSequence(IntPtr handle, IntPtr seq);
 
         [DllImport("autd3capi", CallingConvention = CallingConvention.StdCall)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSendGainSequence(IntPtr handle, IntPtr seq);
