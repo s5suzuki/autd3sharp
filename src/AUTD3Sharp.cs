@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 07/09/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -181,52 +181,43 @@ namespace AUTD3Sharp
 
         public void ClearDevices() => NativeMethods.AUTDClearDevices(AUTDControllerHandle.CntPtr);
 
-        public bool Close() => NativeMethods.AUTDCloseController(AUTDControllerHandle.CntPtr);
+        public int Close() => NativeMethods.AUTDCloseController(AUTDControllerHandle.CntPtr);
 
-        public bool Clear() => NativeMethods.AUTDClear(AUTDControllerHandle.CntPtr);
+        public int Clear() => NativeMethods.AUTDClear(AUTDControllerHandle.CntPtr);
 
-        public bool Stop() => NativeMethods.AUTDStop(AUTDControllerHandle.CntPtr);
-        public bool Pause() => NativeMethods.AUTDPause(AUTDControllerHandle.CntPtr);
-        public bool Resume() => NativeMethods.AUTDResume(AUTDControllerHandle.CntPtr);
+        public int Stop() => NativeMethods.AUTDStop(AUTDControllerHandle.CntPtr);
+        public int Pause() => NativeMethods.AUTDPause(AUTDControllerHandle.CntPtr);
+        public int Resume() => NativeMethods.AUTDResume(AUTDControllerHandle.CntPtr);
 
-        public bool SetOutputDelay(byte[,] delays)
+        public int SetOutputDelay(byte[,] delays)
         {
             if (delays.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
             if (delays.GetLength(1) != NumTransInDevice)
                 throw new ArgumentException("The number of transducers are incorrect.");
-            unsafe
-            {
-                fixed (byte* p = delays)
-                    return NativeMethods.AUTDSetOutputDelay(AUTDControllerHandle.CntPtr, p);
-            }
+
+            return NativeMethods.AUTDSetOutputDelay(AUTDControllerHandle.CntPtr, delays);
+
         }
 
-        public bool SetDutyOffset(byte[,] offset)
+        public int SetDutyOffset(byte[,] offset)
         {
             if (offset.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
             if (offset.GetLength(1) != NumTransInDevice)
                 throw new ArgumentException("The number of transducers are incorrect.");
-            unsafe
-            {
-                fixed (byte* p = offset)
-                    return NativeMethods.AUTDSetDutyOffset(AUTDControllerHandle.CntPtr, p);
-            }
+
+            return NativeMethods.AUTDSetDutyOffset(AUTDControllerHandle.CntPtr, offset);
+
         }
 
-        public bool SetDelayOffset(byte[,] delay, byte[,] offset)
+        public int SetDelayOffset(byte[,] delay, byte[,] offset)
         {
             if (delay.GetLength(0) != NumDevices || offset.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
             if (delay.GetLength(1) != NumTransInDevice || offset.GetLength(1) != NumTransInDevice)
                 throw new ArgumentException("The number of transducers are incorrect.");
-            unsafe
-            {
-                fixed (byte* pd = delay)
-                fixed (byte* po = offset)
-                    return NativeMethods.AUTDSetDelayOffset(AUTDControllerHandle.CntPtr, pd, po);
-            }
+            return NativeMethods.AUTDSetDelayOffset(AUTDControllerHandle.CntPtr, delay, offset);
         }
 
-        public bool UpdateControlFlags() => NativeMethods.AUTDUpdateCtrlFlags(AUTDControllerHandle.CntPtr);
+        public int UpdateControlFlags() => NativeMethods.AUTDUpdateCtrlFlags(AUTDControllerHandle.CntPtr);
 
         public void Dispose()
         {
@@ -279,11 +270,7 @@ namespace AUTD3Sharp
             get
             {
                 var infos = new byte[NumDevices];
-                unsafe
-                {
-                    fixed (byte* p = infos)
-                        NativeMethods.AUTDGetFPGAInfo(AUTDControllerHandle.CntPtr, p);
-                }
+                NativeMethods.AUTDGetFPGAInfo(AUTDControllerHandle.CntPtr, infos);
                 return infos;
             }
         }
@@ -314,30 +301,30 @@ namespace AUTD3Sharp
         #endregion
 
         #region LowLevelInterface
-        public bool Send(Gain gain, bool wait_for_msg_processed = true)
+        public int Send(Gain gain, bool waitForMsgProcessed = true)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr, wait_for_msg_processed);
+            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr, waitForMsgProcessed);
         }
-        public bool Send(Modulation mod)
+        public int Send(Modulation mod)
         {
             if (mod == null) throw new ArgumentNullException(nameof(mod));
             return NativeMethods.AUTDSendModulation(AUTDControllerHandle.CntPtr, mod.ModPtr);
         }
-        public bool Send(Gain gain, Modulation mod, bool wait_for_msg_processed = true)
+        public int Send(Gain gain, Modulation mod, bool waitForMsgProcessed = true)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
             if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr, wait_for_msg_processed);
+            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr, waitForMsgProcessed);
         }
 
-        public bool Send(PointSequence seq)
+        public int Send(PointSequence seq)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
             return NativeMethods.AUTDSendSequence(AUTDControllerHandle.CntPtr, seq.SeqPtr);
         }
 
-        public bool Send(GainSequence seq)
+        public int Send(GainSequence seq)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
             return NativeMethods.AUTDSendGainSequence(AUTDControllerHandle.CntPtr, seq.SeqPtr);
@@ -353,66 +340,38 @@ namespace AUTD3Sharp
 
         public Vector3 TransPosition(int transIdxGlobal)
         {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            unsafe
-            {
-                NativeMethods.AUTDTransPositionByGlobal(AUTDControllerHandle.CntPtr, transIdxGlobal, &x, &y, &z);
-            }
+            NativeMethods.AUTDTransPositionByGlobal(AUTDControllerHandle.CntPtr, transIdxGlobal, out var x, out var y, out var z);
             return Adjust(x, y, z);
         }
 
         public Vector3 TransPosition(int deviceIdx, int transIdxLocal)
         {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            unsafe
-            {
-                NativeMethods.AUTDTransPositionByLocal(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, &x, &y,
-                    &z);
-            }
+
+            NativeMethods.AUTDTransPositionByLocal(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, out var x, out var y, out var z);
 
             return Adjust(x, y, z);
         }
 
         public Vector3 DeviceDirectionX(int deviceIdx)
         {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            unsafe
-            {
 
-                NativeMethods.AUTDDeviceXDirection(AUTDControllerHandle.CntPtr, deviceIdx, &x, &y, &z);
-            }
+
+            NativeMethods.AUTDDeviceXDirection(AUTDControllerHandle.CntPtr, deviceIdx, out var x, out var y, out var z);
 
             return Adjust(x, y, z, false);
         }
 
         public Vector3 DeviceDirectionY(int deviceIdx)
         {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            unsafe
-            {
-                NativeMethods.AUTDDeviceYDirection(AUTDControllerHandle.CntPtr, deviceIdx, &x, &y, &z);
-            }
+            NativeMethods.AUTDDeviceYDirection(AUTDControllerHandle.CntPtr, deviceIdx, out var x, out var y, out var z);
 
             return Adjust(x, y, z, false);
         }
 
         public Vector3 DeviceDirectionZ(int deviceIdx)
         {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            unsafe
-            {
-                NativeMethods.AUTDDeviceZDirection(AUTDControllerHandle.CntPtr, deviceIdx, &x, &y, &z);
-            }
+
+            NativeMethods.AUTDDeviceZDirection(AUTDControllerHandle.CntPtr, deviceIdx, out var x, out var y, out var z);
 
             return Adjust(x, y, z, false);
         }

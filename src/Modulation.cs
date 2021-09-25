@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 28/07/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -41,17 +41,13 @@ namespace AUTD3Sharp
 
         public static Modulation Custom(byte[] data)
         {
-            IntPtr modPtr;
-            unsafe
-            {
-                fixed (byte* p = data) NativeMethods.AUTDModulationCustom(out modPtr, p, (uint)data.Length);
-            }
+            NativeMethods.AUTDModulationCustom(out var modPtr, data, (uint)data.Length);
             return new Modulation(modPtr);
         }
 
-        public static Modulation Square(int freq, byte low = 0x00, byte high = 0xFF)
+        public static Modulation Square(int freq, byte low = 0x00, byte high = 0xFF, double duty = 0.5)
         {
-            NativeMethods.AUTDModulationSquare(out var modPtr, freq, low, high);
+            NativeMethods.AUTDModulationSquare(out var modPtr, freq, low, high, duty);
             return new Modulation(modPtr);
         }
 

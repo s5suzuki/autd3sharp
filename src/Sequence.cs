@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 07/09/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -79,15 +79,8 @@ namespace AUTD3Sharp
                 pointsArr[3 * i + 1] = y;
                 pointsArr[3 * i + 2] = z;
             }
-
             var dutiesArr = duties.ToArray();
-
-            unsafe
-            {
-                fixed (double* pp = pointsArr)
-                fixed (byte* pd = dutiesArr)
-                    return NativeMethods.AUTDSequenceAddPoints(handle, pp, (ulong)points.Count, pd, (ulong)duties.Count);
-            }
+            return NativeMethods.AUTDSequenceAddPoints(handle, pointsArr, (ulong)points.Count, dutiesArr, (ulong)duties.Count);
         }
 
         public static PointSequence Create()
@@ -108,9 +101,9 @@ namespace AUTD3Sharp
 
     public enum GainMode : ushort
     {
-        DUTY_PHASE_FULL = 1,
-        PHASE_FULL = 2,
-        PHASE_HALF = 4
+        DutyPhaseFull = 1,
+        PhaseFull = 2,
+        PhaseHalf = 4
     }
 
     [ComVisible(false)]
@@ -125,7 +118,7 @@ namespace AUTD3Sharp
             return NativeMethods.AUTDSequenceAddGain(handle, gain.GainPtr);
         }
 
-        public static GainSequence Create(GainMode gainMode = GainMode.DUTY_PHASE_FULL)
+        public static GainSequence Create(GainMode gainMode = GainMode.DutyPhaseFull)
         {
             NativeMethods.AUTDGainSequence(out var p, (ushort)gainMode);
             return new GainSequence(p);

@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 03/06/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -85,8 +85,6 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public static Gain Holo(Vector3[] focuses, double[] amps) => HoloSDP(focuses, amps);
-
         private static double[] PackFoci(Vector3[] focuses)
         {
             var size = focuses.Length;
@@ -108,17 +106,17 @@ namespace AUTD3Sharp
             if (focuses.Length != amps.Length) throw new ArgumentException("The number of foci and amplitudes must be the same.");
         }
 
-        private static IntPtr GetEigen3Backend()
+        public static IntPtr Eigen3Backend()
         {
             NativeMethods.AUTDEigen3Backend(out var backend);
             return backend;
         }
 
-        public static Gain HoloSDP(Vector3[] focuses, double[] amps, double alpha = 1e-3,
-            double lambda = 0.9, ulong repeat = 100, bool normalize = false)
+        public static void DeleteBackend(IntPtr backend)
         {
-            return HoloSDP(focuses, amps, GetEigen3Backend(), alpha, lambda, repeat, normalize);
+            NativeMethods.AUTDDeleteBackend(backend);
         }
+
 
         public static Gain HoloSDP(Vector3[] focuses, double[] amps, IntPtr backend, double alpha = 1e-3, double lambda = 0.9, ulong repeat = 100, bool normalize = false)
         {
@@ -126,22 +124,9 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                fixed (double* fp = &foci[0])
-                fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDGainHoloSDP(out gainPtr, backend, fp, ap, size, alpha, lambda, repeat, normalize);
-            }
-            NativeMethods.AUTDDeleteBackend(backend);
-            return new Gain(gainPtr);
-        }
+            NativeMethods.AUTDGainHoloSDP(out var gainPtr, backend, foci, amps, size, alpha, lambda, repeat, normalize);
 
-        public static Gain HoloEVD(Vector3[] focuses, double[] amps, double gamma = 1,
-            bool normalize = true)
-        {
-            return HoloEVD(focuses, amps, GetEigen3Backend(), gamma,
-                normalize);
+            return new Gain(gainPtr);
         }
 
         public static Gain HoloEVD(Vector3[] focuses, double[] amps, IntPtr backend, double gamma = 1, bool normalize = true)
@@ -150,19 +135,9 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                fixed (double* fp = &foci[0])
-                fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDGainHoloEVD(out gainPtr, backend, fp, ap, size, gamma, normalize);
-            }
-            return new Gain(gainPtr);
-        }
 
-        public static Gain HoloGS(Vector3[] focuses, double[] amps, ulong repeat = 100)
-        {
-            return HoloGS(focuses, amps, GetEigen3Backend(), repeat);
+            NativeMethods.AUTDGainHoloEVD(out var gainPtr, backend, foci, amps, size, gamma, normalize);
+            return new Gain(gainPtr);
         }
 
         public static Gain HoloGS(Vector3[] focuses, double[] amps, IntPtr backend, ulong repeat = 100)
@@ -171,19 +146,8 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                fixed (double* fp = &foci[0])
-                fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDGainHoloGS(out gainPtr, backend, fp, ap, size, repeat);
-            }
+            NativeMethods.AUTDGainHoloGS(out var gainPtr, backend, foci, amps, size, repeat);
             return new Gain(gainPtr);
-        }
-
-        public static Gain HoloGSPAT(Vector3[] focuses, double[] amps, uint repeat = 100)
-        {
-            return HoloGSPAT(focuses, amps, GetEigen3Backend(), repeat);
         }
 
         public static Gain HoloGSPAT(Vector3[] focuses, double[] amps, IntPtr backend, uint repeat = 100)
@@ -192,19 +156,8 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                fixed (double* fp = &foci[0])
-                fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDGainHoloGSPAT(out gainPtr, backend, fp, ap, size, repeat);
-            }
+            NativeMethods.AUTDGainHoloGSPAT(out var gainPtr, backend, foci, amps, size, repeat);
             return new Gain(gainPtr);
-        }
-
-        public static Gain HoloNaive(Vector3[] focuses, double[] amps)
-        {
-            return HoloNaive(focuses, amps, GetEigen3Backend());
         }
 
         public static Gain HoloNaive(Vector3[] focuses, double[] amps, IntPtr backend)
@@ -213,20 +166,8 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                fixed (double* fp = &foci[0])
-                fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDGainHoloNaive(out gainPtr, backend, fp, ap, size);
-            }
+            NativeMethods.AUTDGainHoloNaive(out var gainPtr, backend, foci, amps, size);
             return new Gain(gainPtr);
-        }
-
-        public static Gain HoloLM(Vector3[] focuses, double[] amps, double eps1 = 1e-8, double eps2 = 1e-8,
-            double tau = 1e-3, ulong kMax = 5, double[]? initial = null)
-        {
-            return HoloLM(focuses, amps, GetEigen3Backend(), eps1, eps2, tau, kMax, initial);
         }
 
         public static Gain HoloLM(Vector3[] focuses, double[] amps, IntPtr backend, double eps1 = 1e-8, double eps2 = 1e-8, double tau = 1e-3, ulong kMax = 5, double[]? initial = null)
@@ -235,23 +176,37 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                if (initial == null)
-                {
-                    fixed (double* fp = &foci[0])
-                    fixed (double* ap = &amps[0])
-                        NativeMethods.AUTDGainHoloLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, null, 0);
-                }
-                else
-                {
-                    fixed (double* fp = &foci[0])
-                    fixed (double* ap = &amps[0])
-                    fixed (double* ip = &initial[0])
-                        NativeMethods.AUTDGainHoloLM(out gainPtr, backend, fp, ap, size, eps1, eps2, tau, kMax, ip, initial.Length);
-                }
-            }
+            NativeMethods.AUTDGainHoloLM(out var gainPtr, backend, foci, amps, size, eps1, eps2, tau, kMax, initial, initial?.Length ?? 0);
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGaussNewton(Vector3[] focuses, double[] amps, IntPtr backend, double eps1 = 1e-6, double eps2 = 1e-6, ulong kMax = 500, double[]? initial = null)
+        {
+            CheckFociAmps(focuses, amps);
+
+            var size = amps.Length;
+            var foci = PackFoci(focuses);
+            NativeMethods.AUTDGainHoloGaussNewton(out var gainPtr, backend, foci, amps, size, eps1, eps2, kMax, initial, initial?.Length ?? 0);
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloGradientDescent(Vector3[] focuses, double[] amps, IntPtr backend, double eps = 1e-6, double step = 0.5, ulong kMax = 2000, double[]? initial = null)
+        {
+            CheckFociAmps(focuses, amps);
+
+            var size = amps.Length;
+            var foci = PackFoci(focuses);
+            NativeMethods.AUTDGainHoloGradientDescent(out var gainPtr, backend, foci, amps, size, eps, step, kMax, initial, initial?.Length ?? 0);
+            return new Gain(gainPtr);
+        }
+
+        public static Gain HoloAPO(Vector3[] focuses, double[] amps, IntPtr backend, double eps = 1e-8, double lambda = 1.0, ulong kMax = 200)
+        {
+            CheckFociAmps(focuses, amps);
+
+            var size = amps.Length;
+            var foci = PackFoci(focuses);
+            NativeMethods.AUTDGainHoloAPO(out var gainPtr, backend, foci, amps, size, eps, lambda, kMax);
             return new Gain(gainPtr);
         }
 
@@ -261,13 +216,7 @@ namespace AUTD3Sharp
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            IntPtr gainPtr;
-            unsafe
-            {
-                fixed (double* fp = &foci[0])
-                fixed (double* ap = &amps[0])
-                    NativeMethods.AUTDGainHoloGreedy(out gainPtr, fp, ap, size, phaseDiv);
-            }
+            NativeMethods.AUTDGainHoloGreedy(out var gainPtr, foci, amps, size, phaseDiv);
             return new Gain(gainPtr);
         }
 
@@ -287,12 +236,8 @@ namespace AUTD3Sharp
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
 
-            IntPtr gainPtr;
             var length = data.GetLength(0) * data.GetLength(1);
-            unsafe
-            {
-                fixed (ushort* r = data) NativeMethods.AUTDGainCustom(out gainPtr, r, length);
-            }
+            NativeMethods.AUTDGainCustom(out var gainPtr, data, length);
 
             return new Gain(gainPtr);
         }
