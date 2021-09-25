@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
@@ -28,10 +28,12 @@ namespace AUTD3Sharp.Utils
         #endregion
 
         #region property
+#pragma warning disable IDE1006
         public double w { get; }
         public double x { get; }
         public double y { get; }
         public double z { get; }
+#pragma warning restore IDE1006
         #endregion
 
         #region indexcer

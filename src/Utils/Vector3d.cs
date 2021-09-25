@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/05/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -47,9 +47,11 @@ namespace AUTD3Sharp.Utils
         public Vector3d Normalized => this / L2Norm;
         public double L2Norm => Math.Sqrt(L2NormSquared);
         public double L2NormSquared => x * x + y * y + z * z;
+#pragma warning disable IDE1006
         public double x { get; }
         public double y { get; }
         public double z { get; }
+#pragma warning restore IDE1006
         #endregion
 
         #region indexcer
