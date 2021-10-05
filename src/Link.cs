@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/07/2021
+ * Last Modified: 25/09/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -34,7 +34,7 @@ namespace AUTD3Sharp
             var errorHandlerPtr = IntPtr.Zero;
             if (errorHandler != null)
             {
-                var callback = new NativeMethods.ErrorHandlerDelegate(errorHandler);
+                var callback = new NativeMethods.OnLostCallbackDelegate(errorHandler);
                 errorHandlerPtr = Marshal.GetFunctionPointerForDelegate(callback);
             }
             NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks, errorHandlerPtr);
@@ -44,6 +44,12 @@ namespace AUTD3Sharp
         public static Link TwinCAT()
         {
             NativeMethods.AUTDLinkTwinCAT(out var link);
+            return new Link(link);
+        }
+
+        public static Link RemoteTwinCAT(string remoteIp, string remoteAmsNetId, string localAmsNetId)
+        {
+            NativeMethods.AUTDLinkRemoteTwinCAT(out var link, remoteIp, remoteAmsNetId, localAmsNetId);
             return new Link(link);
         }
 
