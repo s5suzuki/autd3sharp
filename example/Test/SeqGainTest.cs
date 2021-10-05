@@ -4,13 +4,12 @@
  * Created Date: 21/07/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/07/2021
+ * Last Modified: 05/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
  * 
  */
-
 
 using AUTD3Sharp;
 using System;
@@ -34,6 +33,7 @@ namespace example.Test
             var center = new Vector3d(x, y, z);
             var seq = GainSequence.Create();
             var pointNum = 200;
+            var backend = Gain.Eigen3Backend();
             for (int i = 0; i < pointNum; i++)
             {
                 var radius = 30.0;
@@ -41,13 +41,15 @@ namespace example.Test
                 var p = radius * new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
                 var focuses = new[] { center + p, center - p };
                 var amps = new[] { 1.0, 1.0 };
-                var gain = Gain.HoloGSPAT(focuses, amps);
+                var gain = Gain.HoloGSPAT(focuses, amps, backend);
                 seq.AddGain(gain);
             }
 
             seq.Frequency = 1;
             Console.WriteLine($"Actual frequency is {seq.Frequency}");
             autd.Send(seq);
+
+            Gain.DeleteBackend(backend);
         }
     }
 }
