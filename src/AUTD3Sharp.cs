@@ -265,6 +265,18 @@ namespace AUTD3Sharp
             set => NativeMethods.AUTDSetReadsFPGAInfo(AUTDControllerHandle.CntPtr, value);
         }
 
+        public bool CheckAck
+        {
+            get => NativeMethods.AUTDIsCheckAck(AUTDControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetCheckAck(AUTDControllerHandle.CntPtr, value);
+        }
+
+        public bool OutputBalance
+        {
+            get => NativeMethods.AUTDIsOutputBalance(AUTDControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetOutputBalance(AUTDControllerHandle.CntPtr, value);
+        }
+
         public byte[] FPGAInfo
         {
             get
@@ -301,21 +313,21 @@ namespace AUTD3Sharp
         #endregion
 
         #region LowLevelInterface
-        public int Send(Gain gain, bool waitForMsgProcessed = true)
+        public int Send(Gain gain)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr, waitForMsgProcessed);
+            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr);
         }
         public int Send(Modulation mod)
         {
             if (mod == null) throw new ArgumentNullException(nameof(mod));
             return NativeMethods.AUTDSendModulation(AUTDControllerHandle.CntPtr, mod.ModPtr);
         }
-        public int Send(Gain gain, Modulation mod, bool waitForMsgProcessed = true)
+        public int Send(Gain gain, Modulation mod)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
             if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr, waitForMsgProcessed);
+            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr);
         }
 
         public int Send(PointSequence seq)

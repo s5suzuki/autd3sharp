@@ -67,5 +67,17 @@ namespace AUTD3Sharp
             NativeMethods.AUTDModulationSineLegacy(out var modPtr, freq, amp, offset);
             return new Modulation(modPtr);
         }
+
+        public static Modulation RawPCM(string filename, double samplingFreq, ushort modSamplingFreqDiv)
+        {
+            NativeMethods.AUTDModulationRawPCM(out var mod, filename, samplingFreq, modSamplingFreqDiv);
+            return new Modulation(mod);
+        }
+
+        public static Modulation Wav(string filename, ushort modSamplingFreqDiv)
+        {
+            NativeMethods.AUTDModulationWav(out var mod, filename, modSamplingFreqDiv);
+            return new Modulation(mod);
+        }
     }
 }

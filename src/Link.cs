@@ -34,7 +34,7 @@ namespace AUTD3Sharp
             var errorHandlerPtr = IntPtr.Zero;
             if (errorHandler != null)
             {
-                var callback = new NativeMethods.ErrorHandlerDelegate(errorHandler);
+                var callback = new NativeMethods.OnLostCallbackDelegate(errorHandler);
                 errorHandlerPtr = Marshal.GetFunctionPointerForDelegate(callback);
             }
             NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks, errorHandlerPtr);

@@ -210,13 +210,13 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public static Gain HoloGreedy(Vector3[] focuses, double[] amps, int phaseDiv = 16)
+        public static Gain HoloGreedy(Vector3[] focuses, double[] amps, IntPtr backend, int phaseDiv = 16)
         {
             CheckFociAmps(focuses, amps);
 
             var size = amps.Length;
             var foci = PackFoci(focuses);
-            NativeMethods.AUTDGainHoloGreedy(out var gainPtr, foci, amps, size, phaseDiv);
+            NativeMethods.AUTDGainHoloGreedy(out var gainPtr, backend, foci, amps, size, phaseDiv);
             return new Gain(gainPtr);
         }
 
