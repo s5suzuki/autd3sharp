@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 25/09/2021
+ * Last Modified: 06/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -12,7 +12,6 @@
  */
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using AUTD3Sharp.Utils;
 using Microsoft.Win32.SafeHandles;
@@ -44,14 +43,7 @@ namespace AUTD3Sharp
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte ToDuty(double amp)
-        {
-            var d = Math.Asin(amp) / AUTD.Pi;
-            return (byte)(511.0 * d);
-        }
-
-        public static Gain FocalPoint(Vector3 point, double amp) => FocalPoint(point, ToDuty(amp));
+        public static Gain FocalPoint(Vector3 point, double amp) => FocalPoint(point, AUTD.ToDuty(amp));
         public static Gain FocalPoint(Vector3 point, byte duty = 0xff)
         {
             var (x, y, z) = AUTD.Adjust(point);
@@ -68,7 +60,7 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public static Gain BesselBeam(Vector3 point, Vector3 dir, double thetaZ, double amp) => BesselBeam(point, dir, thetaZ, ToDuty(amp));
+        public static Gain BesselBeam(Vector3 point, Vector3 dir, double thetaZ, double amp) => BesselBeam(point, dir, thetaZ, AUTD.ToDuty(amp));
         public static Gain BesselBeam(Vector3 point, Vector3 dir, double thetaZ, byte duty = 0xFF)
         {
             var (x, y, z) = AUTD.Adjust(point);
@@ -77,7 +69,7 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public static Gain PlaneWave(Vector3 dir, double amp) => PlaneWave(dir, ToDuty(amp));
+        public static Gain PlaneWave(Vector3 dir, double amp) => PlaneWave(dir, AUTD.ToDuty(amp));
         public static Gain PlaneWave(Vector3 dir, byte duty = 0xFF)
         {
             var (dx, dy, dz) = AUTD.Adjust(dir, false);

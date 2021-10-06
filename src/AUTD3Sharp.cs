@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 25/09/2021
+ * Last Modified: 06/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -94,9 +94,9 @@ namespace AUTD3Sharp
 #else
         public const float MeterScale = 1;
 #endif
-        public const float AUTDWidth = 192.0f / MeterScale;
-        public const float AUTDHeight = 151.4f / MeterScale;
-        public const float TransSize = 10.16f / MeterScale;
+        public const float DeviceWidth = 192.0f / MeterScale;
+        public const float DeviceHeight = 151.4f / MeterScale;
+        public const float TransSpacing = 10.16f / MeterScale;
         public const float Pi = Math.PI;
 #else
 #if DIMENSION_M
@@ -104,9 +104,9 @@ namespace AUTD3Sharp
 #else
         public const double MeterScale = 1;
 #endif
-        public const double AUTDWidth = 192.0 / MeterScale;
-        public const double AUTDHeight = 151.4 / MeterScale;
-        public const double TransSize = 10.16 / MeterScale;
+        public const double DeviceWidth = 192.0 / MeterScale;
+        public const double DeviceHeight = 151.4 / MeterScale;
+        public const double TransSpacing = 10.16 / MeterScale;
         public const double Pi = Math.PI;
 #endif
         public const int NumTransInDevice = 249;
@@ -386,6 +386,27 @@ namespace AUTD3Sharp
             NativeMethods.AUTDDeviceZDirection(AUTDControllerHandle.CntPtr, deviceIdx, out var x, out var y, out var z);
 
             return Adjust(x, y, z, false);
+        }
+        #endregion
+
+        #region Utils
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte ToDuty(double amp)
+        {
+            var d = Math.Asin(amp) / Pi;
+            return (byte)(511.0 * d);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte ToPhase(double phase)
+        {
+            return (byte)((int)Math.Round((phase / (2.0 * Pi) + 0.5) * 256.0) & 0xFF);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort PackToU16(byte high, byte low)
+        {
+            return (ushort)((high << 8) | low);
         }
         #endregion
 
