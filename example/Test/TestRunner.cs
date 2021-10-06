@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/07/2021
+ * Last Modified: 06/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -31,11 +31,11 @@ namespace example.Test
              (SeqTest.Test, "PointSequence Test (Hardware STM)"),
              (SeqGainTest.Test, "GainSequence Test (Hardware STM with arbitrary Gain)"),
              (AdvancedTest.Test, "Advanced Test (Custom gain/modulation, and output delay)"),
+             (CustomTest.Test, "Custom Test (Custom Focus)")
              };
+
             if (autd.NumDevices == 2)
-            {
                 examples.Add((GroupTest.Test, "Grouped gain Test"));
-            }
 
             autd.Clear();
 
