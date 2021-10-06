@@ -6,7 +6,7 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Standard 2.1
 
-version: 1.8.1
+version: 1.8.1.1
 
 ## :hammer_and_wrench: Install
 
