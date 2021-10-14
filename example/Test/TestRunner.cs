@@ -39,7 +39,9 @@ namespace example.Test
 
             autd.Clear();
 
-            foreach (var (firm, index) in autd.FirmwareInfoList().Select((firm, i) => (firm, i)))
+            var firmList = autd.FirmwareInfoList().ToArray();
+            if (!firmList.Any()) Console.WriteLine("Failed to read firmware information of some devices. You probably use firmware v1.8 or earlier.");
+            foreach (var (firm, index) in firmList.Select((firm, i) => (firm, i)))
                 Console.WriteLine($"AUTD {index}: {firm}");
 
             while (true)
@@ -60,9 +62,9 @@ namespace example.Test
 
                 Console.WriteLine("finish.");
                 autd.Stop();
-                autd.Clear();
             }
 
+            autd.Clear();
             autd.Close();
             autd.Dispose();
         }

@@ -20,8 +20,8 @@ namespace example.Test
     {
         public static void Test(AUTD autd)
         {
-            var x = AUTD.AUTDWidth / 2;
-            var y = AUTD.AUTDHeight / 2;
+            const double x = AUTD.DeviceWidth / 2;
+            const double y = AUTD.DeviceHeight / 2;
 
             var mod = Modulation.Sine(150); // AM sin 150 Hz
 

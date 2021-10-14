@@ -21,8 +21,8 @@ namespace example.Test
     {
         public static void Test(AUTD autd)
         {
-            const double x = AUTD.AUTDWidth / 2;
-            const double y = AUTD.AUTDHeight / 2;
+            const double x = AUTD.DeviceWidth / 2;
+            const double y = AUTD.DeviceHeight / 2;
             const double z = 150;
 
             autd.SilentMode = false;
@@ -35,7 +35,7 @@ namespace example.Test
             var seq = PointSequence.CircumferencePointSequence(center, dir, 30.0, 200);
             seq.Frequency = 1;
             Console.WriteLine($"Actual frequency is {seq.Frequency}");
-            autd.Send(seq);
+            autd.Send(seq, mod);
         }
     }
 }

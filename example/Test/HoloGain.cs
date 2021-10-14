@@ -20,8 +20,8 @@ namespace example.Test
     {
         public static void Test(AUTD autd)
         {
-            const double x = AUTD.TransSize * (AUTD.NumTransInX - 1) / 2.0;
-            const double y = AUTD.TransSize * (AUTD.NumTransInY - 1) / 2.0;
+            const double x = AUTD.TransSpacing * (AUTD.NumTransInX - 1) / 2.0;
+            const double y = AUTD.TransSpacing * (AUTD.NumTransInY - 1) / 2.0;
             const double z = 150.0;
 
             var mod = Modulation.Sine(150);

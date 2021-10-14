@@ -21,7 +21,7 @@ namespace example.Test
     {
         private static byte ToPhase(double phase)
         {
-            return (byte)((int)(Math.Round((phase / (2.0 * Math.PI) + 0.5) * 256.0)) & 0xFF);
+            return (byte)((int)Math.Round((phase / (2.0 * Math.PI) + 0.5) * 256.0) & 0xFF);
         }
 
         private static Gain Focus(AUTD autd, Vector3d point)
@@ -30,14 +30,14 @@ namespace example.Test
 
             var data = new ushort[devNum, AUTD.NumTransInDevice];
 
-            var wavenumber = 2.0 * Math.PI / autd.Wavelength;
+            var waveNumber = 2.0 * Math.PI / autd.Wavelength;
             for (var dev = 0; dev < devNum; dev++)
             {
                 for (var i = 0; i < AUTD.NumTransInDevice; i++)
                 {
                     var tp = autd.TransPosition(dev, i);
                     var dist = (tp - point).L2Norm;
-                    var phase = ToPhase(wavenumber * dist);
+                    var phase = ToPhase(waveNumber * dist);
                     const ushort duty = 0xFF;
                     data[dev, i] = (ushort)((duty << 8) | phase);
                 }
@@ -48,8 +48,8 @@ namespace example.Test
 
         public static void Test(AUTD autd)
         {
-            const double x = AUTD.AUTDWidth / 2;
-            const double y = AUTD.AUTDHeight / 2;
+            const double x = AUTD.DeviceWidth / 2;
+            const double y = AUTD.DeviceHeight / 2;
             const double z = 150;
 
             var mod = Modulation.Sine(150);

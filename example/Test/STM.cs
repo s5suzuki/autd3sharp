@@ -21,8 +21,8 @@ namespace example.Test
     {
         public static void Test(AUTD autd)
         {
-            const double x = AUTD.AUTDWidth / 2;
-            const double y = AUTD.AUTDHeight / 2;
+            const double x = AUTD.DeviceWidth / 2;
+            const double y = AUTD.DeviceHeight / 2;
             const double z = 150.0;
 
             autd.SilentMode = false;
