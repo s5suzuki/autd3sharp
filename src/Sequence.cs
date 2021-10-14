@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 25/09/2021
+ * Last Modified: 14/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -49,8 +49,11 @@ namespace AUTD3Sharp
         }
 
         public double SamplingFrequency => NativeMethods.AUTDSequenceSamplingFreq(handle);
-        public ushort SamplingFrequencyDivision => NativeMethods.AUTDSequenceSamplingFreqDiv(handle);
-
+        public uint SamplingFrequencyDivision
+        {
+            get => NativeMethods.AUTDSequenceSamplingFreqDiv(handle);
+            set => NativeMethods.AUTDSequenceSetSamplingFreqDiv(handle, value);
+        }
         public uint SamplingFrequencyPeriod => NativeMethods.AUTDSequenceSamplingPeriod(handle);
         public uint Period => NativeMethods.AUTDSequencePeriod(handle);
     }

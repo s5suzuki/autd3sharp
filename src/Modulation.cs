@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 25/09/2021
+ * Last Modified: 14/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -31,6 +31,13 @@ namespace AUTD3Sharp
         {
             NativeMethods.AUTDDeleteModulation(handle);
             return true;
+        }
+
+        public double SamplingFrequency => NativeMethods.AUTDModulationSamplingFreq(handle);
+        public uint SamplingFrequencyDivision
+        {
+            get => NativeMethods.AUTDModulationSamplingFreqDiv(handle);
+            set => NativeMethods.AUTDModulationSetSamplingFreqDiv(handle, value);
         }
 
         public static Modulation Static(byte amp = 0xFF)
