@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/10/2021
+ * Last Modified: 14/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -247,6 +247,12 @@ namespace AUTD3Sharp
 
         public bool IsOpen => NativeMethods.AUTDIsOpen(AUTDControllerHandle.CntPtr);
 
+        public bool OutputEnable
+        {
+            get => NativeMethods.AUTDIsOutputEnable(AUTDControllerHandle.CntPtr);
+            set => NativeMethods.AUTDSetOutputEnable(AUTDControllerHandle.CntPtr, value);
+        }
+
         public bool SilentMode
         {
             get => NativeMethods.AUTDIsSilentMode(AUTDControllerHandle.CntPtr);
@@ -330,16 +336,16 @@ namespace AUTD3Sharp
             return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr);
         }
 
-        public int Send(PointSequence seq)
+        public int Send(PointSequence seq, Modulation? mod = null)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
-            return NativeMethods.AUTDSendSequence(AUTDControllerHandle.CntPtr, seq.SeqPtr);
+            return NativeMethods.AUTDSendSequenceModulation(AUTDControllerHandle.CntPtr, seq.SeqPtr, mod?.ModPtr ?? IntPtr.Zero);
         }
 
-        public int Send(GainSequence seq)
+        public int Send(GainSequence seq, Modulation? mod = null)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
-            return NativeMethods.AUTDSendGainSequence(AUTDControllerHandle.CntPtr, seq.SeqPtr);
+            return NativeMethods.AUTDSendGainSequenceModulation(AUTDControllerHandle.CntPtr, seq.SeqPtr, mod?.ModPtr ?? IntPtr.Zero);
         }
 
         public STMController STM()

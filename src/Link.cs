@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 25/09/2021
+ * Last Modified: 14/10/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -31,13 +31,11 @@ namespace AUTD3Sharp
 
         public static Link SOEM(string ifname, int deviceNum, uint cycleTicks = 1, Action<string>? errorHandler = null)
         {
-            var errorHandlerPtr = IntPtr.Zero;
-            if (errorHandler != null)
-            {
-                var callback = new NativeMethods.OnLostCallbackDelegate(errorHandler);
-                errorHandlerPtr = Marshal.GetFunctionPointerForDelegate(callback);
-            }
-            NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks, errorHandlerPtr);
+            NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks);
+            if (errorHandler == null) return new Link(link);
+            var callback = new NativeMethods.OnLostCallbackDelegate(errorHandler);
+            var errorHandlerPtr = Marshal.GetFunctionPointerForDelegate(callback);
+            NativeMethods.AUTDSetSOEMOnLost(link, errorHandlerPtr);
             return new Link(link);
         }
 
