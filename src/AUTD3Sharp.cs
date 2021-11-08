@@ -249,37 +249,37 @@ namespace AUTD3Sharp
 
         public bool OutputEnable
         {
-            get => NativeMethods.AUTDIsOutputEnable(AUTDControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetOutputEnable(AUTDControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetOutputEnable(AUTDControllerHandle.CntPtr, value);
         }
 
         public bool SilentMode
         {
-            get => NativeMethods.AUTDIsSilentMode(AUTDControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetSilentMode(AUTDControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetSilentMode(AUTDControllerHandle.CntPtr, value);
         }
 
         public bool ForceFan
         {
-            get => NativeMethods.AUTDIsForceFan(AUTDControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetForceFan(AUTDControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetForceFan(AUTDControllerHandle.CntPtr, value);
         }
 
         public bool ReadsFPGAInfo
         {
-            get => NativeMethods.AUTDIsReadsFPGAInfo(AUTDControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetReadsFPGAInfo(AUTDControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetReadsFPGAInfo(AUTDControllerHandle.CntPtr, value);
         }
 
         public bool CheckAck
         {
-            get => NativeMethods.AUTDIsCheckAck(AUTDControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetCheckAck(AUTDControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetCheckAck(AUTDControllerHandle.CntPtr, value);
         }
 
         public bool OutputBalance
         {
-            get => NativeMethods.AUTDIsOutputBalance(AUTDControllerHandle.CntPtr);
+            get => NativeMethods.AUTDGetOutputBalance(AUTDControllerHandle.CntPtr);
             set => NativeMethods.AUTDSetOutputBalance(AUTDControllerHandle.CntPtr, value);
         }
 

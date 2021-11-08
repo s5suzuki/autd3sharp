@@ -20,12 +20,12 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDClear(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDFreeController(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsOpen(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsOutputEnable(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsSilentMode(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsForceFan(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsReadsFPGAInfo(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsOutputBalance(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDIsCheckAck(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetOutputEnable(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetSilentMode(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetForceFan(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetReadsFPGAInfo(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetOutputBalance(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetCheckAck(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetOutputEnable(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool enable);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetSilentMode(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool mode);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetReadsFPGAInfo(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool readsFpgaInfo);
@@ -124,7 +124,6 @@ namespace AUTD3Sharp
         [DllImport("autd3capi-arrayfire-backend", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDArrayFireBackend(out IntPtr @out);
         [DllImport("autd3capi-blas-backend", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDBLASBackend(out IntPtr @out);
         [DllImport("autd3capi-cuda-backend", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCUDABackend(out IntPtr @out);
-
     }
 }
 
