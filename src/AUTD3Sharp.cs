@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 14/10/2021
+ * Last Modified: 19/11/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -399,14 +399,22 @@ namespace AUTD3Sharp
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte ToDuty(double amp)
         {
+#if USE_DOUBLE
             var d = Math.Asin(amp) / Pi;
+#else
+            var d = Math.Asin((float)amp) / Pi;
+#endif
             return (byte)(511.0 * d);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte ToPhase(double phase)
         {
+#if USE_DOUBLE
             return (byte)((int)Math.Round((phase / (2.0 * Pi) + 0.5) * 256.0) & 0xFF);
+#else
+            return (byte)((int)Math.Round(((float)phase / (2.0 * Pi) + 0.5) * 256.0) & 0xFF);
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
