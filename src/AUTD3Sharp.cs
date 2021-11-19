@@ -161,25 +161,20 @@ namespace AUTD3Sharp
 
 #if UNITY_2018_3_OR_NEWER
 #else
-        public int AddDevice(Vector3 position, Vector3 rotation, int groupId = 0)
+        public int AddDevice(Vector3 position, Vector3 rotation)
         {
             var (x, y, z) = Adjust(position);
             var (rx, ry, rz) = Adjust(rotation, false);
-            return NativeMethods.AUTDAddDevice(AUTDControllerHandle.CntPtr, x, y, z, rx, ry, rz, groupId);
+            return NativeMethods.AUTDAddDevice(AUTDControllerHandle.CntPtr, x, y, z, rx, ry, rz);
         }
 #endif
 
-        public int AddDevice(Vector3 position, Quaternion quaternion, int groupId = 0)
+        public int AddDevice(Vector3 position, Quaternion quaternion)
         {
             var (x, y, z) = Adjust(position);
             var (qw, qx, qy, qz) = Adjust(quaternion);
-            return NativeMethods.AUTDAddDeviceQuaternion(AUTDControllerHandle.CntPtr, x, y, z, qw, qx, qy, qz,
-                groupId);
+            return NativeMethods.AUTDAddDeviceQuaternion(AUTDControllerHandle.CntPtr, x, y, z, qw, qx, qy, qz);
         }
-
-        public int DeleteDevice(int idx) => NativeMethods.AUTDDeleteDevice(AUTDControllerHandle.CntPtr, idx);
-
-        public void ClearDevices() => NativeMethods.AUTDClearDevices(AUTDControllerHandle.CntPtr);
 
         public int Close() => NativeMethods.AUTDCloseController(AUTDControllerHandle.CntPtr);
 
@@ -354,7 +349,7 @@ namespace AUTD3Sharp
             return new STMController(handle);
         }
 
-        public int DeviceIdxForTransIdx(int devIdx) => NativeMethods.AUTDDeviceIdxForTransIdx(AUTDControllerHandle.CntPtr, devIdx);
+        public static int DeviceIdxForTransIdx(int devIdx) => NativeMethods.AUTDDeviceIdxForTransIdx(devIdx);
 
         public Vector3 TransPosition(int transIdxGlobal)
         {
@@ -413,7 +408,7 @@ namespace AUTD3Sharp
 #if USE_DOUBLE
             return (byte)((int)Math.Round((phase / (2.0 * Pi) + 0.5) * 256.0) & 0xFF);
 #else
-            return (byte)((int)Math.Round(((float)phase / (2.0 * Pi) + 0.5) * 256.0) & 0xFF);
+            return (byte)((int)Math.Round(((float)phase / (2.0f * Pi) + 0.5f) * 256.0f) & 0xFF);
 #endif
         }
 

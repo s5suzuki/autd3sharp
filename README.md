@@ -6,7 +6,7 @@
 
 [autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Standard 2.1
 
-version: 1.9.1
+version: 1.9.2
 
 ## :hammer_and_wrench: Install
 
@@ -33,6 +33,7 @@ dotnet run
 ## :video_game: Unity
 
 Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
+    * Tested with 2020.3.22f1 and 
 
 * After importing the package, please enable `Allow 'unsafe' code` in `Project Settings > Player`
     * Also, add `-nullable:enable` in `Additional Compiler Arguments` to suppress warnings
