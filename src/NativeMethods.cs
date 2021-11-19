@@ -12,10 +12,8 @@ namespace AUTD3Sharp
 
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateController(out IntPtr @out);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDOpenController(IntPtr handle, IntPtr pLink);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDAddDevice(IntPtr handle, double x, double y, double z, double rz1, double ry, double rz2, int gid);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDAddDeviceQuaternion(IntPtr handle, double x, double y, double z, double qw, double qx, double qy, double qz, int gid);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDDeleteDevice(IntPtr handle, int idx);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDClearDevices(IntPtr handle);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDAddDevice(IntPtr handle, double x, double y, double z, double rz1, double ry, double rz2);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDAddDeviceQuaternion(IntPtr handle, double x, double y, double z, double qw, double qx, double qy, double qz);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDCloseController(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDClear(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDFreeController(IntPtr handle);
@@ -44,7 +42,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDGetLastError(StringBuilder? error);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDNumDevices(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDNumTransducers(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDDeviceIdxForTransIdx(IntPtr handle, int globalTransIdx);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDDeviceIdxForTransIdx(int globalTransIdx);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDTransPositionByGlobal(IntPtr handle, int globalTransIdx, out double x, out double y, out double z);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDTransPositionByLocal(IntPtr handle, int deviceIdx, int localTransIdx, out double x, out double y, out double z);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeviceXDirection(IntPtr handle, int deviceIdx, out double x, out double y, out double z);
@@ -55,7 +53,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDFreeFirmwareInfoListPointer(IntPtr pFirmInfoList);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainNull(out IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainGrouped(out IntPtr gain);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainGroupedAdd(IntPtr groupedGain, int id, IntPtr gain);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainGroupedAdd(IntPtr groupedGain, int deviceId, IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainFocalPoint(out IntPtr gain, double x, double y, double z, byte duty);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainBesselBeam(out IntPtr gain, double x, double y, double z, double nX, double nY, double nZ, double thetaZ, byte duty);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainPlaneWave(out IntPtr gain, double nX, double nY, double nZ, byte duty);

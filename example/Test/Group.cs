@@ -4,13 +4,14 @@
  * Created Date: 25/08/2019
  * Author: Shun Suzuki
  * -----
- * Last Modified: 05/10/2021
+ * Last Modified: 19/11/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2019 Hapis Lab. All rights reserved.
  * 
  */
 
+using System.Collections.Generic;
 using AUTD3Sharp;
 using AUTD3Sharp.Utils;
 
@@ -39,7 +40,12 @@ namespace example.Test
             var backend = Gain.Eigen3Backend();
             var g2 = Gain.HoloGSPAT(focuses, amps, backend);
 
-            var gain = Gain.Grouped(new GainPair(0, g1), new GainPair(1, g2));
+            var gainMap = new Dictionary<int, Gain>
+            {
+                [0] = g1,
+                [1] = g2
+            };
+            var gain = Gain.Grouped(gainMap);
             var mod = Modulation.Sine(150); // AM sin 150 Hz
             autd.Send(gain, mod);
 

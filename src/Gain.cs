@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/10/2021
+ * Last Modified: 19/11/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -12,8 +12,8 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using AUTD3Sharp.Utils;
 using Microsoft.Win32.SafeHandles;
 
 #if UNITY_2018_3_OR_NEWER
@@ -51,12 +51,12 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public static Gain Grouped(params GainPair[] gainPairs)
+        public static Gain Grouped(Dictionary<int, Gain> gainMap)
         {
-            if (gainPairs == null) throw new ArgumentNullException(nameof(gainPairs));
+            if (gainMap == null) throw new ArgumentNullException(nameof(gainMap));
             NativeMethods.AUTDGainGrouped(out var gainPtr);
-            foreach (var gainPair in gainPairs)
-                NativeMethods.AUTDGainGroupedAdd(gainPtr, gainPair.Id, gainPair.Gain.GainPtr);
+            foreach (var id_gain in gainMap)
+                NativeMethods.AUTDGainGroupedAdd(gainPtr, id_gain.Key, id_gain.Value.GainPtr);
             return new Gain(gainPtr);
         }
 
