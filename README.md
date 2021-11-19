@@ -33,7 +33,7 @@ dotnet run
 ## :video_game: Unity
 
 Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
-    * Tested with 2020.3.22f1 and 
+    * Tested with 2020.3.22f1 and 2021.2.3f1
 
 * After importing the package, please enable `Allow 'unsafe' code` in `Project Settings > Player`
     * Also, add `-nullable:enable` in `Additional Compiler Arguments` to suppress warnings
