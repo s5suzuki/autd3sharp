@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 19/11/2021
+ * Last Modified: 24/11/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -184,31 +184,22 @@ namespace AUTD3Sharp
         public int Pause() => NativeMethods.AUTDPause(AUTDControllerHandle.CntPtr);
         public int Resume() => NativeMethods.AUTDResume(AUTDControllerHandle.CntPtr);
 
-        public int SetOutputDelay(byte[,] delays)
+        public int SetDelayOffset(byte[,]? delay, byte[,]? offset)
         {
-            if (delays.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
-            if (delays.GetLength(1) != NumTransInDevice)
-                throw new ArgumentException("The number of transducers are incorrect.");
+            if (delay != null)
+            {
+                if (delay.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
+                if (delay.GetLength(1) != NumTransInDevice)
+                    throw new ArgumentException("The number of transducers are incorrect.");
+            }
 
-            return NativeMethods.AUTDSetOutputDelay(AUTDControllerHandle.CntPtr, delays);
+            if (offset != null)
+            {
+                if (offset.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
+                if (offset.GetLength(1) != NumTransInDevice)
+                    throw new ArgumentException("The number of transducers are incorrect.");
+            }
 
-        }
-
-        public int SetDutyOffset(byte[,] offset)
-        {
-            if (offset.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
-            if (offset.GetLength(1) != NumTransInDevice)
-                throw new ArgumentException("The number of transducers are incorrect.");
-
-            return NativeMethods.AUTDSetDutyOffset(AUTDControllerHandle.CntPtr, offset);
-
-        }
-
-        public int SetDelayOffset(byte[,] delay, byte[,] offset)
-        {
-            if (delay.GetLength(0) != NumDevices || offset.GetLength(0) != NumDevices) throw new ArgumentException("The number of devices are incorrect.");
-            if (delay.GetLength(1) != NumTransInDevice || offset.GetLength(1) != NumTransInDevice)
-                throw new ArgumentException("The number of transducers are incorrect.");
             return NativeMethods.AUTDSetDelayOffset(AUTDControllerHandle.CntPtr, delay, offset);
         }
 
@@ -289,7 +280,7 @@ namespace AUTD3Sharp
         }
 
         public int NumDevices => NativeMethods.AUTDNumDevices(AUTDControllerHandle.CntPtr);
-        public int NumTransducers => NativeMethods.AUTDNumTransducers(AUTDControllerHandle.CntPtr);
+        public int NumTransducers => NumDevices * NumTransInDevice;
         public double Wavelength
         {
             get => NativeMethods.AUTDGetWavelength(AUTDControllerHandle.CntPtr);
@@ -317,13 +308,15 @@ namespace AUTD3Sharp
         public int Send(Gain gain)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDSendGain(AUTDControllerHandle.CntPtr, gain.GainPtr);
+            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, IntPtr.Zero);
         }
+
         public int Send(Modulation mod)
         {
             if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDSendModulation(AUTDControllerHandle.CntPtr, mod.ModPtr);
+            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, IntPtr.Zero, mod.ModPtr);
         }
+
         public int Send(Gain gain, Modulation mod)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
@@ -349,18 +342,10 @@ namespace AUTD3Sharp
             return new STMController(handle);
         }
 
-        public static int DeviceIdxForTransIdx(int devIdx) => NativeMethods.AUTDDeviceIdxForTransIdx(devIdx);
-
-        public Vector3 TransPosition(int transIdxGlobal)
-        {
-            NativeMethods.AUTDTransPositionByGlobal(AUTDControllerHandle.CntPtr, transIdxGlobal, out var x, out var y, out var z);
-            return Adjust(x, y, z);
-        }
-
         public Vector3 TransPosition(int deviceIdx, int transIdxLocal)
         {
 
-            NativeMethods.AUTDTransPositionByLocal(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, out var x, out var y, out var z);
+            NativeMethods.AUTDTransPosition(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, out var x, out var y, out var z);
 
             return Adjust(x, y, z);
         }
