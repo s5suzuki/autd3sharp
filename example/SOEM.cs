@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 21/07/2021
+ * Last Modified: 24/11/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -44,7 +44,11 @@ namespace example
             //autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 1);
 
             var ifname = GetIfname();
-            var link = Link.SOEM(ifname, autd.NumDevices, 1, x => Console.WriteLine($"Unrecoverable error occurred: {x}"));
+            var link = Link.SOEM(ifname, autd.NumDevices, 1, x =>
+            {
+                Console.WriteLine($"Unrecoverable error occurred: {x}");
+                Environment.Exit(-1);
+            });
             if (!autd.Open(link))
             {
                 Console.WriteLine(AUTD.LastError);

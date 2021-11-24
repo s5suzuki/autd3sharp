@@ -23,7 +23,7 @@ namespace example.Test
 
             var delays = new byte[autd.NumDevices, AUTD.NumTransInDevice];
             delays[0, 0] = 4;
-            autd.SetOutputDelay(delays);
+            autd.SetDelayOffset(delays, null);
 
             var uniform = new ushort[autd.NumDevices, AUTD.NumTransInDevice];
             for (var i = 0; i < autd.NumDevices; i++)
