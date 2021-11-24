@@ -36,15 +36,10 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetAttenuation(IntPtr handle, double attenuation);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGetFPGAInfo(IntPtr handle, byte[] @out);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDUpdateCtrlFlags(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSetOutputDelay(IntPtr handle, byte[,] delay);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSetDutyOffset(IntPtr handle, byte[,] offset);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSetDelayOffset(IntPtr handle, byte[,] delay, byte[,] offset);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSetDelayOffset(IntPtr handle, byte[,]? delay, byte[,]? offset);
         [DllImport("autd3capi", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDGetLastError(StringBuilder? error);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDNumDevices(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDNumTransducers(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDDeviceIdxForTransIdx(int globalTransIdx);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDTransPositionByGlobal(IntPtr handle, int globalTransIdx, out double x, out double y, out double z);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDTransPositionByLocal(IntPtr handle, int deviceIdx, int localTransIdx, out double x, out double y, out double z);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDTransPosition(IntPtr handle, int deviceIdx, int localTransIdx, out double x, out double y, out double z);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeviceXDirection(IntPtr handle, int deviceIdx, out double x, out double y, out double z);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeviceYDirection(IntPtr handle, int deviceIdx, out double x, out double y, out double z);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeviceZDirection(IntPtr handle, int deviceIdx, out double x, out double y, out double z);
@@ -87,8 +82,6 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDStop(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDPause(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDResume(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendGain(IntPtr handle, IntPtr gain);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendModulation(IntPtr handle, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendGainModulation(IntPtr handle, IntPtr gain, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendSequenceModulation(IntPtr handle, IntPtr seq, IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendGainSequenceModulation(IntPtr handle, IntPtr seq, IntPtr mod);
