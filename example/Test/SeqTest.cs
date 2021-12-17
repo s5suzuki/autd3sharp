@@ -31,8 +31,15 @@ namespace example.Test
             autd.Send(mod);
 
             var center = new Vector3d(x, y, z);
-            var dir = Vector3d.UnitZ;
-            var seq = PointSequence.CircumferencePointSequence(center, dir, 30.0, 200);
+            var seq = PointSequence.Create();
+            const int pointNum = 200;
+            for (var i = 0; i < pointNum; i++)
+            {
+                const double radius = 30.0;
+                var theta = 2.0 * Math.PI * i / pointNum;
+                var p = radius * new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
+                seq.AddPoint(center + p);
+            }
             seq.Frequency = 1;
             Console.WriteLine($"Actual frequency is {seq.Frequency}");
             autd.Send(seq, mod);

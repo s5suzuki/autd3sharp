@@ -30,7 +30,7 @@ namespace example.Test
             var mod = Modulation.Static();
 
             var center = new Vector3d(x, y, z);
-            var seq = GainSequence.Create();
+            var seq = GainSequence.Create(autd);
             const int pointNum = 200;
             var backend = Gain.Eigen3Backend();
             for (var i = 0; i < pointNum; i++)
@@ -38,9 +38,7 @@ namespace example.Test
                 const double radius = 30.0;
                 var theta = 2.0 * Math.PI * i / pointNum;
                 var p = radius * new Vector3d(Math.Cos(theta), Math.Sin(theta), 0);
-                var focuses = new[] { center + p, center - p };
-                var amps = new[] { 1.0, 1.0 };
-                var gain = Gain.HoloGSPAT(focuses, amps, backend);
+                var gain = Gain.FocalPoint(center + p);
                 seq.AddGain(gain);
             }
 

@@ -45,7 +45,7 @@ namespace example.Test
                 [0] = g1,
                 [1] = g2
             };
-            var gain = Gain.Grouped(gainMap);
+            var gain = Gain.Grouped(autd, gainMap);
             var mod = Modulation.Sine(150); // AM sin 150 Hz
             autd.Send(gain, mod);
 
