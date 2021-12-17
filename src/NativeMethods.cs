@@ -47,7 +47,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGetFirmwareInfo(IntPtr pFirmInfoList, int index, StringBuilder? cpuVer, StringBuilder? fpgaVer);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDFreeFirmwareInfoListPointer(IntPtr pFirmInfoList);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainNull(out IntPtr gain);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainGrouped(out IntPtr gain);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainGrouped(out IntPtr gain, IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainGroupedAdd(IntPtr groupedGain, int deviceId, IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainFocalPoint(out IntPtr gain, double x, double y, double z, byte duty);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainBesselBeam(out IntPtr gain, double x, double y, double z, double nX, double nY, double nZ, double thetaZ, byte duty);
@@ -58,7 +58,7 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationStatic(out IntPtr mod, byte duty);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationCustom(out IntPtr mod, byte[] buf, uint size);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationSine(out IntPtr mod, int freq, double amp, double offset);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationSinePressure(out IntPtr mod, int freq, double amp, double offset);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationSineSquared(out IntPtr mod, int freq, double amp, double offset);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationSineLegacy(out IntPtr mod, double freq, double amp, double offset);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationSquare(out IntPtr mod, int freq, byte low, byte high, double duty);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern uint AUTDModulationSamplingFreqDiv(IntPtr mod);
@@ -66,9 +66,8 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDModulationSamplingFreq(IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteModulation(IntPtr mod);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSequence(out IntPtr @out);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainSequence(out IntPtr @out, ushort gainMode);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainSequence(out IntPtr @out, IntPtr handle, ushort gainMode);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoint(IntPtr seq, double x, double y, double z, byte duty);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddPoints(IntPtr seq, double[] points, ulong pointsSize, byte[] duties, ulong dutiesSize);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDSequenceAddGain(IntPtr seq, IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDSequenceSetFreq(IntPtr seq, double freq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDSequenceFreq(IntPtr seq);
@@ -77,14 +76,13 @@ namespace AUTD3Sharp
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDSequenceSamplingFreq(IntPtr seq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern uint AUTDSequenceSamplingFreqDiv(IntPtr seq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSequenceSetSamplingFreqDiv(IntPtr seq, uint freqDiv);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCircumSequence(out IntPtr @out, double x, double y, double z, double nx, double ny, double nz, double radius, ulong n);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteSequence(IntPtr seq);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDStop(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDPause(IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDResume(IntPtr handle);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendGainModulation(IntPtr handle, IntPtr gain, IntPtr mod);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendSequenceModulation(IntPtr handle, IntPtr seq, IntPtr mod);
-        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendGainSequenceModulation(IntPtr handle, IntPtr seq, IntPtr mod);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendHeader(IntPtr handle, IntPtr header);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendBody(IntPtr handle, IntPtr body);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendHeaderBody(IntPtr handle, IntPtr header, IntPtr body);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSTMController(out IntPtr @out, IntPtr handle);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDAddSTMGain(IntPtr handle, IntPtr gain);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDStartSTM(IntPtr handle, double freq);
@@ -117,4 +115,3 @@ namespace AUTD3Sharp
         [DllImport("autd3capi-cuda-backend", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCUDABackend(out IntPtr @out);
     }
 }
-

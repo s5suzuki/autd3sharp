@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 19/11/2021
+ * Last Modified: 17/12/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -14,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 #if UNITY_2018_3_OR_NEWER
 using UnityEngine;
@@ -28,13 +27,10 @@ using Vector3 = AUTD3Sharp.Utils.Vector3d;
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
-    public class Gain : SafeHandleZeroOrMinusOneIsInvalid
+    public class Gain : Body
     {
-        internal IntPtr GainPtr => handle;
-
-        internal Gain(IntPtr gain) : base(true)
+        internal Gain(IntPtr gain) : base(gain)
         {
-            SetHandle(gain);
         }
 
         protected override bool ReleaseHandle()
@@ -51,12 +47,12 @@ namespace AUTD3Sharp
             return new Gain(gainPtr);
         }
 
-        public static Gain Grouped(Dictionary<int, Gain> gainMap)
+        public static Gain Grouped(AUTD autd, Dictionary<int, Gain> gainMap)
         {
             if (gainMap == null) throw new ArgumentNullException(nameof(gainMap));
-            NativeMethods.AUTDGainGrouped(out var gainPtr);
+            NativeMethods.AUTDGainGrouped(out var gainPtr, autd.AUTDControllerHandle.CntPtr);
             foreach (var id_gain in gainMap)
-                NativeMethods.AUTDGainGroupedAdd(gainPtr, id_gain.Key, id_gain.Value.GainPtr);
+                NativeMethods.AUTDGainGroupedAdd(gainPtr, id_gain.Key, id_gain.Value.Ptr);
             return new Gain(gainPtr);
         }
 
