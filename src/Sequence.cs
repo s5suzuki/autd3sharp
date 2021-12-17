@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 14/10/2021
+ * Last Modified: 17/12/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -12,10 +12,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 
 #if UNITY_2018_3_OR_NEWER
 using UnityEngine;
@@ -27,13 +24,12 @@ using Vector3 = AUTD3Sharp.Utils.Vector3d;
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
-    public abstract class Sequence : SafeHandleZeroOrMinusOneIsInvalid
+    public abstract class Sequence : Body
     {
         internal IntPtr SeqPtr => handle;
 
-        internal Sequence(IntPtr seq) : base(true)
+        internal Sequence(IntPtr seq) : base(seq)
         {
-            SetHandle(seq);
         }
 
         protected override bool ReleaseHandle()
@@ -61,7 +57,6 @@ namespace AUTD3Sharp
     [ComVisible(false)]
     public class PointSequence : Sequence
     {
-
         internal PointSequence(IntPtr seq) : base(seq)
         {
         }
@@ -72,31 +67,9 @@ namespace AUTD3Sharp
             return NativeMethods.AUTDSequenceAddPoint(handle, x, y, z, duty);
         }
 
-        public bool AddPoints(IList<Vector3> points, IList<byte> duties)
-        {
-            var pointsArr = new double[points.Count * 3];
-            for (var i = 0; i < points.Count; i++)
-            {
-                var (x, y, z) = AUTD.Adjust(points[i]);
-                pointsArr[3 * i] = x;
-                pointsArr[3 * i + 1] = y;
-                pointsArr[3 * i + 2] = z;
-            }
-            var dutiesArr = duties.ToArray();
-            return NativeMethods.AUTDSequenceAddPoints(handle, pointsArr, (ulong)points.Count, dutiesArr, (ulong)duties.Count);
-        }
-
         public static PointSequence Create()
         {
             NativeMethods.AUTDSequence(out var p);
-            return new PointSequence(p);
-        }
-
-        public static PointSequence CircumferencePointSequence(Vector3 center, Vector3 normal, double radius, ulong n)
-        {
-            var (x, y, z) = AUTD.Adjust(center);
-            var (nx, ny, nz) = AUTD.Adjust(normal, false);
-            NativeMethods.AUTDCircumSequence(out var p, x, y, z, nx, ny, nz, radius, n);
             return new PointSequence(p);
         }
     }
@@ -118,12 +91,12 @@ namespace AUTD3Sharp
 
         public bool AddGain(Gain gain)
         {
-            return NativeMethods.AUTDSequenceAddGain(handle, gain.GainPtr);
+            return NativeMethods.AUTDSequenceAddGain(handle, gain.Ptr);
         }
 
-        public static GainSequence Create(GainMode gainMode = GainMode.DutyPhaseFull)
+        public static GainSequence Create(AUTD autd, GainMode gainMode = GainMode.DutyPhaseFull)
         {
-            NativeMethods.AUTDGainSequence(out var p, (ushort)gainMode);
+            NativeMethods.AUTDGainSequence(out var p, autd.AUTDControllerHandle.CntPtr, (ushort)gainMode);
             return new GainSequence(p);
         }
     }

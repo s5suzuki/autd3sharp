@@ -4,7 +4,7 @@
  * Created Date: 02/07/2018
  * Author: Shun Suzuki
  * -----
- * Last Modified: 24/11/2021
+ * Last Modified: 17/12/2021
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2018-2019 Hapis Lab. All rights reserved.
@@ -69,7 +69,7 @@ namespace AUTD3Sharp
         public bool AddSTMGain(Gain gain)
         {
             if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDAddSTMGain(handle, gain.GainPtr);
+            return NativeMethods.AUTDAddSTMGain(handle, gain.Ptr);
         }
 
         public bool StartSTM(double freq) => NativeMethods.AUTDStartSTM(handle, freq);
@@ -305,35 +305,29 @@ namespace AUTD3Sharp
         #endregion
 
         #region LowLevelInterface
-        public int Send(Gain gain)
+        public int Send(Header header)
         {
-            if (gain == null) throw new ArgumentNullException(nameof(gain));
-            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, IntPtr.Zero);
+            if (header == null) throw new ArgumentNullException(nameof(header));
+            return NativeMethods.AUTDSendHeader(AUTDControllerHandle.CntPtr, header.Ptr);
         }
 
-        public int Send(Modulation mod)
+        public int Send(Body body)
         {
-            if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, IntPtr.Zero, mod.ModPtr);
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return NativeMethods.AUTDSendBody(AUTDControllerHandle.CntPtr, body.Ptr);
         }
 
-        public int Send(Gain gain, Modulation mod)
+        public int Send(Header header, Body body)
         {
-            if (gain == null) throw new ArgumentNullException(nameof(gain));
-            if (mod == null) throw new ArgumentNullException(nameof(mod));
-            return NativeMethods.AUTDSendGainModulation(AUTDControllerHandle.CntPtr, gain.GainPtr, mod.ModPtr);
+            if (header == null) throw new ArgumentNullException(nameof(header));
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return NativeMethods.AUTDSendHeaderBody(AUTDControllerHandle.CntPtr, header.Ptr, body.Ptr);
         }
-
-        public int Send(PointSequence seq, Modulation? mod = null)
+        public int Send(Body body, Header header)
         {
-            if (seq == null) throw new ArgumentNullException(nameof(seq));
-            return NativeMethods.AUTDSendSequenceModulation(AUTDControllerHandle.CntPtr, seq.SeqPtr, mod?.ModPtr ?? IntPtr.Zero);
-        }
-
-        public int Send(GainSequence seq, Modulation? mod = null)
-        {
-            if (seq == null) throw new ArgumentNullException(nameof(seq));
-            return NativeMethods.AUTDSendGainSequenceModulation(AUTDControllerHandle.CntPtr, seq.SeqPtr, mod?.ModPtr ?? IntPtr.Zero);
+            if (header == null) throw new ArgumentNullException(nameof(header));
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return NativeMethods.AUTDSendHeaderBody(AUTDControllerHandle.CntPtr, header.Ptr, body.Ptr);
         }
 
         public STMController STM()
