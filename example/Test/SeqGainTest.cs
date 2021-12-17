@@ -30,7 +30,7 @@ namespace example.Test
             var mod = Modulation.Static();
 
             var center = new Vector3d(x, y, z);
-            var seq = GainSequence.Create();
+            var seq = GainSequence.Create(autd);
             const int pointNum = 200;
             var backend = Gain.Eigen3Backend();
             for (var i = 0; i < pointNum; i++)
