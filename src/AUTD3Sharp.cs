@@ -382,7 +382,7 @@ namespace AUTD3Sharp
             Base.AUTDGainGrouped(out handle, cnt.AUTDControllerHandle.CntPtr);
         }
 
-        public void add(int deviceIdx, Gain gain)
+        public void Add(int deviceIdx, Gain gain)
         {
             Base.AUTDGainGroupedAdd(handle, deviceIdx, gain.Ptr);
         }
@@ -413,7 +413,7 @@ namespace AUTD3Sharp
         {
             if (amp.Length != phase.Length) throw new ArgumentException();
             var length = amp.Length;
-            Base.AUTDGainCustom(out var gainPtr, amp, phase, length);
+            Base.AUTDGainCustom(out handle, amp, phase, length);
         }
     }
 

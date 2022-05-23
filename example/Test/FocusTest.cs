@@ -1,5 +1,5 @@
 ﻿/*
- * File: BesselBeam.cs
+ * File: FocusTest.cs
  * Project: Test
  * Created Date: 30/04/2021
  * Author: Shun Suzuki
@@ -11,27 +11,25 @@
  * 
  */
 
-
 using AUTD3Sharp;
 using AUTD3Sharp.Utils;
 
 namespace example.Test
 {
-    internal static class BesselBeamTest
+    internal static class FocusTest
     {
         public static void Test(Controller autd)
         {
-
+            var config = new SilencerConfig();
+            autd.Send(config);
 
             const double x = Controller.DeviceWidth / 2;
             const double y = Controller.DeviceHeight / 2;
+            const double z = 150;
 
             var mod = new Sine(150); // AM sin 150 Hz
-
-            var start = new Vector3d(x, y, 0);
-            var dir = Vector3d.UnitZ;
-            var gain = new BesselBeam(start, dir, 13.0f / 180f * Controller.Pi); // BesselBeam from (x, y, 0), theta = 13 deg
-            autd.Send(gain, mod);
+            var gain = new Focus(new Vector3d(x, y, z)); // Focal point @ (x, y, z) [mm]
+            autd.Send(mod, gain);
         }
     }
 }

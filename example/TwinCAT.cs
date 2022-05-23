@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Hapis Lab. All rights reserved.
@@ -25,13 +25,13 @@ namespace example
         {
             Console.WriteLine("Test with TwinCAT");
 
-            var autd = new AUTD();
+            var autd = new Controller();
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
 
-            var link = Link.TwinCAT();
+            var link = new TwinCAT(2);
             if (!autd.Open(link))
             {
-                Console.WriteLine(AUTD.LastError);
+                Console.WriteLine(Controller.LastError);
                 return;
             }
 

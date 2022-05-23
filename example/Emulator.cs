@@ -1,13 +1,13 @@
 /*
  * File: Emulator.cs
  * Project: example
- * Created Date: 10/07/2021
+ * Created Date: 21/07/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 10/07/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
- * Copyright (c) 2021 Hapis Lab. All rights reserved.
+ * Copyright (c) 2022 Hapis Lab. All rights reserved.
  * 
  */
 
@@ -25,13 +25,13 @@ namespace example
         {
             Console.WriteLine("Test with Emulator");
 
-            var autd = new AUTD();
+            var autd = new Controller();
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
 
-            var link = Link.Emulator(50632, autd);
+            var link = new Emulator(50632, autd);
             if (!autd.Open(link))
             {
-                Console.WriteLine(AUTD.LastError);
+                Console.WriteLine(Controller.LastError);
                 return;
             }
 

@@ -1,17 +1,17 @@
 ﻿/*
  * File: Custom.cs
  * Project: Test
- * Created Date: 06/10/2021
+ * Created Date: 14/10/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/10/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
- * Copyright (c) 2021 Hapis Lab. All rights reserved.
+ * Copyright (c) 2022 Hapis Lab. All rights reserved.
  * 
  */
 
-using System;
+
 using AUTD3Sharp;
 using AUTD3Sharp.Utils;
 
@@ -19,42 +19,38 @@ namespace example.Test
 {
     internal static class CustomTest
     {
-        private static byte ToPhase(double phase)
+        private static Gain Focus(Controller autd, Vector3d point)
         {
-            return (byte)((int)Math.Round((phase / (2.0 * Math.PI) + 0.5) * 256.0) & 0xFF);
-        }
+            var amps = new double[autd.NumTransducers];
+            var phases = new double[autd.NumTransducers];
 
-        private static Gain Focus(AUTD autd, Vector3d point)
-        {
-            var devNum = autd.NumDevices;
-
-            var data = new ushort[devNum, AUTD.NumTransInDevice];
-
-            var waveNumber = 2.0 * Math.PI / autd.Wavelength;
-            for (var dev = 0; dev < devNum; dev++)
+            var c = 0;
+            for (var dev = 0; dev < autd.NumDevices; dev++)
             {
-                for (var i = 0; i < AUTD.NumTransInDevice; i++)
+                for (var i = 0; i < Controller.NumTransInDevice; i++)
                 {
                     var tp = autd.TransPosition(dev, i);
                     var dist = (tp - point).L2Norm;
-                    var phase = ToPhase(waveNumber * dist);
-                    const ushort duty = 0xFF;
-                    data[dev, i] = (ushort)((duty << 8) | phase);
+                    var wavelength = autd.Wavelength(dev, i, autd.SoundSpeed);
+                    var phase = dist / wavelength;
+                    amps[c] = 1.0;
+                    phases[c] = phase;
+                    c++;
                 }
             }
 
-            return Gain.Custom(data);
+            return new CustomGain(amps, phases);
         }
 
-        public static void Test(AUTD autd)
+        public static void Test(Controller autd)
         {
-            const double x = AUTD.DeviceWidth / 2;
-            const double y = AUTD.DeviceHeight / 2;
+            const double x = Controller.DeviceWidth / 2;
+            const double y = Controller.DeviceHeight / 2;
             const double z = 150;
 
-            var mod = Modulation.Sine(150);
+            var mod = new Sine(150);
             var gain = Focus(autd, new Vector3d(x, y, z));
-            autd.Send(gain, mod);
+            autd.Send(mod, gain);
         }
     }
 }

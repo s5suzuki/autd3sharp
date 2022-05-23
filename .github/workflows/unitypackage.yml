@@ -42,7 +42,7 @@ jobs:
         run: |
           cp -f src/*.cs ./unity/Assets/AUTD/Scripts/
           cp -f src/NativeMethods/*.cs ./unity/Assets/AUTD/Scripts/NativeMethods
-          cp -f src/LICENSE.txt ./unity/Assets/AUTD/Scripts/
+          cp -f src/LICENSE.txt ./unity/Assets/AUTD/
       - name: Enumerate Assets
         run: |
           find . -name '*.meta' >> metaList

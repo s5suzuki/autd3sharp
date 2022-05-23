@@ -366,7 +366,7 @@ namespace AUTD3Sharp
 
     public sealed class Focus : Gain
     {
-        public Focus(Vector3 point, double amp) : base()
+        public Focus(Vector3 point, double amp = 1.0) : base()
         {
             var (x, y, z) = Controller.Adjust(point);
             Base.AUTDGainFocus(out handle, x, y, z, amp);
@@ -380,7 +380,7 @@ namespace AUTD3Sharp
             Base.AUTDGainGrouped(out handle, cnt.AUTDControllerHandle.CntPtr);
         }
 
-        public void add(int deviceIdx, Gain gain)
+        public void Add(int deviceIdx, Gain gain)
         {
             Base.AUTDGainGroupedAdd(handle, deviceIdx, gain.Ptr);
         }
@@ -388,7 +388,7 @@ namespace AUTD3Sharp
 
     public sealed class BesselBeam : Gain
     {
-        public BesselBeam(Vector3 point, Vector3 dir, double thetaZ, double amp) : base()
+        public BesselBeam(Vector3 point, Vector3 dir, double thetaZ, double amp = 1.0) : base()
         {
             var (x, y, z) = Controller.Adjust(point);
             var (dx, dy, dz) = Controller.Adjust(dir, false);
@@ -398,7 +398,7 @@ namespace AUTD3Sharp
 
     public sealed class PlaneWave : Gain
     {
-        public PlaneWave(Vector3 dir, double amp) : base()
+        public PlaneWave(Vector3 dir, double amp = 1.0) : base()
         {
             var (dx, dy, dz) = Controller.Adjust(dir, false);
             Base.AUTDGainPlaneWave(out handle, dx, dy, dz, amp);
@@ -411,7 +411,7 @@ namespace AUTD3Sharp
         {
             if (amp.Length != phase.Length) throw new ArgumentException();
             var length = amp.Length;
-            Base.AUTDGainCustom(out var gainPtr, amp, phase, length);
+            Base.AUTDGainCustom(out handle, amp, phase, length);
         }
     }
 

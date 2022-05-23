@@ -1,13 +1,13 @@
 /*
  * File: TestRunner.cs
  * Project: Test
- * Created Date: 20/05/2020
+ * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 06/10/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
- * Copyright (c) 2020 Hapis Lab. All rights reserved.
+ * Copyright (c) 2022 Hapis Lab. All rights reserved.
  * 
  */
 
@@ -18,31 +18,35 @@ using System.Linq;
 
 namespace example.Test
 {
-    internal delegate void TestFn(AUTD autd);
+    internal delegate void TestFn(Controller autd);
 
     public class TestRunner
     {
-        public static void Run(AUTD autd)
+        public static void Run(Controller autd)
         {
-            var examples = new List<(TestFn, string)> { (SimpleTest.Test, "Single Focal Point Test"),
+            var examples = new List<(TestFn, string)> { (FocusTest.Test, "Single Focal Point Test"),
              (BesselBeamTest.Test, "BesselBeam Test"),
-             (HoloGainTest.Test, "Multiple Focal Points Test"),
-             (STMTest.Test, "Spatio-Temporal Modulation Test"),
-             (SeqTest.Test, "PointSequence Test (Hardware STM)"),
-             (SeqGainTest.Test, "GainSequence Test (Hardware STM with arbitrary Gain)"),
-             (AdvancedTest.Test, "Advanced Test (Custom gain/modulation, and output delay)"),
+             (GainHoloTest.Test, "Multiple Focal Points Test"),
+             (PointSTMTest.Test, "PointSTM Test"),
+             (STMGainTest.Test, "GainSTM Test"),
+             (AdvancedTest.Test, "Advanced Test (Custom gain/modulation)"),
              (CustomTest.Test, "Custom Test (Custom Focus)")
              };
 
             if (autd.NumDevices == 2)
                 examples.Add((GroupTest.Test, "Grouped gain Test"));
 
+            autd.CheckAck = true;
+
             autd.Clear();
 
+            autd.Synchronize();
+
             var firmList = autd.FirmwareInfoList().ToArray();
-            if (!firmList.Any()) Console.WriteLine("Failed to read firmware information of some devices. You probably use firmware v1.8 or earlier.");
+            Console.WriteLine("============================ Firmware information ==============================");
             foreach (var (firm, index) in firmList.Select((firm, i) => (firm, i)))
                 Console.WriteLine($"AUTD {index}: {firm}");
+            Console.WriteLine("================================================================================");
 
             while (true)
             {

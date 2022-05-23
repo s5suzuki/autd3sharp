@@ -1,16 +1,15 @@
 /*
  * File: SOEM.cs
  * Project: example
- * Created Date: 20/05/2020
+ * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 24/11/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
- * Copyright (c) 2020 Hapis Lab. All rights reserved.
+ * Copyright (c) 2022 Hapis Lab. All rights reserved.
  * 
  */
-
 
 using AUTD3Sharp;
 using System;
@@ -24,7 +23,7 @@ namespace example
     {
         public static string GetIfname()
         {
-            var adapters = AUTD.EnumerateAdapters();
+            var adapters = SOEM.EnumerateAdapters();
             var etherCATAdapters = adapters as EtherCATAdapter[] ?? adapters.ToArray();
             foreach (var (adapter, index) in etherCATAdapters.Select((adapter, index) => (adapter, index)))
                 Console.WriteLine($"[{index}]: {adapter}");
@@ -39,19 +38,19 @@ namespace example
         {
             Console.WriteLine("Test with SOEM");
 
-            var autd = new AUTD();
+            var autd = new Controller();
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
             //autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 1);
 
             var ifname = GetIfname();
-            var link = Link.SOEM(ifname, autd.NumDevices, 1, x =>
+            var link = new SOEM(ifname, autd.NumDevices, 2, x =>
             {
                 Console.WriteLine($"Unrecoverable error occurred: {x}");
                 Environment.Exit(-1);
             });
             if (!autd.Open(link))
             {
-                Console.WriteLine(AUTD.LastError);
+                Console.WriteLine(Controller.LastError);
                 return;
             }
 

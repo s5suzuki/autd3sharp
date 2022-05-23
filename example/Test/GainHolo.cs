@@ -1,0 +1,37 @@
+﻿/*
+ * File: GainHolo.cs
+ * Project: Test
+ * Created Date: 30/04/2021
+ * Author: Shun Suzuki
+ * -----
+ * Last Modified: 23/05/2022
+ * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
+ * -----
+ * Copyright (c) 2022 Hapis Lab. All rights reserved.
+ * 
+ */
+
+using AUTD3Sharp;
+using AUTD3Sharp.Utils;
+
+namespace example.Test
+{
+    internal static class GainHoloTest
+    {
+        public static void Test(Controller autd)
+        {
+            const double x = Controller.TransSpacing * (Controller.NumTransInX - 1) / 2.0;
+            const double y = Controller.TransSpacing * (Controller.NumTransInY - 1) / 2.0;
+            const double z = 150.0;
+            var center = new Vector3d(x, y, z);
+
+            var gain = new GSPAT();
+            gain.Add(center + 20.0 * Vector3d.UnitX, 1.0);
+            gain.Add(center - 20.0 * Vector3d.UnitX, 1.0);
+
+            var mod = new Sine(150);
+
+            autd.Send(mod, gain);
+        }
+    }
+}
