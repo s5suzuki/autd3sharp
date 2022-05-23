@@ -4,7 +4,7 @@
  * Created Date: 03/07/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 07/04/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -23,7 +23,7 @@ public class EnumerateAdaptersWindow : EditorWindow
 
     private void OnEnable()
     {
-        _adapters = AUTD.EnumerateAdapters().ToArray();
+        _adapters = SOEM.EnumerateAdapters().ToArray();
     }
 
     [MenuItem("AUTD/Enumerate Adapters")]
@@ -40,7 +40,7 @@ public class EnumerateAdaptersWindow : EditorWindow
         {
             _leftScrollPos = sv.scrollPosition;
 
-            foreach (var adapter in _adapters ?? new EtherCATAdapter[]{})
+            foreach (var adapter in _adapters ?? new EtherCATAdapter[] { })
             {
                 using (new GUILayout.HorizontalScope(GUI.skin.box))
                 {
@@ -54,4 +54,3 @@ public class EnumerateAdaptersWindow : EditorWindow
         }
     }
 }
- 

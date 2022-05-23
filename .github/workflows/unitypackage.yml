@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,9 +24,9 @@ jobs:
             return 'autd3-'+context.payload.ref.replace(/refs\/tags\//, '')+'.unitypackage';
       - name: Download latest binary
         run: | 
-          wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
-          wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
-          wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
+          wget https://github.com/shinolab/autd3/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
+          wget https://github.com/shinolab/autd3/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
+          wget https://github.com/shinolab/autd3/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
       - name: Replace latest binary
         run: |
           tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
@@ -42,8 +41,12 @@ jobs:
       - name: Replace latest scripts
         run: |
           cp -f src/*.cs ./unity/Assets/AUTD/Scripts/
-          cp -f LICENSE ./unity/Assets/AUTD
-          cp -f NOTICE ./unity/Assets/AUTD
+          cp -f src/NativeMethods/*.cs ./unity/Assets/AUTD/Scripts/NativeMethods
+          cp -f src/LICENSE.txt ./unity/Assets/AUTD/Scripts/
+      - name: check meta file
+        uses: DeNA/unity-meta-check@v3
+        with:
+          target_path: "unity"
       - name: Enumerate Assets
         run: |
           find . -name '*.meta' >> metaList

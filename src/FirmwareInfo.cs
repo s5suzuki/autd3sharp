@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -17,20 +17,18 @@ namespace AUTD3Sharp
 {
     public readonly struct FirmwareInfo : IEquatable<FirmwareInfo>
     {
-        public string CpuVersion { get; }
-        public string FpgaVersion { get; }
+        public string Info { get; }
 
-        internal FirmwareInfo(string cpu, string fpga)
+        internal FirmwareInfo(string info)
         {
-            CpuVersion = cpu;
-            FpgaVersion = fpga;
+            Info = info;
         }
 
-        public override string ToString() => $"CPU: {CpuVersion}, FPGA: {FpgaVersion}";
-        public bool Equals(FirmwareInfo other) => CpuVersion.Equals(other.CpuVersion) && FpgaVersion.Equals(other.FpgaVersion);
+        public override string ToString() => $"{Info}";
+        public bool Equals(FirmwareInfo other) => Info.Equals(other.Info);
         public static bool operator ==(FirmwareInfo left, FirmwareInfo right) => left.Equals(right);
         public static bool operator !=(FirmwareInfo left, FirmwareInfo right) => !left.Equals(right);
         public override bool Equals(object? obj) => obj is FirmwareInfo info && Equals(info);
-        public override int GetHashCode() => CpuVersion.GetHashCode() ^ FpgaVersion.GetHashCode();
+        public override int GetHashCode() => Info.GetHashCode();
     }
 }

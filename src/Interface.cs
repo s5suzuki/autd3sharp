@@ -4,7 +4,7 @@
  * Created Date: 17/12/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 17/12/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -22,8 +22,9 @@ namespace AUTD3Sharp
     {
         internal IntPtr Ptr => handle;
 
-        internal Header(IntPtr ptr) : base(true)
+        internal Header() : base(true)
         {
+            var ptr = new IntPtr();
             SetHandle(ptr);
         }
     }
@@ -33,8 +34,9 @@ namespace AUTD3Sharp
     {
         internal IntPtr Ptr => handle;
 
-        internal Body(IntPtr ptr) : base(true)
+        internal Body() : base(true)
         {
+            var ptr = new IntPtr();
             SetHandle(ptr);
         }
     }
