@@ -38,6 +38,6 @@ jobs:
       run: |
         dotnet build -c:Release /p:Platform=x64
         cd bin/x64/Release
-        dotnet nuget push autd3sharp.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate --no-symbols true
+        dotnet nuget push autd3sharp.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate --no-symbols
       working-directory: ./src
     
