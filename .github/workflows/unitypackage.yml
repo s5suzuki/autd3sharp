@@ -46,7 +46,7 @@ jobs:
       - name: check meta file
         uses: DeNA/unity-meta-check@v3
         with:
-          target_path: "unity"
+          target_path: "./unity"
       - name: Enumerate Assets
         run: |
           find . -name '*.meta' >> metaList
