@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 14/10/2021
+ * Last Modified: 23/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -12,49 +12,88 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Win32.SafeHandles;
 
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
-    public class Link : SafeHandleZeroOrMinusOneIsInvalid
+    public abstract class Link : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal IntPtr LinkPtr => handle;
 
-        internal Link(IntPtr handle) : base(false)
+        internal Link() : base(false)
         {
+            handle = new IntPtr();
             SetHandle(handle);
         }
 
         protected override bool ReleaseHandle() => true;
+    }
 
-        public static Link SOEM(string ifname, int deviceNum, uint cycleTicks = 1, Action<string>? errorHandler = null)
+    public sealed class SOEM : Link
+    {
+        public SOEM(string ifname, int deviceNum, uint cycleTicks = 2, Action<string>? onLost = null, bool highPresicion = true) : base()
         {
-            NativeMethods.AUTDLinkSOEM(out var link, ifname, deviceNum, cycleTicks);
-            if (errorHandler == null) return new Link(link);
-            var callback = new NativeMethods.OnLostCallbackDelegate(errorHandler);
-            var errorHandlerPtr = Marshal.GetFunctionPointerForDelegate(callback);
-            NativeMethods.AUTDSetSOEMOnLost(link, errorHandlerPtr);
-            return new Link(link);
+            IntPtr onLostHander;
+            if (onLost is null)
+            {
+                onLostHander = IntPtr.Zero;
+            }
+            else
+            {
+                var callback = new NativeMethods.LinkSOEM.OnLostCallbackDelegate(onLost);
+                onLostHander = Marshal.GetFunctionPointerForDelegate(callback);
+            }
+            NativeMethods.LinkSOEM.AUTDLinkSOEM(out handle, ifname, deviceNum, cycleTicks, onLostHander, highPresicion);
         }
 
-        public static Link TwinCAT()
+        public static IEnumerable<EtherCATAdapter> EnumerateAdapters()
         {
-            NativeMethods.AUTDLinkTwinCAT(out var link);
-            return new Link(link);
+            var size = NativeMethods.LinkSOEM.AUTDGetAdapterPointer(out var handle);
+            for (var i = 0; i < size; i++)
+            {
+                var sbDesc = new StringBuilder(128);
+                var sbName = new StringBuilder(128);
+                NativeMethods.LinkSOEM.AUTDGetAdapter(handle, i, sbDesc, sbName);
+                yield return new EtherCATAdapter(sbDesc.ToString(), sbName.ToString());
+            }
+            NativeMethods.LinkSOEM.AUTDFreeAdapterPointer(handle);
         }
+    }
 
-        public static Link RemoteTwinCAT(string remoteIp, string remoteAmsNetId, string localAmsNetId)
+    public sealed class TwinCAT : Link
+    {
+        public TwinCAT(ushort cycleTicks) : base()
         {
-            NativeMethods.AUTDLinkRemoteTwinCAT(out var link, remoteIp, remoteAmsNetId, localAmsNetId);
-            return new Link(link);
+            NativeMethods.LinkTwinCAT.AUTDLinkTwinCAT(out handle, cycleTicks);
         }
+    }
 
-        public static Link Emulator(ushort port, AUTD autd)
+
+    public sealed class RemoteTwinCAT : Link
+    {
+        public RemoteTwinCAT(string remoteIp, string remoteAmsNetId, string localAmsNetId, ushort cycleTicks) : base()
         {
-            NativeMethods.AUTDLinkEmulator(out var link, port, autd.AUTDControllerHandle.CntPtr);
-            return new Link(link);
+            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out handle, remoteIp, remoteAmsNetId, localAmsNetId, cycleTicks);
+        }
+    }
+
+    public sealed class Emulator : Link
+    {
+        public Emulator(ushort port, Controller autd) : base()
+        {
+            NativeMethods.LinkEmulator.AUTDLinkEmulatorLegacy(out handle, port, autd.AUTDControllerHandle.CntPtr);
+        }
+    }
+
+    public sealed class EmulatorNormal : Link
+    {
+        public EmulatorNormal(ushort port, ControllerNormal autd) : base()
+        {
+            NativeMethods.LinkEmulator.AUTDLinkEmulator(out handle, port, autd.AUTDControllerHandle.CntPtr);
         }
     }
 

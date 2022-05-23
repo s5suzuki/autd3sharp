@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,9 +20,9 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d . -f 1,2,3)
     - name: Download latest binary
       run: | 
-        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
-        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
-        wget https://github.com/shinolab/autd3-library-software/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
+        wget https://github.com/shinolab/autd3/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz
+        wget https://github.com/shinolab/autd3/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-macos-universal.tar.gz
+        wget https://github.com/shinolab/autd3/releases/download/${{ steps.get_version.outputs.VERSION }}/autd3-${{ steps.get_version.outputs.VERSION }}-win-x64.zip
     - name: Replace latest binary
       run: |
         tar -zxvf autd3-${{ steps.get_version.outputs.VERSION }}-linux-x64.tar.gz

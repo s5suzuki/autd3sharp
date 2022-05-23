@@ -4,21 +4,20 @@
 
 # autd3sharp
 
-[autd3 library](https://github.com/shinolab/autd3-library-software) wrapper for .Net Standard 2.1
+[autd3](https://github.com/shinolab/autd3) wrapper for .Net Standard 2.1
 
-version: 1.10.0
+version: 2.0.1.0
 
-## :hammer_and_wrench: Install
+## Install
 
-Please install using NuGet
+* Please install using NuGet
+    https://www.nuget.org/packages/autd3sharp
 
-https://www.nuget.org/packages/autd3sharp
+## Requirements
 
-## :ballot_box_with_check: Requirements
+* If you use Windows and `SOEM`, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
 
-If you use Windows and `Link.SOEM`, install [Npcap](https://nmap.org/npcap/) with WinPcap API-compatible mode (recomennded) or [WinPcap](https://www.winpcap.org/).
-
-## :beginner: Example
+## Example
 
 * Please refer to [example](./example)
 
@@ -30,25 +29,22 @@ dotnet run
 * If you are using Linux/macOS, you may need to run as root (e.g. `sudo dotnet run`).
     * On Ubuntu 20.04, you may need to specify runtime (e.g. `sudo dotnet run -r ubuntu-x64`).
 
-## :video_game: Unity
+## Unity
 
-Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
-    * Tested with 2020.3.22f1 and 2021.2.3f1
-
+* Please use unitypackage in [Release page](https://github.com/shinolab/autd3sharp/releases).
 * After importing the package, please enable `Allow 'unsafe' code` in `Project Settings > Player`
     * Also, add `-nullable:enable` in `Additional Compiler Arguments` to suppress warnings
 
-## :mortar_board: Citing
+## Citing
 
-If you use this SDK in your research please consider to include the following citation in your publications:
+* If you use this SDK in your research please consider to include the following citation in your publications:
+    * [S. Suzuki, S. Inoue, M. Fujiwara, Y. Makino and H. Shinoda, "AUTD3: Scalable Airborne Ultrasound Tactile Display," in IEEE Transactions on Haptics, doi: 10.1109/TOH.2021.3069976.](https://ieeexplore.ieee.org/document/9392322)
+    * S. Inoue, Y. Makino and H. Shinoda "Scalable Architecture for Airborne Ultrasound Tactile Display", Asia Haptics 2016
 
-* [S. Suzuki, S. Inoue, M. Fujiwara, Y. Makino and H. Shinoda, "AUTD3: Scalable Airborne Ultrasound Tactile Display," in IEEE Transactions on Haptics, doi: 10.1109/TOH.2021.3069976.](https://ieeexplore.ieee.org/document/9392322)
-* S. Inoue, Y. Makino and H. Shinoda "Scalable Architecture for Airborne Ultrasound Tactile Display", Asia Haptics 2016
-
-## :copyright: LICENSE
+## LICENSE
 
 See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 # Author
 
-Shun Suzuki 2018-2021
+Shun Suzuki 2022

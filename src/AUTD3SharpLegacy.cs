@@ -1,7 +1,7 @@
 ﻿/*
- * File: AUTD3Sharp.cs
+ * File: AUTD3SharpLegacy.cs
  * Project: src
- * Created Date: 23/05/2022
+ * Created Date: 23/05/2021
  * Author: Shun Suzuki
  * -----
  * Last Modified: 23/05/2022
@@ -10,7 +10,6 @@
  * Copyright (c) 2022 Hapis Lab. All rights reserved.
  * 
  */
-
 
 #if UNITY_2018_3_OR_NEWER
 #define LEFT_HANDED
@@ -39,16 +38,16 @@ using Vector3 = AUTD3Sharp.Utils.Vector3d;
 using Quaternion = AUTD3Sharp.Utils.Quaterniond;
 #endif
 
-
+[assembly: CLSCompliant(false), ComVisible(false)]
 namespace AUTD3Sharp
 {
-    using Base = NativeMethods.Base;
+    using Base = NativeMethods.BaseLegacy;
 
-    internal class AUTDControllerHandle : SafeHandleZeroOrMinusOneIsInvalid
+    internal class AUTDControllerHandleLegacy : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal IntPtr CntPtr => handle;
 
-        public AUTDControllerHandle(bool ownsHandle) : base(ownsHandle)
+        public AUTDControllerHandleLegacy(bool ownsHandle) : base(ownsHandle)
         {
             handle = new IntPtr();
             Base.AUTDCreateController(out handle);
@@ -61,7 +60,7 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class ControllerNormal : IDisposable
+    public sealed class Controller : IDisposable
     {
         #region const
 #if USE_SINGLE
@@ -100,7 +99,7 @@ namespace AUTD3Sharp
 
         #region Controller
 
-        public ControllerNormal()
+        public Controller()
         {
             AUTDControllerHandle = new AUTDControllerHandleLegacy(true);
         }
@@ -160,7 +159,7 @@ namespace AUTD3Sharp
             _isDisposed = true;
         }
 
-        ~ControllerNormal()
+        ~Controller()
         {
             Dispose(false);
         }
@@ -351,11 +350,10 @@ namespace AUTD3Sharp
     }
 
 
-
     [ComVisible(false)]
-    public abstract class GainNormal : Body
+    public abstract class Gain : Body
     {
-        internal GainNormal() : base()
+        internal Gain() : base()
         {
         }
 
@@ -366,18 +364,18 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class FocusNormal : Gain
+    public sealed class Focus : Gain
     {
-        public FocusNormal(Vector3 point, double amp = 1.0) : base()
+        public Focus(Vector3 point, double amp) : base()
         {
             var (x, y, z) = Controller.Adjust(point);
             Base.AUTDGainFocus(out handle, x, y, z, amp);
         }
     }
 
-    public sealed class GroupedNormal : Gain
+    public sealed class Grouped : Gain
     {
-        public GroupedNormal(Controller cnt) : base()
+        public Grouped(Controller cnt) : base()
         {
             Base.AUTDGainGrouped(out handle, cnt.AUTDControllerHandle.CntPtr);
         }
@@ -388,9 +386,9 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class BesselBeamNormal : Gain
+    public sealed class BesselBeam : Gain
     {
-        public BesselBeamNormal(Vector3 point, Vector3 dir, double thetaZ, double amp = 1.0) : base()
+        public BesselBeam(Vector3 point, Vector3 dir, double thetaZ, double amp) : base()
         {
             var (x, y, z) = Controller.Adjust(point);
             var (dx, dy, dz) = Controller.Adjust(dir, false);
@@ -398,18 +396,18 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class PlaneWaveNormal : Gain
+    public sealed class PlaneWave : Gain
     {
-        public PlaneWaveNormal(Vector3 dir, double amp = 1.0) : base()
+        public PlaneWave(Vector3 dir, double amp) : base()
         {
             var (dx, dy, dz) = Controller.Adjust(dir, false);
             Base.AUTDGainPlaneWave(out handle, dx, dy, dz, amp);
         }
     }
 
-    public sealed class CustomGainNormal : Gain
+    public sealed class CustomGain : Gain
     {
-        public CustomGainNormal(double[] amp, double[] phase) : base()
+        public CustomGain(double[] amp, double[] phase) : base()
         {
             if (amp.Length != phase.Length) throw new ArgumentException();
             var length = amp.Length;
@@ -417,18 +415,18 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class NullNormal : Gain
+    public sealed class Null : Gain
     {
-        public NullNormal() : base()
+        public Null() : base()
         {
             Base.AUTDGainNull(out handle);
         }
     }
 
     [ComVisible(false)]
-    public abstract class ModulationNormal : Header
+    public abstract class Modulation : Header
     {
-        internal ModulationNormal() : base()
+        internal Modulation() : base()
         {
         }
 
@@ -446,59 +444,59 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class StaticNormal : Modulation
+    public sealed class Static : Modulation
     {
-        public StaticNormal(double amp = 1.0) : base()
+        public Static(double amp = 1.0) : base()
         {
             Base.AUTDModulationStatic(out handle, amp);
 
         }
     }
 
-    public sealed class SineNormal : Modulation
+    public sealed class Sine : Modulation
     {
-        public SineNormal(int freq, double amp = 1.0, double offset = 0.5) : base()
+        public Sine(int freq, double amp = 1.0, double offset = 0.5) : base()
         {
             Base.AUTDModulationSine(out handle, freq, amp, offset);
         }
     }
 
-    public sealed class SineSquaredNormal : Modulation
+    public sealed class SineSquared : Modulation
     {
-        public SineSquaredNormal(int freq, double amp = 1.0, double offset = 0.5) : base()
+        public SineSquared(int freq, double amp = 1.0, double offset = 0.5) : base()
         {
             Base.AUTDModulationSineSquared(out handle, freq, amp, offset);
         }
     }
 
-    public sealed class SineLegacyNormal : Modulation
+    public sealed class SineLegacy : Modulation
     {
-        public SineLegacyNormal(int freq, double amp = 1.0, double offset = 0.5) : base()
+        public SineLegacy(int freq, double amp = 1.0, double offset = 0.5) : base()
         {
             Base.AUTDModulationSineLegacy(out handle, freq, amp, offset);
         }
     }
 
 
-    public sealed class SquareNormal : Modulation
+    public sealed class Square : Modulation
     {
-        public SquareNormal(int freq, double low = 0.0, double high = 1.0, double duty = 0.5) : base()
+        public Square(int freq, double low = 0.0, double high = 1.0, double duty = 0.5) : base()
         {
             Base.AUTDModulationSquare(out handle, freq, low, high, duty);
         }
     }
 
-    public sealed class CustomModulationNormal : Modulation
+    public sealed class CustomModulation : Modulation
     {
-        public CustomModulationNormal(byte[] data, uint freqDiv) : base()
+        public CustomModulation(byte[] data, uint freqDiv) : base()
         {
             Base.AUTDModulationCustom(out handle, data, (ulong)data.Length, freqDiv);
         }
     }
 
-    public abstract class STMNormal : Body
+    public abstract class STM : Body
     {
-        public STMNormal() : base()
+        public STM() : base()
         {
         }
 
@@ -522,9 +520,9 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class PointSTMNormal : STM
+    public sealed class PointSTM : STM
     {
-        public PointSTMNormal() : base()
+        public PointSTM() : base()
         {
             Base.AUTDPointSTM(out handle);
         }
@@ -536,9 +534,9 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class GainSTMNormal : STM
+    public sealed class GainSTM : STM
     {
-        public GainSTMNormal(Controller cnt) : base()
+        public GainSTM(Controller cnt) : base()
         {
             Base.AUTDGainSTM(out handle, cnt.AUTDControllerHandle.CntPtr);
         }
@@ -549,9 +547,9 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class SilencerConfigNormal : Header
+    public sealed class SilencerConfig : Header
     {
-        public SilencerConfigNormal(ushort step = 10, ushort cycle = 4096) : base()
+        public SilencerConfig(ushort step = 10, ushort cycle = 4096) : base()
         {
             Base.AUTDCreateSilencer(out handle, step, cycle);
         }
