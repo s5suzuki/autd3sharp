@@ -43,10 +43,6 @@ jobs:
           cp -f src/*.cs ./unity/Assets/AUTD/Scripts/
           cp -f src/NativeMethods/*.cs ./unity/Assets/AUTD/Scripts/NativeMethods
           cp -f src/LICENSE.txt ./unity/Assets/AUTD/Scripts/
-      - name: check meta file
-        uses: DeNA/unity-meta-check@v3
-        with:
-          target_path: "./unity"
       - name: Enumerate Assets
         run: |
           find . -name '*.meta' >> metaList
