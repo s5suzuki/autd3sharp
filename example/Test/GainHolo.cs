@@ -20,6 +20,9 @@ namespace example.Test
     {
         public static void Test(Controller autd)
         {
+            var config = new SilencerConfig();
+            autd.Send(config);
+
             const double x = Controller.TransSpacing * (Controller.NumTransInX - 1) / 2.0;
             const double y = Controller.TransSpacing * (Controller.NumTransInY - 1) / 2.0;
             const double z = 150.0;

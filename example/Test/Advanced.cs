@@ -19,6 +19,9 @@ namespace example.Test
     {
         public static void Test(Controller autd)
         {
+            var config = SilencerConfig.None();
+            autd.Send(config);
+
             var amp = new double[autd.NumTransducers];
             var phase = new double[autd.NumTransducers];
             for (var i = 0; i < autd.NumTransducers; i++)

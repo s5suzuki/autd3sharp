@@ -28,7 +28,7 @@ namespace example.Test
              (BesselBeamTest.Test, "BesselBeam Test"),
              (GainHoloTest.Test, "Multiple Focal Points Test"),
              (PointSTMTest.Test, "PointSTM Test"),
-             (STMGainTest.Test, "GainSTM Test"),
+             (GainSTMTest.Test, "GainSTM Test"),
              (AdvancedTest.Test, "Advanced Test (Custom gain/modulation)"),
              (CustomTest.Test, "Custom Test (Custom Focus)")
              };

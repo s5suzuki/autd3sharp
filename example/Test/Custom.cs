@@ -44,6 +44,9 @@ namespace example.Test
 
         public static void Test(Controller autd)
         {
+            var config = new SilencerConfig();
+            autd.Send(config);
+
             const double x = Controller.DeviceWidth / 2;
             const double y = Controller.DeviceHeight / 2;
             const double z = 150;

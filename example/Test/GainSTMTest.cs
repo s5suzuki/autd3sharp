@@ -17,7 +17,7 @@ using AUTD3Sharp.Utils;
 
 namespace example.Test
 {
-    internal static class STMGainTest
+    internal static class GainSTMTest
     {
         public static void Test(Controller autd)
         {
