@@ -4,7 +4,7 @@
  * Created Date: 23/05/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2022
+ * Last Modified: 24/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Hapis Lab. All rights reserved.
@@ -26,11 +26,11 @@ using Vector3 = AUTD3Sharp.Utils.Vector3d;
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
-    public abstract class BackendNormal : SafeHandleZeroOrMinusOneIsInvalid
+    public abstract class Backend : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal IntPtr Ptr => handle;
 
-        internal BackendNormal() : base(true)
+        internal Backend() : base(true)
         {
             var ptr = new IntPtr();
             SetHandle(ptr);
@@ -43,147 +43,174 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class BackendEigenNormal : BackendNormal
+    public sealed class BackendEigen : Backend
     {
-        public BackendEigenNormal() : base()
+        public BackendEigen() : base()
         {
             NativeMethods.GainHolo.AUTDEigenBackend(out handle);
         }
     }
 
-    public abstract class AmplitudeConstraintNormal : SafeHandleZeroOrMinusOneIsInvalid
+    public abstract class AmplitudeConstraint
     {
-        internal IntPtr Ptr => handle;
+        internal int Id { get; }
 
-        internal AmplitudeConstraintNormal() : base(true)
-        {
-            var ptr = new IntPtr();
-            SetHandle(ptr);
-        }
+        internal abstract IntPtr Ptr();
 
-        protected override bool ReleaseHandle()
+        internal AmplitudeConstraint(int id)
         {
-            NativeMethods.GainHolo.AUTDDeleteAmplitudeConstraint(handle);
-            return true;
+            Id = id;
         }
     }
 
-    public sealed class DontCareNormal : AmplitudeConstraintNormal
+    public sealed class DontCare : AmplitudeConstraint
     {
-        public DontCareNormal() : base()
+        public DontCare() : base(0)
         {
-            NativeMethods.GainHolo.AUTDAmplitudeConstraintDontCate(out handle);
+        }
+
+        internal override IntPtr Ptr()
+        {
+            return IntPtr.Zero;
         }
     }
 
 
-    public sealed class NormalizeNormal : AmplitudeConstraintNormal
+    public sealed class Normalize : AmplitudeConstraint
     {
-        public NormalizeNormal() : base()
+        public Normalize() : base(1)
         {
-            NativeMethods.GainHolo.AUTDAmplitudeConstraintNormalize(out handle);
+        }
+
+        internal override IntPtr Ptr()
+        {
+            return IntPtr.Zero;
         }
     }
 
-    public sealed class UniformNormal : AmplitudeConstraintNormal
+    public sealed class Uniform : AmplitudeConstraint
     {
-        public UniformNormal(double value) : base()
+
+        private readonly double _value;
+
+        public Uniform(double value) : base(2)
         {
-            NativeMethods.GainHolo.AUTDAmplitudeConstraintUniform(out handle, value);
+            _value = value;
+        }
+
+
+        internal override IntPtr Ptr()
+        {
+            unsafe
+            {
+                fixed (double* vp = &_value)
+                    return new IntPtr(vp);
+            }
         }
     }
 
-    public sealed class ClampNormal : AmplitudeConstraintNormal
+    public sealed class Clamp : AmplitudeConstraint
     {
-        public ClampNormal() : base()
+        public Clamp() : base(3)
         {
-            NativeMethods.GainHolo.AUTDAmplitudeConstraintClamp(out handle);
+        }
+
+
+        internal override IntPtr Ptr()
+        {
+            return IntPtr.Zero;
         }
     }
 
-    public class HoloNormal : GainNormal
+    public class Holo : Gain
     {
-        public HoloNormal() : base()
+        public Holo() : base()
         {
-            Backend = new BackendEigenNormal();
-            Constraint = new NormalizeNormal();
+            Backend = new BackendEigen();
+            Constraint = new Normalize();
         }
 
-        public BackendNormal Backend { get; set; }
-        public AmplitudeConstraintNormal Constraint { get; set; }
+        public Backend Backend { get; set; }
+        public AmplitudeConstraint Constraint
+        {
+            set
+            {
+                NativeMethods.GainHolo.AUTDSetConstraint(handle, value.Id, value.Ptr());
+            }
+        }
 
         public void Add(Vector3 focus, double amp)
         {
-            var (x, y, z) = ControllerNormal.Adjust(focus);
+            var (x, y, z) = Controller.Adjust(focus);
             NativeMethods.GainHolo.AUTDGainHoloAdd(handle, x, y, z, amp);
         }
     }
 
-    public sealed class SDPNormal : HoloNormal
+    public sealed class SDP : Holo
     {
-        public SDPNormal(double alpha = 1e-3, double lambda = 0.9, ulong repeat = 100) : base()
+        public SDP(double alpha = 1e-3, double lambda = 0.9, ulong repeat = 100) : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloSDP(out handle, Backend.Ptr, alpha, lambda, repeat, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloSDP(out handle, Backend.Ptr, alpha, lambda, repeat);
         }
     }
-    public sealed class EVDNormal : HoloNormal
+    public sealed class EVD : Holo
     {
-        public EVDNormal(double gamma = 1.0) : base()
+        public EVD(double gamma = 1.0) : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloEVD(out handle, Backend.Ptr, gamma, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloEVD(out handle, Backend.Ptr, gamma);
         }
     }
-    public sealed class NaiveNormal : HoloNormal
+    public sealed class Naive : Holo
     {
-        public NaiveNormal() : base()
+        public Naive() : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloNaive(out handle, Backend.Ptr, Constraint.Ptr);
-        }
-    }
-
-    public sealed class GSNormal : HoloNormal
-    {
-        public GSNormal(ulong repeat = 100) : base()
-        {
-            NativeMethods.GainHolo.AUTDGainHoloGS(out handle, Backend.Ptr, repeat, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloNaive(out handle, Backend.Ptr);
         }
     }
 
-    public sealed class GSPATNormal : HoloNormal
+    public sealed class GS : Holo
     {
-        public GSPATNormal(ulong repeat = 100) : base()
+        public GS(ulong repeat = 100) : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloGSPAT(out handle, Backend.Ptr, repeat, Constraint.Ptr);
-        }
-    }
-    public sealed class LMNormal : HoloNormal
-    {
-        public LMNormal(double eps1 = 1e-8, double eps2 = 1e-8, double tau = 1e-3, ulong kMax = 5, double[]? initial = null) : base()
-        {
-            NativeMethods.GainHolo.AUTDGainHoloLM(out handle, Backend.Ptr, eps1, eps2, tau, kMax, initial, initial is null ? 0 : initial.Length, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloGS(out handle, Backend.Ptr, repeat);
         }
     }
 
-    public sealed class GaussNewtonNormal : HoloNormal
+    public sealed class GSPAT : Holo
     {
-        public GaussNewtonNormal(double eps1 = 1e-6, double eps2 = 1e-6, ulong kMax = 500, double[]? initial = null) : base()
+        public GSPAT(ulong repeat = 100) : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloGaussNewton(out handle, Backend.Ptr, eps1, eps2, kMax, initial, initial is null ? 0 : initial.Length, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloGSPAT(out handle, Backend.Ptr, repeat);
         }
     }
-    public sealed class GradientDescentNormal : HoloNormal
+    public sealed class LM : Holo
     {
-        public GradientDescentNormal(double eps = 1e-6, double step = 0.5, ulong kMax = 2000, double[]? initial = null) : base()
+        public LM(double eps1 = 1e-8, double eps2 = 1e-8, double tau = 1e-3, ulong kMax = 5, double[]? initial = null) : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloGradientDescent(out handle, Backend.Ptr, eps, step, kMax, initial, initial is null ? 0 : initial.Length, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloLM(out handle, Backend.Ptr, eps1, eps2, tau, kMax, initial, initial is null ? 0 : initial.Length);
         }
     }
 
-    public sealed class GreedyNormal : HoloNormal
+    public sealed class GaussNewton : Holo
     {
-        public GreedyNormal(int phaseDiv = 16) : base()
+        public GaussNewton(double eps1 = 1e-6, double eps2 = 1e-6, ulong kMax = 500, double[]? initial = null) : base()
         {
-            NativeMethods.GainHolo.AUTDGainHoloGreedy(out handle, Backend.Ptr, phaseDiv, Constraint.Ptr);
+            NativeMethods.GainHolo.AUTDGainHoloGaussNewton(out handle, Backend.Ptr, eps1, eps2, kMax, initial, initial is null ? 0 : initial.Length);
+        }
+    }
+    public sealed class GradientDescent : Holo
+    {
+        public GradientDescent(double eps = 1e-6, double step = 0.5, ulong kMax = 2000, double[]? initial = null) : base()
+        {
+            NativeMethods.GainHolo.AUTDGainHoloGradientDescent(out handle, Backend.Ptr, eps, step, kMax, initial, initial is null ? 0 : initial.Length);
+        }
+    }
+
+    public sealed class Greedy : Holo
+    {
+        public Greedy(int phaseDiv = 16) : base()
+        {
+            NativeMethods.GainHolo.AUTDGainHoloGreedy(out handle, Backend.Ptr, phaseDiv);
         }
     }
 }

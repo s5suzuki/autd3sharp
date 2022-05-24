@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2022
+ * Last Modified: 24/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -84,14 +84,6 @@ namespace AUTD3Sharp
     public sealed class Emulator : Link
     {
         public Emulator(ushort port, Controller autd) : base()
-        {
-            NativeMethods.LinkEmulator.AUTDLinkEmulatorLegacy(out handle, port, autd.AUTDControllerHandle.CntPtr);
-        }
-    }
-
-    public sealed class EmulatorNormal : Link
-    {
-        public EmulatorNormal(ushort port, ControllerNormal autd) : base()
         {
             NativeMethods.LinkEmulator.AUTDLinkEmulator(out handle, port, autd.AUTDControllerHandle.CntPtr);
         }

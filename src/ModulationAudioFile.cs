@@ -4,7 +4,7 @@
  * Created Date: 23/05/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2022
+ * Last Modified: 24/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Hapis Lab. All rights reserved.
@@ -23,21 +23,6 @@ namespace AUTD3Sharp
     public sealed class Wav : Modulation
     {
         public Wav(string filename, uint modSamplingFreqDiv) : base()
-        {
-            NativeMethods.ModulationAudioFile.AUTDModulationWav(out handle, filename, modSamplingFreqDiv);
-        }
-    }
-
-    public sealed class RawPCMNormal : ModulationNormal
-    {
-        public RawPCMNormal(string filename, double samplingFreq, uint modSamplingFreqDiv) : base()
-        {
-            NativeMethods.ModulationAudioFile.AUTDModulationRawPCM(out handle, filename, samplingFreq, modSamplingFreqDiv);
-        }
-    }
-    public sealed class WavNormal : ModulationNormal
-    {
-        public WavNormal(string filename, uint modSamplingFreqDiv) : base()
         {
             NativeMethods.ModulationAudioFile.AUTDModulationWav(out handle, filename, modSamplingFreqDiv);
         }

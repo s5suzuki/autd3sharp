@@ -4,7 +4,7 @@
  * Created Date: 23/05/2022
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2022
+ * Last Modified: 24/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Hapis Lab. All rights reserved.
@@ -90,5 +90,6 @@ namespace AUTD3Sharp.NativeMethods
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendHeader(IntPtr handle, IntPtr header);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendBody(IntPtr handle, IntPtr body);
         [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendHeaderBody(IntPtr handle, IntPtr header, IntPtr body);
+        [DllImport("autd3capi", CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetMode(int mode);
     }
 }
