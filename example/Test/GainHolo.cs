@@ -4,7 +4,7 @@
  * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2022
+ * Last Modified: 25/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Hapis Lab. All rights reserved.
@@ -31,6 +31,7 @@ namespace example.Test
             var gain = new GSPAT();
             gain.Add(center + 20.0 * Vector3d.UnitX, 1.0);
             gain.Add(center - 20.0 * Vector3d.UnitX, 1.0);
+            gain.Constraint = new Uniform(1.0);
 
             var mod = new Sine(150);
 
