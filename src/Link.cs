@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 24/05/2022
+ * Last Modified: 25/05/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Hapis Lab. All rights reserved.
@@ -35,7 +35,9 @@ namespace AUTD3Sharp
 
     public sealed class SOEM : Link
     {
-        public SOEM(string ifname, int deviceNum, uint cycleTicks = 2, Action<string>? onLost = null, bool highPresicion = true) : base()
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)] public delegate void OnLostCallbackDelegate(string str);
+
+        public SOEM(string ifname, int deviceNum, ushort cycleTicks = 2, Action<string>? onLost = null, bool highPresicion = true) : base()
         {
             IntPtr onLostHander;
             if (onLost is null)
@@ -44,7 +46,7 @@ namespace AUTD3Sharp
             }
             else
             {
-                var callback = new NativeMethods.LinkSOEM.OnLostCallbackDelegate(onLost);
+                var callback = new OnLostCallbackDelegate(onLost);
                 onLostHander = Marshal.GetFunctionPointerForDelegate(callback);
             }
             NativeMethods.LinkSOEM.AUTDLinkSOEM(out handle, ifname, deviceNum, cycleTicks, onLostHander, highPresicion);
