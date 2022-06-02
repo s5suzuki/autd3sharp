@@ -4,10 +4,10 @@
  * Created Date: 23/05/2022
  * Author: Shun Suzuki
  * -----
- * Last Modified: 25/05/2022
+ * Last Modified: 02/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
- * Copyright (c) 2022 Hapis Lab. All rights reserved.
+ * Copyright (c) 2022 Shun Suzuki. All rights reserved.
  * 
  */
 
@@ -112,6 +112,12 @@ namespace AUTD3Sharp
         }
 
         public static void ToNormal()
+        {
+            Base.AUTDSetMode(1);
+            NativeMethods.GainHolo.AUTDSetModeHolo(1);
+        }
+
+        public static void ToNormalPhase()
         {
             Base.AUTDSetMode(1);
             NativeMethods.GainHolo.AUTDSetModeHolo(1);
@@ -292,6 +298,11 @@ namespace AUTD3Sharp
         public void SetTransCycle(int deviceIdx, int transIdxLocal, ushort cycle)
         {
             Base.AUTDSetTransCycle(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, cycle);
+        }
+
+        public void SetModDelay(int deviceIdx, int transIdxLocal, ushort delay)
+        {
+            Base.AUTDSetModDelay(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, delay);
         }
 
         public Vector3 TransDirectionX(int deviceIdx, int transIdxLocal)
@@ -548,8 +559,21 @@ namespace AUTD3Sharp
         }
     }
 
+    public enum Mode : ushort
+    {
+        PhaseDutyFull = 0x0001,
+        PhaseFull = 0x0002,
+        PhaseHalf = 0x0004,
+    }
+
     public sealed class GainSTM : STM
     {
+        public Mode Mode
+        {
+            get => (Mode)Base.AUTDGetGainSTMMode(handle);
+            set => Base.AUTDSetGainSTMMode(handle, (ushort)value);
+        }
+
         public GainSTM(Controller cnt) : base()
         {
             Base.AUTDGainSTM(out handle, cnt.AUTDControllerHandle.CntPtr);
@@ -577,6 +601,34 @@ namespace AUTD3Sharp
         public static SilencerConfig None()
         {
             return new SilencerConfig(0xFFFF, 4096);
+        }
+    }
+
+    public sealed class ModDelayConfig : Body
+    {
+        public ModDelayConfig() : base()
+        {
+            Base.AUTDCreateModDelayConfig(out handle);
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            Base.AUTDDeleteModDelayConfig(handle);
+            return true;
+        }
+    }
+
+    public sealed class Amplitudes : Body
+    {
+        public Amplitudes(Controller cnt, double amp = 1.0) : base()
+        {
+            Base.AUTDCreateAmplitudes(out handle, cnt.AUTDControllerHandle.CntPtr, amp);
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            Base.AUTDDeleteAmplitudes(handle);
+            return true;
         }
     }
 }

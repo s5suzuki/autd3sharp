@@ -65,6 +65,8 @@ namespace AUTD3Sharp.NativeMethods
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGainSTM(out IntPtr @out, IntPtr handle);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)][return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDPointSTMAdd(IntPtr stm, double x, double y, double z, byte shift);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)][return: MarshalAs(UnmanagedType.U1)] public static extern bool AUTDGainSTMAdd(IntPtr stm, IntPtr gain);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern ushort AUTDGetGainSTMMode(IntPtr stm);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetGainSTMMode(IntPtr stm, ushort mode);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDSTMSetFrequency(IntPtr stm, double freq);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDSTMFrequency(IntPtr stm);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern double AUTDSTMSamplingFrequency(IntPtr stm);
@@ -77,7 +79,12 @@ namespace AUTD3Sharp.NativeMethods
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendHeader(IntPtr handle, IntPtr header);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendBody(IntPtr handle, IntPtr body);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDSendHeaderBody(IntPtr handle, IntPtr header, IntPtr body);
-        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetMode(int mode);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetModDelay(IntPtr handle, int deviceIdx, int localTransIdx, ushort delay);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateModDelayConfig(out IntPtr @out);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteModDelayConfig(IntPtr config);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateAmplitudes(out IntPtr @out, IntPtr handle, double amp);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteAmplitudes(IntPtr amplitudes);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetMode(byte mode);
 
     }
 }

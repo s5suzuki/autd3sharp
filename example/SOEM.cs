@@ -4,10 +4,10 @@
  * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 23/05/2022
+ * Last Modified: 02/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
- * Copyright (c) 2022 Hapis Lab. All rights reserved.
+ * Copyright (c) 2022 Shun Suzuki. All rights reserved.
  * 
  */
 
@@ -41,6 +41,10 @@ namespace example
             var autd = new Controller();
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
             //autd.AddDevice(Vector3d.Zero, Vector3d.Zero, 1);
+
+            // Controller.ToNormal();
+            // for (int i = 0; i < Controller.NumTransInDevice; i++)
+            //     autd.SetTransFrequency(0, i, 70e3);
 
             var ifname = GetIfname();
             var link = new SOEM(ifname, autd.NumDevices, 2, x =>
