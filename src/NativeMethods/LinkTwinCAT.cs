@@ -8,7 +8,6 @@ namespace AUTD3Sharp.NativeMethods
     {
         const string DLL = "autd3capi-link-twincat";
 
-        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkTwinCAT(out IntPtr @out, ushort cycleTicks);
-
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkTwinCAT(out IntPtr @out);
     }
 }

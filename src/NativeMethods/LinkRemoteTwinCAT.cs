@@ -8,7 +8,6 @@ namespace AUTD3Sharp.NativeMethods
     {
         const string DLL = "autd3capi-link-remote-twincat";
 
-        [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkRemoteTwinCAT(out IntPtr @out, string remoteIpAddr, string remoteAmsNetId, string localAmsNetId, ushort cycleTicks);
-
+        [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkRemoteTwinCAT(out IntPtr @out, string remoteIpAddr, string remoteAmsNetId, string localAmsNetId);
     }
 }

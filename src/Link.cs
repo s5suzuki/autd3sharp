@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/06/2022
+ * Last Modified: 10/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Shun Suzuki. All rights reserved.
@@ -68,18 +68,18 @@ namespace AUTD3Sharp
 
     public sealed class TwinCAT : Link
     {
-        public TwinCAT(ushort cycleTicks) : base()
+        public TwinCAT() : base()
         {
-            NativeMethods.LinkTwinCAT.AUTDLinkTwinCAT(out handle, cycleTicks);
+            NativeMethods.LinkTwinCAT.AUTDLinkTwinCAT(out handle);
         }
     }
 
 
     public sealed class RemoteTwinCAT : Link
     {
-        public RemoteTwinCAT(string remoteIp, string remoteAmsNetId, string localAmsNetId, ushort cycleTicks) : base()
+        public RemoteTwinCAT(string remoteIp, string remoteAmsNetId, string localAmsNetId) : base()
         {
-            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out handle, remoteIp, remoteAmsNetId, localAmsNetId, cycleTicks);
+            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out handle, remoteIp, remoteAmsNetId, localAmsNetId);
         }
     }
 

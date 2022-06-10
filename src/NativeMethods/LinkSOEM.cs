@@ -12,6 +12,5 @@ namespace AUTD3Sharp.NativeMethods
         [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGetAdapter(IntPtr pAdapter, int index, System.Text.StringBuilder? desc, System.Text.StringBuilder? name);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDFreeAdapterPointer(IntPtr pAdapter);
         [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkSOEM(out IntPtr @out, string ifname, int deviceNum, ushort cycleTicks, IntPtr onLost, [MarshalAs(UnmanagedType.U1)] bool highPrecision);
-
     }
 }

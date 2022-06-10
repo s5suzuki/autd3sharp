@@ -10,6 +10,5 @@ namespace AUTD3Sharp.NativeMethods
 
         [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationRawPCM(out IntPtr mod, string filename, double samplingFreq, uint modSamplingFreqDiv);
         [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDModulationWav(out IntPtr mod, string filename, uint modSamplingFreqDiv);
-
     }
 }

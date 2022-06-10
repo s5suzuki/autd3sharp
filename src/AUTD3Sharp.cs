@@ -4,7 +4,7 @@
  * Created Date: 23/05/2022
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/06/2022
+ * Last Modified: 10/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Shun Suzuki. All rights reserved.
@@ -245,27 +245,27 @@ namespace AUTD3Sharp
         public int Send(Header header)
         {
             if (header == null) throw new ArgumentNullException(nameof(header));
-            return Base.AUTDSendHeader(AUTDControllerHandle.CntPtr, header.Ptr);
+            return Base.AUTDSend(AUTDControllerHandle.CntPtr, header.Ptr, IntPtr.Zero);
         }
 
         public int Send(Body body)
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
-            return Base.AUTDSendBody(AUTDControllerHandle.CntPtr, body.Ptr);
+            return Base.AUTDSend(AUTDControllerHandle.CntPtr, IntPtr.Zero, body.Ptr);
         }
 
         public int Send(Header header, Body body)
         {
             if (header == null) throw new ArgumentNullException(nameof(header));
             if (body == null) throw new ArgumentNullException(nameof(body));
-            return Base.AUTDSendHeaderBody(AUTDControllerHandle.CntPtr, header.Ptr, body.Ptr);
+            return Base.AUTDSend(AUTDControllerHandle.CntPtr, header.Ptr, body.Ptr);
         }
 
         public int Send(Body body, Header header)
         {
             if (header == null) throw new ArgumentNullException(nameof(header));
             if (body == null) throw new ArgumentNullException(nameof(body));
-            return Base.AUTDSendHeaderBody(AUTDControllerHandle.CntPtr, header.Ptr, body.Ptr);
+            return Base.AUTDSend(AUTDControllerHandle.CntPtr, header.Ptr, body.Ptr);
         }
 
         public Vector3 TransPosition(int deviceIdx, int transIdxLocal)

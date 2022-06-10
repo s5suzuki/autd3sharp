@@ -4,7 +4,7 @@
  * Created Date: 20/05/2020
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/06/2022
+ * Last Modified: 10/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2020 Shun Suzuki. All rights reserved.
@@ -28,7 +28,7 @@ namespace example
             var autd = new Controller();
             autd.AddDevice(Vector3d.Zero, Vector3d.Zero);
 
-            var link = new TwinCAT(2);
+            var link = new TwinCAT();
             if (!autd.Open(link))
             {
                 Console.WriteLine(Controller.LastError);
