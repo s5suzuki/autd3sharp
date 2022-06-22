@@ -4,7 +4,7 @@
  * Created Date: 23/05/2022
  * Author: Shun Suzuki
  * -----
- * Last Modified: 10/06/2022
+ * Last Modified: 22/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Shun Suzuki. All rights reserved.
@@ -201,10 +201,16 @@ namespace AUTD3Sharp
             set => Base.AUTDSetReadsFPGAInfo(AUTDControllerHandle.CntPtr, value);
         }
 
-        public bool CheckAck
+        public int CheckTrials
         {
-            get => Base.AUTDGetCheckAck(AUTDControllerHandle.CntPtr);
-            set => Base.AUTDSetCheckAck(AUTDControllerHandle.CntPtr, value);
+            get => Base.AUTDGetCheckTrials(AUTDControllerHandle.CntPtr);
+            set => Base.AUTDSetCheckTrials(AUTDControllerHandle.CntPtr, value);
+        }
+
+        public int SendIntervals
+        {
+            get => Base.AUTDGetSendInterval(AUTDControllerHandle.CntPtr);
+            set => Base.AUTDSetSendInterval(AUTDControllerHandle.CntPtr, value);
         }
 
         public byte[] FPGAInfo
@@ -276,9 +282,9 @@ namespace AUTD3Sharp
             return Adjust(x, y, z);
         }
 
-        public double Wavelength(int deviceIdx, int transIdxLocal, double soundSpeed)
+        public double Wavelength(int deviceIdx, int transIdxLocal)
         {
-            return Base.AUTDGetWavelength(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal, soundSpeed);
+            return Base.AUTDGetWavelength(AUTDControllerHandle.CntPtr, deviceIdx, transIdxLocal);
         }
 
         public double TransFrequency(int deviceIdx, int transIdxLocal)

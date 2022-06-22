@@ -4,7 +4,7 @@
  * Created Date: 23/05/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/06/2022
+ * Last Modified: 22/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Shun Suzuki. All rights reserved.
@@ -187,21 +187,6 @@ namespace AUTD3Sharp
         public LM(double eps1 = 1e-8, double eps2 = 1e-8, double tau = 1e-3, ulong kMax = 5, double[]? initial = null) : base()
         {
             NativeMethods.GainHolo.AUTDGainHoloLM(out handle, Backend.Ptr, eps1, eps2, tau, kMax, initial, initial is null ? 0 : initial.Length);
-        }
-    }
-
-    public sealed class GaussNewton : Holo
-    {
-        public GaussNewton(double eps1 = 1e-6, double eps2 = 1e-6, ulong kMax = 500, double[]? initial = null) : base()
-        {
-            NativeMethods.GainHolo.AUTDGainHoloGaussNewton(out handle, Backend.Ptr, eps1, eps2, kMax, initial, initial is null ? 0 : initial.Length);
-        }
-    }
-    public sealed class GradientDescent : Holo
-    {
-        public GradientDescent(double eps = 1e-6, double step = 0.5, ulong kMax = 2000, double[]? initial = null) : base()
-        {
-            NativeMethods.GainHolo.AUTDGainHoloGradientDescent(out handle, Backend.Ptr, eps, step, kMax, initial, initial is null ? 0 : initial.Length);
         }
     }
 

@@ -4,7 +4,7 @@
  * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/06/2022
+ * Last Modified: 22/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Shun Suzuki. All rights reserved.
@@ -57,6 +57,8 @@ namespace example
                 Console.WriteLine(Controller.LastError);
                 return;
             }
+
+            autd.CheckTrials = 50;
 
             TestRunner.Run(autd);
         }
