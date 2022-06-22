@@ -36,8 +36,6 @@ namespace example.Test
             if (autd.NumDevices == 2)
                 examples.Add((GroupTest.Test, "Grouped gain Test"));
 
-            autd.CheckAck = true;
-
             autd.Clear();
 
             autd.Synchronize();

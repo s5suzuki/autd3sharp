@@ -4,7 +4,7 @@
  * Created Date: 08/03/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 02/06/2022
+ * Last Modified: 22/06/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Shun Suzuki. All rights reserved.
@@ -28,7 +28,7 @@ public class SimpleAUTDController : MonoBehaviour
         _link = new SOEM(ifname, _autd.NumDevices);
         _autd.Open(_link);
 
-        _autd.CheckAck = true;
+        _autd.CheckTrials = 50;
 
         _autd.Clear();
 

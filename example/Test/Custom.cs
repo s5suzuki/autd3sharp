@@ -31,7 +31,7 @@ namespace example.Test
                 {
                     var tp = autd.TransPosition(dev, i);
                     var dist = (tp - point).L2Norm;
-                    var wavelength = autd.Wavelength(dev, i, autd.SoundSpeed);
+                    var wavelength = autd.Wavelength(dev, i);
                     var phase = dist / wavelength;
                     amps[c] = 1.0;
                     phases[c] = phase;
