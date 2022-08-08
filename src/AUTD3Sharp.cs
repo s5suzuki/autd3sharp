@@ -105,22 +105,19 @@ namespace AUTD3Sharp
             AUTDControllerHandle = new AUTDControllerHandle(true);
         }
 
-        public static void ToLegacy()
+        public void ToLegacy()
         {
-            Base.AUTDSetMode(0);
-            NativeMethods.GainHolo.AUTDSetModeHolo(0);
+            Base.AUTDSetMode(AUTDControllerHandle.CntPtr, 0);
         }
 
-        public static void ToNormal()
+        public void ToNormal()
         {
-            Base.AUTDSetMode(1);
-            NativeMethods.GainHolo.AUTDSetModeHolo(1);
+            Base.AUTDSetMode(AUTDControllerHandle.CntPtr, 1);
         }
 
-        public static void ToNormalPhase()
+        public void ToNormalPhase()
         {
-            Base.AUTDSetMode(1);
-            NativeMethods.GainHolo.AUTDSetModeHolo(1);
+            Base.AUTDSetMode(AUTDControllerHandle.CntPtr, 2);
         }
 
         public bool Open(Link link) => Base.AUTDOpenController(AUTDControllerHandle.CntPtr, link.LinkPtr);
@@ -626,9 +623,9 @@ namespace AUTD3Sharp
 
     public sealed class Amplitudes : Body
     {
-        public Amplitudes(Controller cnt, double amp = 1.0) : base()
+        public Amplitudes(double amp = 1.0) : base()
         {
-            Base.AUTDCreateAmplitudes(out handle, cnt.AUTDControllerHandle.CntPtr, amp);
+            Base.AUTDCreateAmplitudes(out handle, amp);
         }
 
         protected override bool ReleaseHandle()

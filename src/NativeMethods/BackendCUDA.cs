@@ -6,7 +6,7 @@ namespace AUTD3Sharp.NativeMethods
 {
     internal static class BackendCUDA
     {
-        private const string DLL = "autd3capi-backend-cuda";
+        const string DLL = "autd3capi-backend-cuda";
 
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCUDABackend(out IntPtr @out);
     }

@@ -6,7 +6,7 @@ namespace AUTD3Sharp.NativeMethods
 {
     internal static class LinkSOEM
     {
-        private const string DLL = "autd3capi-link-soem";
+        const string DLL = "autd3capi-link-soem";
 
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDGetAdapterPointer(out IntPtr @out);
         [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDGetAdapter(IntPtr pAdapter, int index, System.Text.StringBuilder? desc, System.Text.StringBuilder? name);

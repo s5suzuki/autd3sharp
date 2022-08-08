@@ -187,6 +187,22 @@ namespace AUTD3Sharp
         }
     }
 
+    public sealed class LSSGreedy : Holo
+    {
+        public LSSGreedy(int phaseDiv = 16)
+        {
+            NativeMethods.GainHolo.AUTDGainHoloLSSGreedy(out handle, Backend.Ptr, phaseDiv);
+        }
+    }
+
+    public sealed class APO : Holo
+    {
+        public APO(double eps = 1e-8, double lambda = 1.0, int kMax = 200, int lineSearchMax = 100)
+        {
+            NativeMethods.GainHolo.AUTDGainHoloAPO(out handle, Backend.Ptr, eps, lambda, kMax, lineSearchMax);
+        }
+    }
+
     public sealed class Greedy : Holo
     {
         public Greedy(int phaseDiv = 16)

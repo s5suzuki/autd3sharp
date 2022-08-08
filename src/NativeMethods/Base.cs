@@ -6,7 +6,7 @@ namespace AUTD3Sharp.NativeMethods
 {
     internal static class Base
     {
-        private const string DLL = "autd3capi";
+        const string DLL = "autd3capi";
 
         [DllImport(DLL, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true, CallingConvention = CallingConvention.Cdecl)] public static extern int AUTDGetLastError(System.Text.StringBuilder? error);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateController(out IntPtr @out);
@@ -82,8 +82,8 @@ namespace AUTD3Sharp.NativeMethods
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetModDelay(IntPtr handle, int deviceIdx, int localTransIdx, ushort delay);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateModDelayConfig(out IntPtr @out);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteModDelayConfig(IntPtr config);
-        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateAmplitudes(out IntPtr @out, IntPtr handle, double amp);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDCreateAmplitudes(out IntPtr @out, double amp);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteAmplitudes(IntPtr amplitudes);
-        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetMode(byte mode);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDSetMode(IntPtr handle, byte mode);
     }
 }
