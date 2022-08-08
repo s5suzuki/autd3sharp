@@ -4,7 +4,7 @@
  * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 22/06/2022
+ * Last Modified: 08/08/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Shun Suzuki. All rights reserved.
@@ -47,11 +47,12 @@ namespace example
             //     autd.SetTransFrequency(0, i, 70e3);
 
             var ifname = GetIfname();
-            var link = new SOEM(ifname, autd.NumDevices, 2, x =>
+            var link = new SOEM(ifname, autd.NumDevices).OnLost(x =>
             {
                 Console.WriteLine($"Unrecoverable error occurred: {x}");
                 Environment.Exit(-1);
-            });
+            }).Build();
+        
             if (!autd.Open(link))
             {
                 Console.WriteLine(Controller.LastError);

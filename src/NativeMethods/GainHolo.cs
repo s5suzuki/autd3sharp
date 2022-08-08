@@ -6,7 +6,7 @@ namespace AUTD3Sharp.NativeMethods
 {
     internal static class GainHolo
     {
-        const string DLL = "autd3capi-gain-holo";
+        private const string DLL = "autd3capi-gain-holo";
 
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDEigenBackend(out IntPtr @out);
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDDeleteBackend(IntPtr backend);

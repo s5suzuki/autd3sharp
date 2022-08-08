@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 10/06/2022
+ * Last Modified: 08/08/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Shun Suzuki. All rights reserved.
@@ -20,36 +20,86 @@ using Microsoft.Win32.SafeHandles;
 namespace AUTD3Sharp
 {
     [ComVisible(false)]
-    public abstract class Link : SafeHandleZeroOrMinusOneIsInvalid
+    public class Link : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal IntPtr LinkPtr => handle;
 
-        internal Link() : base(false)
+        internal Link(IntPtr handle) : base(false)
         {
-            handle = new IntPtr();
             SetHandle(handle);
         }
 
         protected override bool ReleaseHandle() => true;
     }
 
-    public sealed class SOEM : Link
+    public class SOEM
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)] public delegate void OnLostCallbackDelegate(string str);
 
-        public SOEM(string ifname, int deviceNum, ushort cycleTicks = 2, Action<string>? onLost = null, bool highPresicion = true) : base()
+        private readonly string _ifname;
+        private readonly int _deviceNum;
+
+        private ushort _sendCycle;
+        private ushort _sync0Cycle;
+        private bool _freerun;
+        private bool _highPrecision;
+        private Action<string>? _onLost;
+
+        public SOEM(string ifname, int deviceNum)
         {
-            IntPtr onLostHander;
-            if (onLost is null)
+            _ifname = ifname;
+            _deviceNum = deviceNum;
+            _sendCycle = 1;
+            _sync0Cycle = 1;
+            _freerun = false;
+            _highPrecision = false;
+            _onLost = null;
+        }
+
+        public SOEM SendCycle(ushort sendCycle)
+        {
+            _sendCycle = sendCycle;
+            return this;
+        }
+
+        public SOEM Sync0Cycle(ushort sync0Cycle)
+        {
+            _sync0Cycle = sync0Cycle;
+            return this;
+        }
+
+        public SOEM FreeRun(bool freerun)
+        {
+            _freerun = freerun;
+            return this;
+        }
+
+        public SOEM HighPrecision(bool highPrecision)
+        {
+            _highPrecision = highPrecision;
+            return this;
+        }
+
+        public SOEM OnLost(Action<string> onLost)
+        {
+            _onLost = onLost;
+            return this;
+        }
+
+        public Link Build()
+        {
+            IntPtr onLostHandler;
+            if (_onLost is null)
             {
-                onLostHander = IntPtr.Zero;
+                onLostHandler = IntPtr.Zero;
             }
             else
             {
-                var callback = new OnLostCallbackDelegate(onLost);
-                onLostHander = Marshal.GetFunctionPointerForDelegate(callback);
+                var callback = new OnLostCallbackDelegate(_onLost);
+                onLostHandler = Marshal.GetFunctionPointerForDelegate(callback);
             }
-            NativeMethods.LinkSOEM.AUTDLinkSOEM(out handle, ifname, deviceNum, cycleTicks, onLostHander, highPresicion);
+            NativeMethods.LinkSOEM.AUTDLinkSOEM(out var handle, _ifname, _deviceNum, _sync0Cycle, _sendCycle, _freerun, onLostHandler, _highPrecision);
+            return new Link(handle);
         }
 
         public static IEnumerable<EtherCATAdapter> EnumerateAdapters()
@@ -66,28 +116,62 @@ namespace AUTD3Sharp
         }
     }
 
-    public sealed class TwinCAT : Link
+    public sealed class TwinCAT
     {
-        public TwinCAT() : base()
+        public TwinCAT()
         {
-            NativeMethods.LinkTwinCAT.AUTDLinkTwinCAT(out handle);
+        }
+
+        public Link Build()
+        {
+            NativeMethods.LinkTwinCAT.AUTDLinkTwinCAT(out var handle);
+            return new Link(handle);
         }
     }
 
 
-    public sealed class RemoteTwinCAT : Link
+    public sealed class RemoteTwinCAT
     {
-        public RemoteTwinCAT(string remoteIp, string remoteAmsNetId, string localAmsNetId) : base()
+        private readonly string _remoteIp;
+        private readonly string _remoteAmsNetId;
+        private string _localAmsNetId;
+
+        public RemoteTwinCAT(string remoteIp, string remoteAmsNetId)
         {
-            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out handle, remoteIp, remoteAmsNetId, localAmsNetId);
+            _remoteIp = remoteIp;
+            _remoteAmsNetId = remoteAmsNetId;
+            _localAmsNetId = string.Empty;
+        }
+
+        public RemoteTwinCAT LocalAmsNetId(string localAmsNetId)
+        {
+            _localAmsNetId = localAmsNetId;
+            return this;
+        }
+
+        public Link Build()
+        {
+            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out var handle, _remoteIp, _remoteAmsNetId, _localAmsNetId);
+            return new Link(handle);
         }
     }
 
-    public sealed class Emulator : Link
+    public sealed class Emulator
     {
-        public Emulator(ushort port, Controller autd) : base()
+        private readonly ushort _port;
+        private readonly Controller _autd;
+
+        public Emulator(ushort port,
+        Controller autd)
         {
-            NativeMethods.LinkEmulator.AUTDLinkEmulator(out handle, port, autd.AUTDControllerHandle.CntPtr);
+            _port = port;
+            _autd = autd;
+        }
+
+        public Link Build()
+        {
+            NativeMethods.LinkEmulator.AUTDLinkEmulator(out var handle, _port, _autd.AUTDControllerHandle.CntPtr);
+            return new Link(handle);
         }
     }
 

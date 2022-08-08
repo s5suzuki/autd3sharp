@@ -18,7 +18,7 @@ namespace AUTD3Sharp
     [ComVisible(false)]
     public abstract class BackendCUDA : Backend
     {
-        internal BackendCUDA() : base()
+        internal BackendCUDA()
         {
             NativeMethods.BackendCUDA.AUTDCUDABackend(out handle);
         }
