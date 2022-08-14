@@ -13,7 +13,6 @@
 
 using AUTD3Sharp;
 using System;
-using System.Linq;
 using AUTD3Sharp.Utils;
 using example.Test;
 
@@ -33,12 +32,14 @@ namespace example
             // for (int i = 0; i < Controller.NumTransInDevice; i++)
             //     autd.SetTransFrequency(0, i, 70e3);
 
-            var link = new SOEM(autd.NumDevices).OnLost(x =>
-            {
-                Console.WriteLine($"Unrecoverable error occurred: {x}");
-                Environment.Exit(-1);
-            }).Build();
-        
+            var link = new SOEM(autd.NumDevices)
+                .HighPrecision(true)
+                .OnLost(x => 
+                    {
+                        Console.WriteLine($"Unrecoverable error occurred: {x}");
+                        Environment.Exit(-1);
+                    })
+                .Build();
             if (!autd.Open(link))
             {
                 Console.WriteLine(Controller.LastError);

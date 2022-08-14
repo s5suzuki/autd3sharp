@@ -165,7 +165,7 @@ namespace AUTD3Sharp
     {
         private ushort _port;
 
-        public Emulator(ushort port)
+        public Emulator()
         {
             _port = 50632;
         }
