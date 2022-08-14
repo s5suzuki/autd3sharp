@@ -4,7 +4,7 @@
  * Created Date: 08/03/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 08/08/2022
+ * Last Modified: 14/08/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Shun Suzuki. All rights reserved.
@@ -24,8 +24,7 @@ public class SimpleAUTDController : MonoBehaviour
     {
         _autd.AddDevice(gameObject.transform.position, gameObject.transform.rotation);
 
-        string ifname = @"write your interface name here";
-        _link = new SOEM(ifname, _autd.NumDevices).Build();
+        _link = new SOEM(_autd.NumDevices).Build();
         _autd.Open(_link);
 
         _autd.CheckTrials = 50;
