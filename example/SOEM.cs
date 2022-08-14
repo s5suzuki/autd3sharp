@@ -4,7 +4,7 @@
  * Created Date: 30/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 08/08/2022
+ * Last Modified: 14/08/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2022 Shun Suzuki. All rights reserved.
@@ -21,19 +21,6 @@ namespace example
 {
     internal static class SOEMTest
     {
-        public static string GetIfname()
-        {
-            var adapters = SOEM.EnumerateAdapters();
-            var etherCATAdapters = adapters as EtherCATAdapter[] ?? adapters.ToArray();
-            foreach (var (adapter, index) in etherCATAdapters.Select((adapter, index) => (adapter, index)))
-                Console.WriteLine($"[{index}]: {adapter}");
-
-            Console.Write("Choose number: ");
-            int i;
-            while (!int.TryParse(Console.ReadLine(), out i)) { }
-            return etherCATAdapters.ElementAt(i).Name;
-        }
-
         public static void Test()
         {
             Console.WriteLine("Test with SOEM");
@@ -46,8 +33,7 @@ namespace example
             // for (int i = 0; i < Controller.NumTransInDevice; i++)
             //     autd.SetTransFrequency(0, i, 70e3);
 
-            var ifname = GetIfname();
-            var link = new SOEM(ifname, autd.NumDevices).OnLost(x =>
+            var link = new SOEM(autd.NumDevices).OnLost(x =>
             {
                 Console.WriteLine($"Unrecoverable error occurred: {x}");
                 Environment.Exit(-1);

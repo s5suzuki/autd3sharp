@@ -8,6 +8,6 @@ namespace AUTD3Sharp.NativeMethods
     {
         const string DLL = "autd3capi-link-emulator";
 
-        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkEmulator(out IntPtr @out, ushort port, IntPtr cnt);
+        [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)] public static extern void AUTDLinkEmulator(out IntPtr @out, ushort port);
     }
 }
