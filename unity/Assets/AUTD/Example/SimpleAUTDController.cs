@@ -24,7 +24,7 @@ public class SimpleAUTDController : MonoBehaviour
     {
         _autd.AddDevice(gameObject.transform.position, gameObject.transform.rotation);
 
-        _link = new SOEM(_autd.NumDevices).Build();
+        _link = new SOEM().Build();
         _autd.Open(_link);
 
         _autd.CheckTrials = 50;

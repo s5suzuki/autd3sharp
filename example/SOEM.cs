@@ -32,7 +32,7 @@ namespace example
             // for (int i = 0; i < Controller.NumTransInDevice; i++)
             //     autd.SetTransFrequency(0, i, 70e3);
 
-            var link = new SOEM(autd.NumDevices)
+            var link = new SOEM()
                 .HighPrecision(true)
                 .OnLost(x => 
                     {

@@ -36,8 +36,6 @@ namespace AUTD3Sharp
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)] public delegate void OnLostCallbackDelegate(string str);
 
-        private readonly int _deviceNum;
-
         private string? _ifname;
         private ushort _sendCycle;
         private ushort _sync0Cycle;
@@ -45,10 +43,9 @@ namespace AUTD3Sharp
         private bool _highPrecision;
         private Action<string>? _onLost;
 
-        public SOEM(int deviceNum)
+        public SOEM()
         {
             _ifname = null;
-            _deviceNum = deviceNum;
             _sendCycle = 1;
             _sync0Cycle = 1;
             _freerun = false;
@@ -103,7 +100,7 @@ namespace AUTD3Sharp
                 var callback = new OnLostCallbackDelegate(_onLost);
                 onLostHandler = Marshal.GetFunctionPointerForDelegate(callback);
             }
-            NativeMethods.LinkSOEM.AUTDLinkSOEM(out var handle, _ifname, _deviceNum, _sync0Cycle, _sendCycle, _freerun, onLostHandler, _highPrecision);
+            NativeMethods.LinkSOEM.AUTDLinkSOEM(out var handle, _ifname, _sync0Cycle, _sendCycle, _freerun, onLostHandler, _highPrecision);
             return new Link(handle);
         }
 
