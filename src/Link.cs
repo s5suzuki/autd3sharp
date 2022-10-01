@@ -4,7 +4,7 @@
  * Created Date: 28/04/2021
  * Author: Shun Suzuki
  * -----
- * Last Modified: 14/08/2022
+ * Last Modified: 01/10/2022
  * Modified By: Shun Suzuki (suzuki@hapis.k.u-tokyo.ac.jp)
  * -----
  * Copyright (c) 2021 Shun Suzuki. All rights reserved.
@@ -53,7 +53,8 @@ namespace AUTD3Sharp
             _onLost = null;
         }
 
-        public SOEM Ifname(string ifname) {
+        public SOEM Ifname(string ifname)
+        {
             _ifname = ifname;
             return this;
         }
@@ -134,26 +135,32 @@ namespace AUTD3Sharp
 
     public sealed class RemoteTwinCAT
     {
-        private readonly string _remoteIp;
-        private readonly string _remoteAmsNetId;
-        private string _localAmsNetId;
+        private string _serverIp;
+        private readonly string _serverAmsNetId;
+        private string _clientAmsNetId;
 
-        public RemoteTwinCAT(string remoteIp, string remoteAmsNetId)
+        public RemoteTwinCAT(string serverAmsNetId)
         {
-            _remoteIp = remoteIp;
-            _remoteAmsNetId = remoteAmsNetId;
-            _localAmsNetId = string.Empty;
+            _serverAmsNetId = serverAmsNetId;
+            _clientAmsNetId = string.Empty;
+            _serverIp = string.Empty;
+        }
+
+        public RemoteTwinCAT ServerIp(string serverIp)
+        {
+            _serverIp = serverIp;
+            return this;
         }
 
         public RemoteTwinCAT LocalAmsNetId(string localAmsNetId)
         {
-            _localAmsNetId = localAmsNetId;
+            _clientAmsNetId = localAmsNetId;
             return this;
         }
 
         public Link Build()
         {
-            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out var handle, _remoteIp, _remoteAmsNetId, _localAmsNetId);
+            NativeMethods.LinkRemoteTwinCAT.AUTDLinkRemoteTwinCAT(out var handle, _serverIp, _serverAmsNetId, _clientAmsNetId);
             return new Link(handle);
         }
     }
