@@ -1,6 +1,6 @@
 # DEPRECATED 
 
-## This repository has been merged into [autd3](https://github.com/shinolab/autd3/cs) repository from v2.4.1.
+## This repository has been merged into [autd3](https://github.com/shinolab/autd3) repository from v2.4.1.
 
 ![build](https://github.com/shinolab/autd3sharp/workflows/build/badge.svg)
 ![Publish to NuGet](https://github.com/shinolab/autd3sharp/workflows/Publish%20to%20NuGet/badge.svg)
